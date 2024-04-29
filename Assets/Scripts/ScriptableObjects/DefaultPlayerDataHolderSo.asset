@@ -17,3 +17,4 @@ MonoBehaviour:
     ShopData:
       Size: {x: 8, y: 8}
       WallType: 1
+      FloorType: 1

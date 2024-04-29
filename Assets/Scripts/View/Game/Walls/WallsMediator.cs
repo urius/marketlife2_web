@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Data;
+using Holders;
 using Infra.Instance;
 using Model;
 using Providers;
@@ -10,17 +11,12 @@ namespace View.Game.Walls
 {
     public class WallsMediator : MediatorBase
     {
-        private readonly IPlayerModelHolder _playerModelHolder;
-        private readonly IGridCalculator _gridCalculator;
+        private readonly IPlayerModelHolder _playerModelHolder = Instance.Get<IPlayerModelHolder>();
+        private readonly IGridCalculator _gridCalculator = Instance.Get<IGridCalculator>();
+        private readonly SpritesHolderSo _spritesHolder = Instance.Get<SpritesHolderSo>();
         private readonly Dictionary<Vector2Int, WallView> _wallByCoords = new();
 
         private ShopModel ShopModel => _playerModelHolder.PlayerModel.ShopModel;
-
-        public WallsMediator()
-        {
-            _playerModelHolder = Instance.Get<IPlayerModelHolder>();
-            _gridCalculator = Instance.Get<IGridCalculator>();
-        }
 
         protected override void MediateInternal()
         {
@@ -35,6 +31,7 @@ namespace View.Game.Walls
         private void DisplayWalls()
         {
             var shopSize = ShopModel.Size;
+            var wallSprite = _spritesHolder.GetWallSpriteByKey(ShopModel.WallsType);
             
             for (var x = 0; x < shopSize.x; x++)
             {
@@ -49,6 +46,8 @@ namespace View.Game.Walls
                 var wallView = CreateWallIfNeeded(coords);
                 wallView.ToYMode(y == shopSize.y - 1);
             }
+
+            SetWallsSprite(wallSprite);
         }
 
         private void RemoveWalls()
@@ -76,6 +75,23 @@ namespace View.Game.Walls
                 _wallByCoords[coords] = wallView;
 
                 return wallView;
+            }
+        }
+
+        private void SetWallsSprite(Sprite sprite)
+        {
+            var shopSize = ShopModel.Size;
+            
+            for (var x = 0; x < shopSize.x; x++)
+            {
+                var coords = new Vector2Int(x, -1);
+                _wallByCoords[coords].SetWallSprite(sprite);
+            }
+            
+            for (var y = 0; y < shopSize.y; y++)
+            {
+                var coords = new Vector2Int(-1, y);
+                _wallByCoords[coords].SetWallSprite(sprite);
             }
         }
     }

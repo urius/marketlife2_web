@@ -8,5 +8,6 @@ namespace Data
     {
         public Vector2Int Size;
         public WallType WallType;
+        public FloorType FloorType;
     }
 }

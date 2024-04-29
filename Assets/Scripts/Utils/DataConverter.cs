@@ -16,7 +16,7 @@ namespace Utils
 
         private static ShopModel ToShopModel(ShopDataDto shopDataDto)
         {
-            var result = new ShopModel(shopDataDto.Size, shopDataDto.WallType);
+            var result = new ShopModel(shopDataDto.Size, shopDataDto.WallType, shopDataDto.FloorType);
 
             return result;
         }

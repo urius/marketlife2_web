@@ -1,5 +1,6 @@
 using Infra.Instance;
 using Providers;
+using View.Game.Floors;
 using View.Game.Walls;
 
 namespace View.Game

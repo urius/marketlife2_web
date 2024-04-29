@@ -1,0 +1,54 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 93dd8156a1b643a6a6081757c1c96b19, type: 3}
+  m_Name: SpritesHolderSo
+  m_EditorClassIdentifier: 
+  _floorItems:
+  - Key: 1
+    Tile: {fileID: 11400000, guid: 81a1a58e81fd84555812f5ac652bda4d, type: 2}
+  - Key: 2
+    Tile: {fileID: 11400000, guid: 2281a1047cc5b4046a5bfd25a08bde20, type: 2}
+  - Key: 3
+    Tile: {fileID: 11400000, guid: 738268c86563e488fa6fa3f32cd29862, type: 2}
+  - Key: 4
+    Tile: {fileID: 11400000, guid: 54c7d4c978b644e12a2d73cf4246e326, type: 2}
+  - Key: 5
+    Tile: {fileID: 11400000, guid: 8d94c3f18f26040d89a59ffa4e373d9a, type: 2}
+  - Key: 101
+    Tile: {fileID: 11400000, guid: 0362352fe185647b0a1baa69c67c58e4, type: 2}
+  - Key: 102
+    Tile: {fileID: 11400000, guid: cec2ce896fd71495895602a707435e1a, type: 2}
+  - Key: 102
+    Tile: {fileID: 11400000, guid: eb3507b9ee5754701b91b6272fa78cde, type: 2}
+  - Key: 201
+    Tile: {fileID: 11400000, guid: cec2ce896fd71495895602a707435e1a, type: 2}
+  _wallItems:
+  - Key: 1
+    Sprite: {fileID: 21300000, guid: 031cd9da9b78d485dbf6f4fa2c981d68, type: 3}
+  - Key: 2
+    Sprite: {fileID: 21300000, guid: 65a9fa44677d544a185f3275dc94e21e, type: 3}
+  - Key: 3
+    Sprite: {fileID: 21300000, guid: 577f3a33e09bd4755a94c9ed894c5868, type: 3}
+  - Key: 4
+    Sprite: {fileID: 21300000, guid: 5947fa53b063a46cca199e4a9da2300f, type: 3}
+  - Key: 5
+    Sprite: {fileID: 21300000, guid: 5f22a7b6512f74054aaddd1edb9feff7, type: 3}
+  - Key: 6
+    Sprite: {fileID: 21300000, guid: 9bb06f65de2a748ddb744feb588506f2, type: 3}
+  - Key: 7
+    Sprite: {fileID: 21300000, guid: da0876db82cda4d65a053b2198dfa85b, type: 3}
+  - Key: 8
+    Sprite: {fileID: 21300000, guid: 7b69f9448741848bab552b3ee15a844b, type: 3}
+  - Key: 9
+    Sprite: {fileID: 21300000, guid: ecc9badbe3f9f49389409a61ec064144, type: 3}
+  - Key: 10
+    Sprite: {fileID: 21300000, guid: 1a6ecbbfe1207467aa46487e2235f88b, type: 3}

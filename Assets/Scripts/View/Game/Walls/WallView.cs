@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 namespace View.Game.Walls
@@ -24,6 +23,11 @@ namespace View.Game.Walls
             
             _edgeVerticalLeft.SetActive(isLast);
             _edgeVerticalRight.SetActive(false);
+        }
+
+        public void SetWallSprite(Sprite sprite)
+        {
+            _wallSpriteRenderer.sprite = sprite;
         }
     }
 }

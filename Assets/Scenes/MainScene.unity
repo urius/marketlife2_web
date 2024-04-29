@@ -2233,6 +2233,7 @@ MonoBehaviour:
   _floorGrid: {fileID: 263887374}
   _defaultPlayerDataHolder: {fileID: 11400000, guid: 5c07318db84c64153a7d25669a017899, type: 2}
   _prefabsHolder: {fileID: 11400000, guid: 1b0416fa3604f467faa9a5b95b47728d, type: 2}
+  _spritesHolder: {fileID: 11400000, guid: f8c9477dc899d48dda6b7da2e4f92aa6, type: 2}
 --- !u!1 &1685709051
 GameObject:
   m_ObjectHideFlags: 0

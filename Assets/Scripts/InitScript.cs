@@ -14,6 +14,7 @@ public class InitScript : MonoBehaviour
     [SerializeField] private Grid _floorGrid;
     [SerializeField] private DefaultPlayerDataHolderSo _defaultPlayerDataHolder;
     [SerializeField] private PrefabsHolderSo _prefabsHolder;
+    [SerializeField] private SpritesHolderSo _spritesHolder;
 
     private PlayerModelHolder _playerModelHolder;
     private GameRootMediator _gameRootMediator;
@@ -43,6 +44,7 @@ public class InitScript : MonoBehaviour
         SetupInstance.From(new GridCalculator(_floorGrid)).As<IGridCalculator>();
         SetupInstance.From(_defaultPlayerDataHolder).AsSelf();
         SetupInstance.From(_prefabsHolder).AsSelf();
+        SetupInstance.From(_spritesHolder).AsSelf();
         
         _playerModelHolder = SetupNewInstance<PlayerModelHolder, IPlayerModelHolder>();
         var commandExecutor = SetupNewInstance<CommandExecutor, ICommandExecutor>();
