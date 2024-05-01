@@ -47,3 +47,12 @@ TagManager:
   - name: General
     uniqueID: 1419607231
     locked: 0
+  - name: PeopleLocal
+    uniqueID: 1903607907
+    locked: 0
+  - name: WallLocal
+    uniqueID: 2794509685
+    locked: 0
+  - name: UI
+    uniqueID: 3470003085
+    locked: 0

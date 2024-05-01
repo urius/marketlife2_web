@@ -3,6 +3,7 @@ using Data;
 using Holders;
 using Infra.Instance;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace View
 {
@@ -40,6 +41,8 @@ namespace View
 
         protected T MediateChild<T>(Transform transform) where T : MediatorBase, new()
         {
+            Assert.IsNotNull(transform);
+            
             _children ??= new LinkedList<MediatorBase>();
             
             var mediator = new T();
