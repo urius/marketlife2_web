@@ -10,7 +10,6 @@ namespace View.UI.GameOverlayPanel.MovingControl
     public class UIMovingControlMediator : MediatorBase
     {
         private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
-        private readonly IScreenCalculator _screenCalculator = Instance.Get<IScreenCalculator>();
         private readonly IMainCameraHolder _mainCameraHolder = Instance.Get<IMainCameraHolder>();
 
         private UIMovingControlView _movingControlView;
@@ -20,11 +19,21 @@ namespace View.UI.GameOverlayPanel.MovingControl
         {
             _rectTransform = Transform as RectTransform;
             
+            SubscribeToEvents();
+        }
+
+        protected override void UnmediateInternal()
+        {
+            UnsubscribeFromEvents();
+        }
+
+        private void SubscribeToEvents()
+        {
             _eventBus.Subscribe<GameLayerPointerDownEvent>(OnGameLayerPointerDownEvent);
             _eventBus.Subscribe<GameLayerPointerUpEvent>(OnGameLayerPointerUpEvent);
         }
 
-        protected override void UnmediateInternal()
+        private void UnsubscribeFromEvents()
         {
             _eventBus.Unsubscribe<GameLayerPointerDownEvent>(OnGameLayerPointerDownEvent);
             _eventBus.Unsubscribe<GameLayerPointerUpEvent>(OnGameLayerPointerUpEvent);
@@ -34,11 +43,9 @@ namespace View.UI.GameOverlayPanel.MovingControl
         {
             _movingControlView ??= CreateView();
 
-            var worldMousePoint = _screenCalculator.GetWorldMousePoint();
-
             RectTransformUtility.ScreenPointToLocalPointInRectangle(
                 _rectTransform, Input.mousePosition, _mainCameraHolder.MainCamera, out var point);
-            
+
             _movingControlView.SetAnchoredPosition(point);
             _movingControlView.ResetAndActivate();
         }
