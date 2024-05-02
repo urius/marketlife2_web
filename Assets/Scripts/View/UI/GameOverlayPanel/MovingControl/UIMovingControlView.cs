@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 namespace View.UI.GameOverlayPanel.MovingControl
@@ -8,10 +7,15 @@ namespace View.UI.GameOverlayPanel.MovingControl
         [SerializeField] private RectTransform _innerPartTransform;
         
         private RectTransform _rectTransform;
+        private float _radius;
+        private float _sqrRadius;
 
         private void Awake()
         {
-            _rectTransform = transform as RectTransform;
+            _rectTransform = (RectTransform)transform;
+
+            _radius = _rectTransform.sizeDelta.x * 0.5f - _innerPartTransform.sizeDelta.x * 0.2f;
+            _sqrRadius = _radius * _radius;
         }
 
         public void ResetAndActivate()
@@ -29,6 +33,18 @@ namespace View.UI.GameOverlayPanel.MovingControl
         public void SetAnchoredPosition(Vector2 pos)
         {
             _rectTransform.anchoredPosition = pos;
+        }
+
+        public void SetInnerPartPosition(Vector2 innerPartLocalPos)
+        {
+            var resultPos = innerPartLocalPos;
+
+            if (innerPartLocalPos.sqrMagnitude >= _sqrRadius)
+            {
+                resultPos = innerPartLocalPos.normalized * _radius;
+            }
+
+            _innerPartTransform.anchoredPosition = resultPos;
         }
     }
 }

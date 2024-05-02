@@ -2579,6 +2579,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1168823300}
   - component: {fileID: 1168823301}
+  - component: {fileID: 1168823302}
   m_Layer: 0
   m_Name: '[ global ]'
   m_TagString: Untagged
@@ -2620,6 +2621,19 @@ MonoBehaviour:
   _defaultPlayerDataHolder: {fileID: 11400000, guid: 5c07318db84c64153a7d25669a017899, type: 2}
   _prefabsHolder: {fileID: 11400000, guid: 1b0416fa3604f467faa9a5b95b47728d, type: 2}
   _spritesHolder: {fileID: 11400000, guid: f8c9477dc899d48dda6b7da2e4f92aa6, type: 2}
+  _updatesProvider: {fileID: 1168823302}
+--- !u!114 &1168823302
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1168823299}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8ef5bb75dba4e0895f063017248bab7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1215627040
 GameObject:
   m_ObjectHideFlags: 0

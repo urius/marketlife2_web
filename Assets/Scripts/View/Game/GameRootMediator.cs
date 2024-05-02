@@ -13,7 +13,7 @@ namespace View.Game
 
         protected override async void MediateInternal()
         {
-            _gameRootView = Transform.GetComponent<GameRootView>();
+            _gameRootView = TargetTransform.GetComponent<GameRootView>();
 
             await _playerModelHolder.PlayerModelSetTask;
 

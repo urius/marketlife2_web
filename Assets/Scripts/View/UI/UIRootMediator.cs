@@ -6,7 +6,7 @@ namespace View.UI
     {
         protected override void MediateInternal()
         {
-            var view = Transform.GetComponent<UIRootView>();
+            var view = TargetTransform.GetComponent<UIRootView>();
             
             MediateChild<UIGameOverlayPanelMediator>(view.UIGameOverlayPanelTransform);
         }

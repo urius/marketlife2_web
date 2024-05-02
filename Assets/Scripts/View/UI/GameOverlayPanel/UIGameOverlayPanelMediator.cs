@@ -14,9 +14,9 @@ namespace View.UI.GameOverlayPanel
 
         protected override void MediateInternal()
         {
-            _view = Transform.GetComponent<UIGameOverlayPanelView>();
+            _view = TargetTransform.GetComponent<UIGameOverlayPanelView>();
 
-            MediateChild<UIMovingControlMediator>(Transform);
+            MediateChild<UIMovingControlMediator>(TargetTransform);
 
             Subscribe();
         }

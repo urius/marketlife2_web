@@ -17,7 +17,7 @@ namespace View.Game.Floors
 
         protected override void MediateInternal()
         {
-            _tilemap = Transform.GetComponentInChildren<Tilemap>();
+            _tilemap = TargetTransform.GetComponentInChildren<Tilemap>();
             
             DisplayFloors();
         }

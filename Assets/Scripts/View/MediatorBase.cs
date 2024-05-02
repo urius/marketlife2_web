@@ -11,13 +11,12 @@ namespace View
     {
         private LinkedList<MediatorBase> _children;
         private PrefabsHolderSo _prefabsHolder;
-        private Transform _transform;
-        
-        protected Transform Transform => _transform;
+
+        protected Transform TargetTransform { get; private set; }
 
         public void Mediate(Transform transform)
         {
-            _transform = transform;
+            TargetTransform = transform;
 
             MediateInternal();
         }
@@ -55,7 +54,7 @@ namespace View
 
         protected GameObject InstantiatePrefab(PrefabKey prefabKey)
         {
-            return InstantiatePrefab(prefabKey, _transform);
+            return InstantiatePrefab(prefabKey, TargetTransform);
         }
         
         protected GameObject InstantiatePrefab(PrefabKey prefabKey, Transform transform)
