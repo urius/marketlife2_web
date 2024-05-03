@@ -9,7 +9,13 @@ namespace Utils
         public GridCalculator(Grid grid)
         {
             _grid = grid;
+            WorldCellXDirection = (CellToWorld(new Vector2Int(1,0)) - CellToWorld(Vector2Int.zero)).normalized;
+            WorldCellYDirection = (CellToWorld(new Vector2Int(0,1)) - CellToWorld(Vector2Int.zero)).normalized;
         }
+
+        public Vector2 CellSize => _grid.cellSize;
+        public Vector3 WorldCellXDirection { get; }
+        public Vector3 WorldCellYDirection { get; }
 
         public Vector3 CellToWorld(Vector2Int cellPosition)
         {
@@ -29,6 +35,10 @@ namespace Utils
 
     public interface IGridCalculator
     {
+        public Vector2 CellSize { get; }
+        public Vector3 WorldCellXDirection { get; }
+        public Vector3 WorldCellYDirection { get; }
+        
         public Vector3 CellToWorld(Vector2Int cellPosition);
         public Vector2Int WorldToCell(Vector3 worldPosition);
         public Vector3 GetCellCenterWorld(Vector2Int cellPosition);

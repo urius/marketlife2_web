@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class DisplayCellNumber : MonoBehaviour
+public class DebugDisplayCellNumber : MonoBehaviour
 {
     [SerializeField] private Grid _grid;
     

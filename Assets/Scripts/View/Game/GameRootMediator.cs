@@ -1,6 +1,7 @@
 using Infra.Instance;
 using Providers;
 using View.Game.Floors;
+using View.Game.People;
 using View.Game.Walls;
 
 namespace View.Game
@@ -19,6 +20,7 @@ namespace View.Game
 
             MediateChild<FloorsMediator>(_gameRootView.FloorsContainerTransform);
             MediateChild<WallsMediator>(_gameRootView.WallsContainerTransform);
+            MediateChild<PlayerCharMediator>(_gameRootView.PeopleContainerTransform);
         }
 
         protected override void UnmediateInternal()

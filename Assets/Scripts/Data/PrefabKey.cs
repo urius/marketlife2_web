@@ -4,5 +4,6 @@ namespace Data
     {
         Wall,
         UIInputMovingControl,
+        Man,
     }
 }

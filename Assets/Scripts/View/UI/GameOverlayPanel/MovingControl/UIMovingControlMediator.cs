@@ -9,6 +9,8 @@ namespace View.UI.GameOverlayPanel.MovingControl
 {
     public class UIMovingControlMediator : MediatorBase
     {
+        private const int BlindZoneRadiusSqr = 25;
+        
         private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
         private readonly IMainCameraHolder _mainCameraHolder = Instance.Get<IMainCameraHolder>();
         private readonly IUpdatesProvider _updatesProvider = Instance.Get<IUpdatesProvider>();
@@ -67,7 +69,9 @@ namespace View.UI.GameOverlayPanel.MovingControl
             var innerPartLocalPos = point - _viewZeroPoint;
             _movingControlView.SetInnerPartPosition(innerPartLocalPos);
 
-            _eventBus.Dispatch(new MovingVectorChangedEvent(innerPartLocalPos.normalized));
+            _eventBus.Dispatch(innerPartLocalPos.sqrMagnitude > BlindZoneRadiusSqr
+                ? new MovingVectorChangedEvent(innerPartLocalPos.normalized)
+                : new MovingVectorChangedEvent(Vector2.zero));
         }
 
         private Vector2 GetLocalMousePoint()
