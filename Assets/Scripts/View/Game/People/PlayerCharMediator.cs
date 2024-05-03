@@ -119,11 +119,12 @@ namespace View.Game.People
 
             var resultMoveDirection = moveDirection;
             
-            foreach (var valueTuple in _detectorOffsets)
+            for (var i = 0; i < _detectorOffsets.Length; i++)
             {
-                if (CheckIsBlocked(playerPos, valueTuple.offsets))
+                var detectorOffsetData = _detectorOffsets[i];
+                if (CheckIsBlocked(playerPos, detectorOffsetData.offsets))
                 {
-                    var worldDirectionData = _detectorWorldDirections[valueTuple.direction];
+                    var worldDirectionData = _detectorWorldDirections[detectorOffsetData.direction];
 
                     if (Vector3.Dot(worldDirectionData.worldDirection, resultMoveDirection) > 0)
                     {
