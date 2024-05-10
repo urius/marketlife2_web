@@ -1,7 +1,9 @@
+using Holders;
 using Infra.Instance;
-using Providers;
+using View.Game.BuildPoint;
 using View.Game.Floors;
 using View.Game.People;
+using View.Game.ShopObjects;
 using View.Game.Walls;
 
 namespace View.Game
@@ -20,6 +22,8 @@ namespace View.Game
 
             MediateChild<FloorsMediator>(_gameRootView.FloorsContainerTransform);
             MediateChild<WallsMediator>(_gameRootView.WallsContainerTransform);
+            MediateChild<ShopObjectsMediator>(_gameRootView.ShopObjectsContainerTransform);
+            MediateChild<BuildPointsMediator>(_gameRootView.ShopObjectsContainerTransform);
             MediateChild<PlayerCharMediator>(_gameRootView.PeopleContainerTransform);
         }
 

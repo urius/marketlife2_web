@@ -3,7 +3,7 @@ using Holders;
 using Infra.CommandExecutor;
 using Infra.EventBus;
 using Infra.Instance;
-using Providers;
+using Systems;
 using UnityEngine;
 using Utils;
 using View.Game;
@@ -23,6 +23,7 @@ public class InitScript : MonoBehaviour
     private PlayerModelHolder _playerModelHolder;
     private GameRootMediator _gameRootMediator;
     private UIRootMediator _uiRootMediator;
+    private RootSystem _rootSystem;
 
     private void Awake()
     {
@@ -33,9 +34,16 @@ public class InitScript : MonoBehaviour
     {
         var commandExecutor = Instance.Get<ICommandExecutor>();
 
+        InitializeRootSystem();
         InitializeRootMediators();
         
         await commandExecutor.ExecuteAsync<InitPlayerModelCommand, PlayerModelHolder>(_playerModelHolder);
+    }
+
+    private void InitializeRootSystem()
+    {
+        _rootSystem = new RootSystem();
+        _rootSystem.Start();
     }
 
     private void InitializeRootMediators()
@@ -57,6 +65,7 @@ public class InitScript : MonoBehaviour
         SetupInstance.From(_spritesHolder).AsSelf();
         
         SetupNewInstance<ScreenCalculator, IScreenCalculator>();
+        SetupNewInstance<ShopModelHolder, IShopModelHolder>();
         
         _playerModelHolder = SetupNewInstance<PlayerModelHolder, IPlayerModelHolder>();
         var commandExecutor = SetupNewInstance<CommandExecutor, ICommandExecutor>();

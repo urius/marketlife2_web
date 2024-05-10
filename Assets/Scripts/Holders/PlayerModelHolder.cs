@@ -1,7 +1,7 @@
 using Cysharp.Threading.Tasks;
 using Model;
 
-namespace Providers
+namespace Holders
 {
     public class PlayerModelHolder : IPlayerModelHolder
     {

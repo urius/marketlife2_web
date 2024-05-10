@@ -1,7 +1,6 @@
 using Data;
 using Holders;
 using Infra.Instance;
-using Providers;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using Random = UnityEngine.Random;

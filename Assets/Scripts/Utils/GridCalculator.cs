@@ -9,8 +9,8 @@ namespace Utils
         public GridCalculator(Grid grid)
         {
             _grid = grid;
-            WorldCellXDirection = (CellToWorld(new Vector2Int(1,0)) - CellToWorld(Vector2Int.zero)).normalized;
-            WorldCellYDirection = (CellToWorld(new Vector2Int(0,1)) - CellToWorld(Vector2Int.zero)).normalized;
+            WorldCellXDirection = (GetCellCenterWorld(new Vector2Int(1,0)) - GetCellCenterWorld(Vector2Int.zero)).normalized;
+            WorldCellYDirection = (GetCellCenterWorld(new Vector2Int(0,1)) - GetCellCenterWorld(Vector2Int.zero)).normalized;
         }
 
         public Vector2 CellSize => _grid.cellSize;

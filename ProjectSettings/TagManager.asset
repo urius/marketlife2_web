@@ -44,6 +44,12 @@ TagManager:
   - name: Floors
     uniqueID: 144280939
     locked: 0
+  - name: GUIOnFloor
+    uniqueID: 1777312917
+    locked: 0
+  - name: Walls
+    uniqueID: 1581635257
+    locked: 0
   - name: General
     uniqueID: 1419607231
     locked: 0
@@ -55,4 +61,7 @@ TagManager:
     locked: 0
   - name: UI
     uniqueID: 3470003085
+    locked: 0
+  - name: EditorTop
+    uniqueID: 2583332063
     locked: 0

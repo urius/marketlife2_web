@@ -18,3 +18,10 @@ MonoBehaviour:
       Size: {x: 8, y: 8}
       WallType: 1
       FloorType: 1
+      ShopObjects: []
+      BuildPoints:
+      - ShopObjectType: 1
+        CellCoords: {x: 2, y: 2}
+        MoneyToBuildLeft: 30
+    PlayerCharData:
+      CellPosition: {x: 3, y: 4}

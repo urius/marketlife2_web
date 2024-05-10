@@ -1,8 +1,8 @@
 using Cysharp.Threading.Tasks;
-using Data;
+using Data.Dto;
+using Holders;
 using Infra.CommandExecutor;
 using Infra.Instance;
-using Providers;
 using Utils;
 
 namespace Commands

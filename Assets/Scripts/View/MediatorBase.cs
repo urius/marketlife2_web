@@ -21,7 +21,7 @@ namespace View
             MediateInternal();
         }
         
-        public void Unmediate()
+        public virtual void Unmediate()
         {
             if (_children != null)
             {
@@ -42,14 +42,60 @@ namespace View
         {
             Assert.IsNotNull(transform);
             
-            _children ??= new LinkedList<MediatorBase>();
-            
             var mediator = new T();
             mediator.Mediate(transform);
             
-            _children.AddLast(mediator);
+            AddChildMediator(mediator);
+
+            return mediator;
+        }
+
+        protected T MediateChild<T, TModel>(Transform transform, TModel model) 
+            where TModel : class
+            where T : MediatorWithModelBase<TModel>, new()
+        {
+            Assert.IsNotNull(transform);
+            Assert.IsNotNull(model);
+            
+            var mediator = new T();
+            mediator.Mediate(transform, model);
+            
+            AddChildMediator(mediator);
             
             return mediator;
+        }
+
+        protected bool UnmediateChild(MediatorBase childMediator)
+        {
+            if (_children.Contains(childMediator))
+            {
+                childMediator.Unmediate();
+                _children.Remove(childMediator);
+
+                return true;
+            }
+
+            return false;
+        }
+
+        private void AddChildMediator<T>(T mediator) where T : MediatorBase, new()
+        {
+            _children ??= new LinkedList<MediatorBase>();
+            _children.AddLast(mediator);
+        }
+
+        protected T InstantiatePrefab<T>(PrefabKey prefabKey)
+            where T : MonoBehaviour
+        {
+            return InstantiatePrefab<T>(prefabKey, TargetTransform);
+        }
+
+        protected T InstantiatePrefab<T>(PrefabKey prefabKey, Transform transform)
+            where T : MonoBehaviour
+        {
+            var go = InstantiatePrefab(prefabKey, transform);
+            var result = go.GetComponent<T>();
+            return result;
         }
 
         protected GameObject InstantiatePrefab(PrefabKey prefabKey)
@@ -62,6 +108,16 @@ namespace View
             _prefabsHolder ??= Instance.Get<PrefabsHolderSo>();
 
             return Object.Instantiate(_prefabsHolder.GetPrefabByKey(prefabKey), transform);
+        }
+        
+        protected void Destroy(MonoBehaviour monoBehaviour)
+        {
+            Destroy(monoBehaviour.gameObject);
+        }
+
+        protected void Destroy(GameObject gameObject)
+        {
+            Object.Destroy(gameObject);
         }
     }
 }

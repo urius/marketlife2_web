@@ -5,5 +5,8 @@ namespace Data
         Wall,
         UIInputMovingControl,
         Man,
+        CashDesk,
+        BuildPoint,
+        Money,
     }
 }
