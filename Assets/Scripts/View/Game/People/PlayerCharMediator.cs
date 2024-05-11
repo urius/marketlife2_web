@@ -11,24 +11,13 @@ namespace View.Game.People
             _playerCharView = InstantiatePrefab<ManView>(PrefabKey.Man);
             
             MediateChild<PlayerCharMovementMediator>(_playerCharView.transform);
-            
-            Subscribe();
+            MediateChild(new PlayerCharSpendAnimationMediator(_playerCharView));
         }
 
         protected override void UnmediateInternal()
         {
-            Unsubscribe();
-            
             Destroy(_playerCharView);
             _playerCharView = null;
-        }
-
-        private void Subscribe()
-        {
-        }
-
-        private void Unsubscribe()
-        {
         }
     }
 }

@@ -32,27 +32,63 @@ namespace Systems
 
         private void Subscribe()
         {
-            _eventBus.Subscribe<RequestPlayerCellChangeEvent>(OnRequestPlayerCellChangeEvent);
+            _eventBus.Subscribe<RequestPlayerCellChangeEvent>(OnRequestPlayerCellChanged);
+            _eventBus.Subscribe<SpendMoneyOnBuildPointAnimationHalfEvent>(OnSpendMoneyOnBuildPointHalfAnimation);
+            _eventBus.Subscribe<SpendMoneyOnBuildPointAnimationFinishedEvent>(OnSpendMoneyOnBuildPointAnimationFinished);
             _playerCharModel.CellPositionChanged += OnCellPositionChanged;
         }
 
         private void Unsubscribe()
         {
-            _eventBus.Unsubscribe<RequestPlayerCellChangeEvent>(OnRequestPlayerCellChangeEvent);
+            _eventBus.Unsubscribe<RequestPlayerCellChangeEvent>(OnRequestPlayerCellChanged);
+            _eventBus.Unsubscribe<SpendMoneyOnBuildPointAnimationHalfEvent>(OnSpendMoneyOnBuildPointHalfAnimation);
+            _eventBus.Unsubscribe<SpendMoneyOnBuildPointAnimationFinishedEvent>(OnSpendMoneyOnBuildPointAnimationFinished);
             _playerCharModel.CellPositionChanged -= OnCellPositionChanged;
         }
 
-        private void OnRequestPlayerCellChangeEvent(RequestPlayerCellChangeEvent e)
+        private void OnRequestPlayerCellChanged(RequestPlayerCellChangeEvent e)
         {
             _playerCharModel.SetCellPosition(e.CellCoords);
         }
 
         private void OnCellPositionChanged(Vector2Int cellPosition)
         {
+            TriggerSpendOnBuildPointIterationAnimationIfNeeded(cellPosition);
+        }
+
+        private void OnSpendMoneyOnBuildPointHalfAnimation(SpendMoneyOnBuildPointAnimationHalfEvent e)
+        {
+            if (_shopModel.BuildPoints.TryGetValue(e.TargetBuildPointCellCoords, out var buildPoint))
+            {
+                if (buildPoint.MoneyToBuildLeft > e.ActiveAnimationsAmount)
+                {
+                    TriggerSpendOnBuildPointIterationAnimationIfNeeded(_playerCharModel.CellPosition);
+                }
+            }
+        }
+
+        private void OnSpendMoneyOnBuildPointAnimationFinished(SpendMoneyOnBuildPointAnimationFinishedEvent e)
+        {
+            if (_shopModel.BuildPoints.TryGetValue(e.TargetBuildPointCellCoords, out var buildPoint))
+            {
+                buildPoint.ChangeMoneyToBuildLeft(-1);
+            
+                if (buildPoint.MoneyToBuildLeft <= 0)
+                {
+                    //implement build logic
+                }
+            }
+        }
+
+        private void TriggerSpendOnBuildPointIterationAnimationIfNeeded(Vector2Int cellPosition)
+        {
             if (_shopModel.BuildPoints.TryGetValue(cellPosition, out var buildPoint)
+                && buildPoint.MoneyToBuildLeft > 0
                 && _playerModel.Money > 0)
             {
-                //trigger start spend animation
+                _playerModel.ChangeMoney(-1);
+
+                _eventBus.Dispatch(new TriggerSpendMoneyOnBuildPointAnimationEvent(buildPoint));
             }
         }
     }

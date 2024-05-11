@@ -4,6 +4,7 @@ using Infra.CommandExecutor;
 using Infra.EventBus;
 using Infra.Instance;
 using Systems;
+using Tools.GameObjectsCache;
 using UnityEngine;
 using Utils;
 using View.Game;
@@ -19,6 +20,7 @@ public class InitScript : MonoBehaviour
     [SerializeField] private PrefabsHolderSo _prefabsHolder;
     [SerializeField] private SpritesHolderSo _spritesHolder;
     [SerializeField] private UpdatesProvider _updatesProvider;
+    [SerializeField] private GameObjectsCache _gameObjectsCache;
 
     private PlayerModelHolder _playerModelHolder;
     private GameRootMediator _gameRootMediator;
@@ -63,6 +65,7 @@ public class InitScript : MonoBehaviour
         SetupInstance.From(_defaultPlayerDataHolder).AsSelf();
         SetupInstance.From(_prefabsHolder).AsSelf();
         SetupInstance.From(_spritesHolder).AsSelf();
+        SetupInstance.From(_gameObjectsCache).As<IGameObjectsCache>();
         
         SetupNewInstance<ScreenCalculator, IScreenCalculator>();
         SetupNewInstance<ShopModelHolder, IShopModelHolder>();

@@ -20,9 +20,9 @@ namespace Model.BuildPoint
 
         public int MoneyToBuildLeft { get; private set; }
 
-        public void SetMoneyToBuildLeft(int moneyValue)
+        public void ChangeMoneyToBuildLeft(int deltaMoney)
         {
-            MoneyToBuildLeft = moneyValue;
+            MoneyToBuildLeft += deltaMoney;
             
             MoneyToBuildLeftChanged?.Invoke();
         }

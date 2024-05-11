@@ -1,8 +1,11 @@
+using System;
+
 namespace Model
 {
     public class PlayerModel
     {
-        public int Money;
+        public event Action<int> MoneyChanged;
+        
         public readonly ShopModel ShopModel;
         public readonly PlayerCharModel PlayerCharModel;
 
@@ -11,6 +14,15 @@ namespace Model
             ShopModel = shopModel;
             Money = money;
             PlayerCharModel = playerCharModel;
+        }
+        
+        public int Money { get; private set; }
+
+        public void ChangeMoney(int deltaMoney)
+        {
+            Money += deltaMoney;
+            
+            MoneyChanged?.Invoke(deltaMoney);
         }
     }
 }

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Data;
 using Holders;
 using Infra.Instance;
+using Tools.GameObjectsCache;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -9,6 +10,7 @@ namespace View
 {
     public abstract class MediatorBase
     {
+        private IGameObjectsCache _gameObjectsCache;
         private LinkedList<MediatorBase> _children;
         private PrefabsHolderSo _prefabsHolder;
 
@@ -50,19 +52,35 @@ namespace View
             return mediator;
         }
 
-        protected T MediateChild<T, TModel>(Transform transform, TModel model) 
+        protected T MediateChild<T, TModel>(Transform transform, TModel model)
             where TModel : class
             where T : MediatorWithModelBase<TModel>, new()
         {
             Assert.IsNotNull(transform);
             Assert.IsNotNull(model);
-            
+
             var mediator = new T();
             mediator.Mediate(transform, model);
+
+            AddChildMediator(mediator);
+
+            return mediator;
+        }
+
+        protected MediatorBase MediateChild(MediatorBase mediator, Transform transform)
+        {
+            Assert.IsNotNull(transform);
+            
+            mediator.Mediate(transform);
             
             AddChildMediator(mediator);
-            
+
             return mediator;
+        }
+        
+        protected MediatorBase MediateChild(MediatorBase mediator)
+        {
+            return MediateChild(mediator, TargetTransform);
         }
 
         protected bool UnmediateChild(MediatorBase childMediator)
@@ -78,7 +96,7 @@ namespace View
             return false;
         }
 
-        private void AddChildMediator<T>(T mediator) where T : MediatorBase, new()
+        private void AddChildMediator(MediatorBase mediator)
         {
             _children ??= new LinkedList<MediatorBase>();
             _children.AddLast(mediator);
@@ -118,6 +136,42 @@ namespace View
         protected void Destroy(GameObject gameObject)
         {
             Object.Destroy(gameObject);
+        }
+
+        protected GameObject GetFromCache(PrefabKey prefabKey, Transform transform)
+        {
+            _gameObjectsCache ??= Instance.Get<IGameObjectsCache>();
+            _prefabsHolder ??= Instance.Get<PrefabsHolderSo>();
+
+            var prefab = _prefabsHolder.GetPrefabByKey(prefabKey);
+
+            return _gameObjectsCache.Get(prefab, transform);
+        }
+        
+        protected GameObject GetFromCache(PrefabKey prefabKey)
+        {
+            return GetFromCache(prefabKey, TargetTransform);
+        }
+
+        protected T GetFromCache<T>(PrefabKey prefabKey, Transform transform)
+            where T : MonoBehaviour
+        {
+            var instance = GetFromCache(prefabKey, transform);
+            var component = instance.GetComponent<T>();
+
+            return component;
+        }
+
+        protected T GetFromCache<T>(PrefabKey prefabKey)
+            where T : MonoBehaviour
+        {
+            return GetFromCache<T>(prefabKey, TargetTransform);
+        }
+
+        protected void ReturnToCache(GameObject instance)
+        {
+            _gameObjectsCache ??= Instance.Get<IGameObjectsCache>();
+            _gameObjectsCache.Put(instance);
         }
     }
 }
