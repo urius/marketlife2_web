@@ -69,6 +69,7 @@ public class InitScript : MonoBehaviour
         
         SetupNewInstance<ScreenCalculator, IScreenCalculator>();
         SetupNewInstance<ShopModelHolder, IShopModelHolder>();
+        SetupNewInstance<OwnedCellsDataHolder, IOwnedCellsDataHolder>();
         
         _playerModelHolder = SetupNewInstance<PlayerModelHolder, IPlayerModelHolder>();
         var commandExecutor = SetupNewInstance<CommandExecutor, ICommandExecutor>();

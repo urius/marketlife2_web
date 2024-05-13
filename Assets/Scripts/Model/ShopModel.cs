@@ -9,6 +9,7 @@ namespace Model
 {
     public class ShopModel
     {
+        public event Action<ShopObjectModelBase> ShopObjectAdded;
         public event Action<BuildPointModel> BuildPointAdded;
         public event Action<BuildPointModel> BuildPointRemoved;
 
@@ -41,6 +42,18 @@ namespace Model
                 
                 BuildPointRemoved?.Invoke(buildPointModel);
 
+                return true;
+            }
+
+            return false;
+        }
+        
+        public bool AddShopObject(ShopObjectModelBase shopObject)
+        {
+            if (_shopObjects.TryAdd(shopObject.CellCoords, shopObject))
+            {
+                ShopObjectAdded?.Invoke(shopObject);
+                
                 return true;
             }
 

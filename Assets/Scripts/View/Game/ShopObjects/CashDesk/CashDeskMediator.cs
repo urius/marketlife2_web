@@ -1,4 +1,6 @@
+using System.Linq;
 using Data;
+using Holders;
 using Infra.Instance;
 using Model.ShopObjects;
 using Utils;
@@ -8,6 +10,7 @@ namespace View.Game.ShopObjects.CashDesk
     public class CashDeskMediator : MediatorWithModelBase<CashDeskModel>
     {
         private readonly IGridCalculator _gridCalculator = Instance.Get<IGridCalculator>();
+        private readonly IOwnedCellsDataHolder _ownedCellsDataHolder = Instance.Get<IOwnedCellsDataHolder>();
         
         private CashDeskView _view;
 
@@ -17,6 +20,17 @@ namespace View.Game.ShopObjects.CashDesk
             _view = go.GetComponent<CashDeskView>();
 
             _view.transform.position = _gridCalculator.GetCellCenterWorld(TargetModel.CellCoords);
+
+            OwnCells();
+        }
+
+        private void OwnCells()
+        {
+            var ownedCells = _view.OwnedCellViews
+                .Select(v => _gridCalculator.WorldToCell(v.transform.position))
+                .ToArray();
+
+            _ownedCellsDataHolder.RegisterShopObject(TargetModel, ownedCells);
         }
 
         protected override void UnmediateInternal()

@@ -1,8 +1,12 @@
+using System;
+using Data;
 using Events;
 using Holders;
 using Infra.EventBus;
 using Infra.Instance;
 using Model;
+using Model.BuildPoint;
+using Model.ShopObjects;
 using UnityEngine;
 
 namespace Systems
@@ -75,9 +79,50 @@ namespace Systems
             
                 if (buildPoint.MoneyToBuildLeft <= 0)
                 {
-                    //implement build logic
+                    _shopModel.RemoveBuildPoint(buildPoint.CellCoords);
+                    
+                    var shopObject = GetShopObjectByBuildPoint(buildPoint);
+                    _shopModel.AddShopObject(shopObject);
                 }
             }
+        }
+
+        private ShopObjectModelBase GetShopObjectByBuildPoint(BuildPointModel buildPoint)
+        {
+            ShopObjectModelBase result;
+            
+            var shopObjectType = buildPoint.ShopObjectType;
+            var pointOffset = GetBuildPointOffset(shopObjectType);
+            var buildCoords = buildPoint.CellCoords + pointOffset;
+            
+            switch (shopObjectType)
+            {
+                case ShopObjectType.CashDesk:
+                    result = new CashDeskModel(buildCoords);
+                    break;
+                default:
+                    throw new NotImplementedException(
+                        $"{nameof(GetShopObjectByBuildPoint)}: unknown shopObjectType {shopObjectType}");
+            }
+
+            return result;
+        }
+
+        private Vector2Int GetBuildPointOffset(ShopObjectType shopObjectType)
+        {
+            var result = Vector2Int.zero;
+            
+            switch (shopObjectType)
+            {
+                case ShopObjectType.CashDesk:
+                    result = new Vector2Int(-1, 0);
+                    break;
+                default:
+                    Debug.LogError($"{nameof(GetBuildPointOffset)}: Unknown shopObjectType: {shopObjectType}");
+                    break;
+            }
+
+            return result;
         }
 
         private void TriggerSpendOnBuildPointIterationAnimationIfNeeded(Vector2Int cellPosition)

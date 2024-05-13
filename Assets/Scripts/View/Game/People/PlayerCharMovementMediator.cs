@@ -18,6 +18,7 @@ namespace View.Game.People
         private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
         private readonly IUpdatesProvider _updatesProvider = Instance.Get<IUpdatesProvider>();
         private readonly IGridCalculator _gridCalculator = Instance.Get<IGridCalculator>();
+        private readonly IOwnedCellsDataHolder _ownedCellsDataHolder = Instance.Get<IOwnedCellsDataHolder>();
 
         private Dictionary<Vector2Int, (Vector3 worldDirection, Vector3 worldDirectionToProject)> _detectorWorldDirections;
 
@@ -122,7 +123,7 @@ namespace View.Game.People
         {
             if (_moveDirection == Vector2.zero) return;
             
-            const float speed = 0.02f;
+            const float speed = 0.04f;
 
             var clampedMoveDirection = ClampMoveDirection(_moveDirection);
 
@@ -171,11 +172,7 @@ namespace View.Game.People
 
         private bool IsWalkable(Vector2Int cellPos)
         {
-            //todo check from model
-            if (cellPos.x < 0 || cellPos.y < 0) return false;
-            if (cellPos == Vector2Int.one) return false;
-
-            return true;
+            return _ownedCellsDataHolder.IsWalkableForPlayerChar(cellPos);
         }
 
 

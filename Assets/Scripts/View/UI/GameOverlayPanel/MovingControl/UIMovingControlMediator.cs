@@ -9,7 +9,8 @@ namespace View.UI.GameOverlayPanel.MovingControl
 {
     public class UIMovingControlMediator : MediatorBase
     {
-        private const int BlindZoneRadiusSqr = 25;
+        private const int BlindZoneRadius = 30;
+        private const int BlindZoneRadiusSqr = BlindZoneRadius * BlindZoneRadius;
         
         private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
         private readonly IMainCameraHolder _mainCameraHolder = Instance.Get<IMainCameraHolder>();
