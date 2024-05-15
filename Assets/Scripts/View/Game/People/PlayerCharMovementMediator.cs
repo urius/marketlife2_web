@@ -5,6 +5,7 @@ using Infra.EventBus;
 using Infra.Instance;
 using UnityEngine;
 using Utils;
+using View.Game.Shared;
 
 namespace View.Game.People
 {
@@ -27,7 +28,8 @@ namespace View.Game.People
         private Vector2Int _cellCoords;
         private (Vector2Int direction, Vector3[] offsets)[] _detectorOffsets;
         private Vector3 _playerWorldPosition;
-        
+        private DynamicViewSortingLogic _sortingLogic;
+
         protected override void MediateInternal()
         {
             FillDetectorOffsets();
@@ -35,13 +37,16 @@ namespace View.Game.People
             _playerCharView = TargetTransform.GetComponent<ManView>();
             _playerWorldPosition = _playerCharView.transform.position;
 
+            _sortingLogic = new DynamicViewSortingLogic(_playerCharView, _ownedCellsDataHolder);
+            _sortingLogic.UpdateSorting(_cellCoords);
+            
             Subscribe();
         }
 
         private void FillDetectorOffsets()
         {
-            var cellPrimaryOffset = _gridCalculator.CellSize.x * 0.3f;
-            const float innerOffsetMult = 0.1f;
+            var cellPrimaryOffset = _gridCalculator.CellSize.x * 0.35f;
+            const float innerOffsetMult = 0.2f;
             var xOffsetInner = _gridCalculator.WorldCellXDirection * innerOffsetMult;
             var yOffsetInner = _gridCalculator.WorldCellYDirection * innerOffsetMult;
 
@@ -115,6 +120,9 @@ namespace View.Game.People
             if (newCellCoords != _cellCoords)
             {
                 _cellCoords = newCellCoords;
+                
+                _sortingLogic.UpdateSorting(_cellCoords);
+                
                 _eventBus.Dispatch(new RequestPlayerCellChangeEvent(_cellCoords));
             }
         }

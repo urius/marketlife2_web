@@ -4,10 +4,11 @@ using Holders;
 using Infra.Instance;
 using Model.ShopObjects;
 using Utils;
+using View.Helpers;
 
 namespace View.Game.ShopObjects.CashDesk
 {
-    public class CashDeskMediator : MediatorWithModelBase<CashDeskModel>
+    public class CashDeskMediator : ShopObjectMediatorBase<CashDeskModel>
     {
         private readonly IGridCalculator _gridCalculator = Instance.Get<IGridCalculator>();
         private readonly IOwnedCellsDataHolder _ownedCellsDataHolder = Instance.Get<IOwnedCellsDataHolder>();
@@ -37,6 +38,11 @@ namespace View.Game.ShopObjects.CashDesk
         {
             Destroy(_view);
             _view = null;
+        }
+
+        protected override void UpdateSorting()
+        {
+            _view.SetSortingOrder(SortingOrderHelper.GetDefaultSortingOrderByCoords(TargetModel.CellCoords));
         }
     }
 }

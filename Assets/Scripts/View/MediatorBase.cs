@@ -16,7 +16,7 @@ namespace View
 
         protected Transform TargetTransform { get; private set; }
 
-        public void Mediate(Transform transform)
+        public virtual void Mediate(Transform transform)
         {
             TargetTransform = transform;
 

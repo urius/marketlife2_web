@@ -10,7 +10,7 @@ namespace View.Game.People
 {
     public class PlayerCharSpendAnimationMediator : MediatorBase
     {
-        private const float AnimDuration = 0.2f;
+        private const float AnimDuration = 0.22f;
         private const float AnimDurationHalf = AnimDuration * 0.5f;
         
         private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
@@ -65,7 +65,9 @@ namespace View.Game.People
             var targetPoint = _gridCalculator.GetCellCenterWorld(targetCellCoords);
 
             LeanTween.delayedCall(AnimDurationHalf, OnSpendAnimationHalf);
-            LeanTween.move(moneyGo, targetPoint, AnimDuration).setOnComplete(OnSpendAnimationComplete);
+            LeanTween.move(moneyGo, targetPoint, AnimDuration)
+                .setEase(LeanTweenType.easeOutQuad)
+                .setOnComplete(OnSpendAnimationComplete);
         }
 
         private void OnSpendAnimationHalf()

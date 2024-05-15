@@ -94,6 +94,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8128931988278988984}
   - component: {fileID: 334905412293794220}
+  - component: {fileID: 3020643599038023989}
   m_Layer: 0
   m_Name: CashDesk
   m_TagString: Untagged
@@ -131,6 +132,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11d50c88b8444e89809195abf50fd704, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _sortingGroup: {fileID: 3020643599038023989}
+--- !u!210 &3020643599038023989
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5447212722549671781}
+  m_Enabled: 1
+  m_SortingLayerID: 1419607231
+  m_SortingLayer: 4
+  m_SortingOrder: 0
+  m_SortAtRoot: 0
 --- !u!1001 &45759405887659547
 PrefabInstance:
   m_ObjectHideFlags: 0

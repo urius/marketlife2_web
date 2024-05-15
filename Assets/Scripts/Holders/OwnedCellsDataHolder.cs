@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Model.ShopObjects;
 using UnityEngine;
 
@@ -37,6 +38,19 @@ namespace Holders
             return _ownedCellDataByCoords.ContainsKey(cellCoords);
         }
         
+        public bool TryGetShopObjectOwner(Vector2Int shopObjectCellCoords, out OwnedCellByShopObjectData ownerData)
+        {
+            ownerData = null;
+            
+            if (_ownedCellDataByCoords.TryGetValue(shopObjectCellCoords, out var ownedCellData)
+                && ownedCellData.OwnedCellDataObjectType == OwnedCellDataObjectType.ShopObject)
+            {
+                ownerData = ((OwnedCellByShopObjectData)ownedCellData);
+            }
+
+            return ownerData != null;
+        }
+        
         public bool IsWalkableForPlayerChar(Vector2Int cellCoords)
         {
             return IsOwnedByShopObject(cellCoords) == false;
@@ -61,6 +75,8 @@ namespace Holders
     {
         public bool RegisterShopObject(ShopObjectModelBase shopObjectModel, Vector2Int[] ownedCells);
         public bool IsOwnedByShopObject(Vector2Int cellCoords);
+        public bool TryGetShopObjectOwner(Vector2Int shopObjectCellCoords, out OwnedCellByShopObjectData ownedData);
+
         public bool IsWalkableForPlayerChar(Vector2Int cellCoords);
 
     }
@@ -74,13 +90,13 @@ namespace Holders
     {
         public readonly ShopObjectModelBase ShopObjectModel;
 
-        public OwnedCellByShopObjectData(ShopObjectModelBase shopObjectModel, IEnumerable<Vector2Int> ownedCells) 
+        public OwnedCellByShopObjectData(ShopObjectModelBase shopObjectModel, Vector2Int[] ownedCells) 
         {
             ShopObjectModel = shopObjectModel;
             OwnedCells = ownedCells;
         }
 
-        public IEnumerable<Vector2Int> OwnedCells { get; }
+        public Vector2Int[] OwnedCells { get; }
 
         public override OwnedCellDataObjectType OwnedCellDataObjectType => OwnedCellDataObjectType.ShopObject;
     }
