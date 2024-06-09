@@ -1,0 +1,37 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc483f647cf84d8284100cdcc38ca0e1, type: 3}
+  m_Name: BuildPointsDataHolderSo
+  m_EditorClassIdentifier: 
+  CashDesks:
+  - ShopObjectType: 1
+    CellCoords: {x: 2, y: 2}
+    MoneyToBuildLeft: 30
+  - ShopObjectType: 1
+    CellCoords: {x: 5, y: 2}
+    MoneyToBuildLeft: 50
+  ShelfsByRow:
+  - Shelfs:
+    - ShopObjectType: 102
+      CellCoords: {x: 4, y: 4}
+      MoneyToBuildLeft: 20
+    - ShopObjectType: 102
+      CellCoords: {x: 7, y: 4}
+      MoneyToBuildLeft: 30
+  - Shelfs:
+    - ShopObjectType: 104
+      CellCoords: {x: 4, y: 6}
+      MoneyToBuildLeft: 40
+    - ShopObjectType: 104
+      CellCoords: {x: 7, y: 6}
+      MoneyToBuildLeft: 50
+  TruckGates: []

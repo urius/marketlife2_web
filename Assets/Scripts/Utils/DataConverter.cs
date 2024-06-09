@@ -22,6 +22,12 @@ namespace Utils
             return result;
         }
 
+        public static BuildPointModel ToBuildPointModel(BuildPointDto buildPointDto)
+        {
+            return new BuildPointModel(buildPointDto.ShopObjectType, buildPointDto.CellCoords,
+                buildPointDto.MoneyToBuildLeft);
+        }
+
         private static PlayerCharModel ToPlayerCharModel(PlayerCharDataDto playerCharDataDto)
         {
             return new PlayerCharModel(playerCharDataDto.CellPosition);
@@ -40,14 +46,8 @@ namespace Utils
         private static IEnumerable<BuildPointModel> ToBuildPoints(IEnumerable<BuildPointDto> buildPoints)
         {
             return buildPoints
-                .Select(CreateBuildPointModel)
+                .Select(ToBuildPointModel)
                 .ToArray();
-        }
-
-        private static BuildPointModel CreateBuildPointModel(BuildPointDto buildPointDto)
-        {
-            return new BuildPointModel(buildPointDto.ShopObjectType, buildPointDto.CellCoords,
-                buildPointDto.MoneyToBuildLeft);
         }
 
         private static IEnumerable<ShopObjectModelBase> ToShopObjects(ShopObjectDto[] shopObjectDtos)

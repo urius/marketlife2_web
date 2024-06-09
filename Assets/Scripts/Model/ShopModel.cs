@@ -34,6 +34,18 @@ namespace Model
         public IReadOnlyDictionary<Vector2Int, ShopObjectModelBase> ShopObjects => _shopObjects;
         public IReadOnlyDictionary<Vector2Int, BuildPointModel> BuildPoints => _buildPoints;
 
+        public bool HaveBuildPoint(Vector2Int cellCoords)
+        {
+            return _buildPoints.ContainsKey(cellCoords);
+        }
+
+        public void AddBuildPoint(BuildPointModel buildPoint)
+        {
+            _buildPoints[buildPoint.CellCoords] = buildPoint;
+            
+            BuildPointAdded?.Invoke(buildPoint);
+        }
+
         public bool RemoveBuildPoint(Vector2Int cellCoords)
         {
             if (_buildPoints.TryGetValue(cellCoords, out var buildPointModel))

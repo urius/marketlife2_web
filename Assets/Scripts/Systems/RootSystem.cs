@@ -15,6 +15,7 @@ namespace Systems
             await _playerModelHolder.PlayerModelSetTask;
 
             StartSystem<PlayerCharSystem>();
+            StartSystem<BuildPointsAppearanceSystem>();
         }
 
         public void Stop()
