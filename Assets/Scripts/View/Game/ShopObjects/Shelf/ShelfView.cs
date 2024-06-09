@@ -1,6 +1,8 @@
 using System;
+using Data;
 using Other;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace View.Game.ShopObjects.Shelf
 {
@@ -14,9 +16,19 @@ namespace View.Game.ShopObjects.Shelf
             public int SortingOrder;
         }
         
-        [LabeledArray(nameof(ProductPlaceholder.Transform))]
-        [SerializeField] private ProductPlaceholder[] _productPlaceholders;
+        [SerializeField] 
+        private ShopObjectType _shelfType;
+        
+        [SerializeField] 
+        private int _shelfUpgradeIndex;
 
+        [SerializeField]
+        [LabeledArray(nameof(ProductPlaceholder.Transform))]
+        private ProductPlaceholder[] _productPlaceholders;
+
+        public ShopObjectType ShelfType => _shelfType;
+        public int ShelfUpgradeIndex => _shelfUpgradeIndex;
+        public int SlotsAmount => _productPlaceholders.Length;
 
         [ExecuteInEditMode]
         private void OnDrawGizmos()

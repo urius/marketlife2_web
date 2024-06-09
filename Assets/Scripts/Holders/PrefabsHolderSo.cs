@@ -11,13 +11,15 @@ namespace Holders
     {
         [LabeledArray(nameof(PrefabHolderItem.Key))] [SerializeField] private PrefabHolderItem[] _items;
 
+        public PrefabHolderItem[] Items => _items;
+
         public GameObject GetPrefabByKey(PrefabKey key)
         {
             return _items.First(i => i.Key == key).Prefab;
         }
-        
+
         [Serializable]
-        private struct PrefabHolderItem
+        public struct PrefabHolderItem
         {
             public PrefabKey Key;
             public GameObject Prefab;

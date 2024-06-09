@@ -101,8 +101,16 @@ namespace Systems
                     result = new CashDeskModel(buildCoords);
                     break;
                 default:
-                    throw new NotImplementedException(
-                        $"{nameof(GetShopObjectByBuildPoint)}: unknown shopObjectType {shopObjectType}");
+                    if (shopObjectType.IsShelf())
+                    {
+                        result = new ShelfModel(buildCoords, shopObjectType);
+                    }
+                    else
+                    {
+                        throw new NotImplementedException(
+                            $"{nameof(GetShopObjectByBuildPoint)}: unknown shopObjectType {shopObjectType}");
+                    }
+                    break;
             }
 
             return result;
@@ -115,10 +123,17 @@ namespace Systems
             switch (shopObjectType)
             {
                 case ShopObjectType.CashDesk:
-                    result = new Vector2Int(-1, 0);
+                    result = Vector2Int.left;
                     break;
                 default:
-                    Debug.LogError($"{nameof(GetBuildPointOffset)}: Unknown shopObjectType: {shopObjectType}");
+                    if (shopObjectType.IsShelf())
+                    {
+                        result = Vector2Int.left;
+                    }
+                    else
+                    {
+                        Debug.LogError($"{nameof(GetBuildPointOffset)}: Unknown shopObjectType: {shopObjectType}");
+                    }
                     break;
             }
 

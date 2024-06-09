@@ -1319,6 +1319,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 209b5a2536124bf6bd8b8f8d29557805, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _shelfType: 101
+  _shelfUpgradeIndex: 2
   _productPlaceholders:
   - Transform: {fileID: 6238484576838609329}
     SortingOrder: 6
