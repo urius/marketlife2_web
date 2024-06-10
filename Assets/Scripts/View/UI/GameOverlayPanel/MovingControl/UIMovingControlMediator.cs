@@ -9,7 +9,7 @@ namespace View.UI.GameOverlayPanel.MovingControl
 {
     public class UIMovingControlMediator : MediatorBase
     {
-        private const int BlindZoneRadius = 30;
+        private const int BlindZoneRadius = 20;
         private const int BlindZoneRadiusSqr = BlindZoneRadius * BlindZoneRadius;
         
         private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
@@ -69,9 +69,11 @@ namespace View.UI.GameOverlayPanel.MovingControl
 
             var innerPartLocalPos = point - _viewZeroPoint;
             _movingControlView.SetInnerPartPosition(innerPartLocalPos);
+            
+            var moveVector = _movingControlView.GetInnerPartPosition();
 
             _eventBus.Dispatch(innerPartLocalPos.sqrMagnitude > BlindZoneRadiusSqr
-                ? new MovingVectorChangedEvent(innerPartLocalPos.normalized)
+                ? new MovingVectorChangedEvent(moveVector)
                 : new MovingVectorChangedEvent(Vector2.zero));
         }
 

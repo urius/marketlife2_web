@@ -46,5 +46,10 @@ namespace View.UI.GameOverlayPanel.MovingControl
 
             _innerPartTransform.anchoredPosition = resultPos;
         }
+        
+        public Vector2 GetInnerPartPosition()
+        {
+            return _innerPartTransform.anchoredPosition;
+        }
     }
 }

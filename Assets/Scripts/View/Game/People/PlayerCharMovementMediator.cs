@@ -131,7 +131,7 @@ namespace View.Game.People
         {
             if (_moveDirection == Vector2.zero) return;
             
-            const float speed = 0.04f;
+            const float speed = 0.0005f;
 
             var clampedMoveDirection = ClampMoveDirection(_moveDirection);
 
@@ -202,7 +202,7 @@ namespace View.Game.People
 
         private void OnMovingVectorChangedEvent(MovingVectorChangedEvent e)
         {
-            _moveDirection = new Vector3(e.Direction.x, -e.Direction.y).normalized;
+            _moveDirection = new Vector3(e.Direction.x, -e.Direction.y);
         }
     }
 }
