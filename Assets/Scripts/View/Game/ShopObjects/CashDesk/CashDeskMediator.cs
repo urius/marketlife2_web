@@ -1,9 +1,9 @@
-using System.Linq;
 using Data;
 using Holders;
 using Infra.Instance;
 using Model.ShopObjects;
 using Utils;
+using View.Game.Extensions;
 using View.Helpers;
 
 namespace View.Game.ShopObjects.CashDesk
@@ -27,15 +27,15 @@ namespace View.Game.ShopObjects.CashDesk
 
         private void OwnCells()
         {
-            var ownedCells = _view.OwnedCellViews
-                .Select(v => _gridCalculator.WorldToCell(v.transform.position))
-                .ToArray();
+            var ownedCells = _gridCalculator.GetOwnedCells(_view);
 
             _ownedCellsDataHolder.RegisterShopObject(TargetModel, ownedCells);
         }
 
         protected override void UnmediateInternal()
         {
+            _ownedCellsDataHolder.UnregisterShopObject(TargetModel);
+            
             Destroy(_view);
             _view = null;
         }

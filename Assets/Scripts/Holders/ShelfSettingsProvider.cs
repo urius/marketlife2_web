@@ -74,6 +74,7 @@ namespace Holders
 
     public interface IShelfSettingsProvider
     {
-        
+        public bool TryGetShelfSetting(ShopObjectType shopObjectType, int upgradeIndex,
+            out ShelfSettingsProvider.ShelfSettingsData settingsData);
     }
 }

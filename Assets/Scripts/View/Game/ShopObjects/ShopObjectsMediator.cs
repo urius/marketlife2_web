@@ -5,6 +5,7 @@ using Infra.Instance;
 using Model;
 using Model.ShopObjects;
 using View.Game.ShopObjects.CashDesk;
+using View.Game.ShopObjects.Shelf;
 
 namespace View.Game.ShopObjects
 {
@@ -54,8 +55,16 @@ namespace View.Game.ShopObjects
                     MediateChild<CashDeskMediator, CashDeskModel>(TargetTransform, (CashDeskModel)shopObjectModel);
                     break;
                 default:
-                    throw new NotSupportedException(
-                        $"Not supported mediator for shop object type: ${shopObjectModel.ShopObjectType}");
+                    if (shopObjectModel.ShopObjectType.IsShelf())
+                    {
+                        MediateChild<ShelfMediator, ShelfModel>(TargetTransform, (ShelfModel)shopObjectModel);
+                    }
+                    else
+                    {
+                        throw new NotSupportedException(
+                            $"Not supported mediator for shop object type: ${shopObjectModel.ShopObjectType}");
+                    }
+                    break;
             }
         }
     }

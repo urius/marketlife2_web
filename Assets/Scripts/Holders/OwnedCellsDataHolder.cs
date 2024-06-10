@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using Model.ShopObjects;
 using UnityEngine;
 
@@ -31,6 +30,19 @@ namespace Holders
             }
 
             return false;
+        }
+
+        public void UnregisterShopObject(ShopObjectModelBase shopObjectModel)
+        {
+            if (TryGetShopObjectOwner(shopObjectModel.CellCoords, out var ownerData))
+            {
+                foreach (var ownedCell in ownerData.OwnedCells)
+                {
+                    _ownedCellDataByCoords.Remove(ownedCell);
+                }
+
+                _ownedCellDataList.Remove(ownerData);
+            }
         }
 
         public bool IsOwnedByShopObject(Vector2Int cellCoords)
@@ -76,9 +88,8 @@ namespace Holders
         public bool RegisterShopObject(ShopObjectModelBase shopObjectModel, Vector2Int[] ownedCells);
         public bool IsOwnedByShopObject(Vector2Int cellCoords);
         public bool TryGetShopObjectOwner(Vector2Int shopObjectCellCoords, out OwnedCellByShopObjectData ownedData);
-
         public bool IsWalkableForPlayerChar(Vector2Int cellCoords);
-
+        public void UnregisterShopObject(ShopObjectModelBase shopObjectModel);
     }
 
     public abstract class OwnedCellData

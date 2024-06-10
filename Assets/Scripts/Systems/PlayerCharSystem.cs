@@ -15,6 +15,7 @@ namespace Systems
     {
         private readonly IPlayerModelHolder _playerModelHolder = Instance.Get<IPlayerModelHolder>();
         private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
+        private readonly IShelfSettingsProvider _shelfSettingsProvider = Instance.Get<IShelfSettingsProvider>();
         
         private ShopModel _shopModel;
         private PlayerModel _playerModel;
@@ -103,7 +104,9 @@ namespace Systems
                 default:
                     if (shopObjectType.IsShelf())
                     {
-                        result = new ShelfModel(buildCoords, shopObjectType);
+                        _shelfSettingsProvider.TryGetShelfSetting(shopObjectType, 0, out var shelfSettings);
+                        
+                        result = new ShelfModel(buildCoords, shopObjectType, shelfSettings.SlotsAmount);
                     }
                     else
                     {

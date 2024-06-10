@@ -2,12 +2,12 @@ using System;
 using Data;
 using Other;
 using UnityEngine;
-using UnityEngine.Serialization;
+using View.Game.ShopObjects.Common;
 
 namespace View.Game.ShopObjects.Shelf
 {
     [SelectionBase]
-    public class ShelfView : MonoBehaviour
+    public class ShelfView : ShopObjectViewBase
     {
         [Serializable]
         private class ProductPlaceholder
@@ -29,7 +29,7 @@ namespace View.Game.ShopObjects.Shelf
         public ShopObjectType ShelfType => _shelfType;
         public int ShelfUpgradeIndex => _shelfUpgradeIndex;
         public int SlotsAmount => _productPlaceholders.Length;
-
+        
         [ExecuteInEditMode]
         private void OnDrawGizmos()
         {

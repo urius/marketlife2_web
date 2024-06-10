@@ -688,8 +688,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1703903694389772406}
-  - component: {fileID: 1914285698625715536}
   - component: {fileID: 8314795221632141224}
+  - component: {fileID: 1914285698625715536}
   m_Layer: 0
   m_Name: Shelf_1
   m_TagString: Untagged
@@ -715,18 +715,6 @@ Transform:
   - {fileID: 6500428372977999853}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!210 &1914285698625715536
-SortingGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9093042244983523206}
-  m_Enabled: 1
-  m_SortingLayerID: 1419607231
-  m_SortingLayer: 4
-  m_SortingOrder: 10
-  m_SortAtRoot: 0
 --- !u!114 &8314795221632141224
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -739,7 +727,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 209b5a2536124bf6bd8b8f8d29557805, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _sortingGroup: {fileID: 1914285698625715536}
   _shelfType: 101
+  _shelfUpgradeIndex: 0
   _productPlaceholders:
   - Transform: {fileID: 4857304649892306346}
     SortingOrder: 3
@@ -753,6 +743,18 @@ MonoBehaviour:
     SortingOrder: 7
   - Transform: {fileID: 3350093140230537958}
     SortingOrder: 8
+--- !u!210 &1914285698625715536
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9093042244983523206}
+  m_Enabled: 1
+  m_SortingLayerID: 1419607231
+  m_SortingLayer: 4
+  m_SortingOrder: 10
+  m_SortAtRoot: 0
 --- !u!1001 &9115310075865468416
 PrefabInstance:
   m_ObjectHideFlags: 0
