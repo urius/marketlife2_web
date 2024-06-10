@@ -76,7 +76,7 @@ namespace Systems
         {
             if (_shopModel.BuildPoints.TryGetValue(e.TargetBuildPointCellCoords, out var buildPoint))
             {
-                buildPoint.ChangeMoneyToBuildLeft(-1);
+                buildPoint.ChangeMoneyToBuildLeft(-e.MoneyAmount);
             
                 if (buildPoint.MoneyToBuildLeft <= 0)
                 {
@@ -149,10 +149,27 @@ namespace Systems
                 && buildPoint.MoneyToBuildLeft > 0
                 && _playerModel.Money > 0)
             {
-                _playerModel.ChangeMoney(-1);
+                var moneyAmount = GetMoneyPerSingleAnimation(buildPoint.MoneyToBuildLeft);
+                
+                _playerModel.ChangeMoney(-moneyAmount);
 
-                _eventBus.Dispatch(new TriggerSpendMoneyOnBuildPointAnimationEvent(buildPoint));
+                _eventBus.Dispatch(new TriggerSpendMoneyOnBuildPointAnimationEvent(buildPoint, moneyAmount));
             }
+        }
+
+        private int GetMoneyPerSingleAnimation(int moneyToBuildLeft)
+        {
+            var result = moneyToBuildLeft switch
+            {
+                > 500 => 50,
+                > 100 => 20,
+                > 50 => 10,
+                > 10 => 3,
+                > 5 => 2,
+                _ => 1
+            };
+
+            return Math.Min(result, _playerModel.Money);
         }
     }
 }

@@ -53,7 +53,7 @@ namespace View.Game.People
             var moneyGo = GetFromCache(PrefabKey.Money);
             var targetCellCoords = e.BuildPoint.CellCoords;
             
-            var context = new SpendAnimationContext(moneyGo, targetCellCoords);
+            var context = new SpendAnimationContext(moneyGo, targetCellCoords, e.MoneyAmount);
             
             _contextsQueue.Enqueue(context);
             
@@ -82,18 +82,20 @@ namespace View.Game.People
             
             ReturnToCache(context.TargetMoneyGo);
             
-            _eventBus.Dispatch(new SpendMoneyOnBuildPointAnimationFinishedEvent(context.TargetCellCoords));
+            _eventBus.Dispatch(new SpendMoneyOnBuildPointAnimationFinishedEvent(context.TargetCellCoords, context.MoneyAmount));
         }
         
         private struct SpendAnimationContext
         {
             public readonly GameObject TargetMoneyGo;
             public readonly Vector2Int TargetCellCoords;
+            public readonly int MoneyAmount;
 
-            public SpendAnimationContext(GameObject targetMoneyGo, Vector2Int targetCellCoords)
+            public SpendAnimationContext(GameObject targetMoneyGo, Vector2Int targetCellCoords, int moneyAmount)
             {
                 TargetMoneyGo = targetMoneyGo;
                 TargetCellCoords = targetCellCoords;
+                MoneyAmount = moneyAmount;
             }
         }
     }
