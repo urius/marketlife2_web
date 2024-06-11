@@ -131,7 +131,7 @@ namespace View.Game.People
         {
             if (_moveDirection == Vector2.zero) return;
             
-            const float speed = 0.0005f;
+            const float speed = 0.04f;
 
             var clampedMoveDirection = ClampMoveDirection(_moveDirection);
 

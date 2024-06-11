@@ -8,6 +8,7 @@ namespace View.UI.GameOverlayPanel.MovingControl
         
         private RectTransform _rectTransform;
         private float _radius;
+        private float _normalizationMultiplier;
         private float _sqrRadius;
 
         private void Awake()
@@ -16,6 +17,7 @@ namespace View.UI.GameOverlayPanel.MovingControl
 
             _radius = _rectTransform.sizeDelta.x * 0.5f - _innerPartTransform.sizeDelta.x * 0.2f;
             _sqrRadius = _radius * _radius;
+            _normalizationMultiplier = 1 / _radius;
         }
 
         public void ResetAndActivate()
@@ -49,7 +51,7 @@ namespace View.UI.GameOverlayPanel.MovingControl
         
         public Vector2 GetInnerPartPosition()
         {
-            return _innerPartTransform.anchoredPosition;
+            return _innerPartTransform.anchoredPosition * _normalizationMultiplier;
         }
     }
 }
