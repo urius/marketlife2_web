@@ -158,7 +158,7 @@ namespace View.Game.People
 
                     if (Vector3.Dot(worldDirectionData.worldDirection, resultMoveDirection) > 0)
                     {
-                        resultMoveDirection = (worldDirectionData.worldDirectionToProject * Vector3.Dot(worldDirectionData.worldDirectionToProject, resultMoveDirection)).normalized;
+                        resultMoveDirection = (worldDirectionData.worldDirectionToProject * Vector3.Dot(worldDirectionData.worldDirectionToProject, resultMoveDirection));//.normalized;
                     }
                 }
             }
