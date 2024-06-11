@@ -34,7 +34,7 @@ public class DebugDisplayCellNumber : MonoBehaviour
                 _intersectionPoint = ray.GetPoint(enter);
                 _cell = _grid.WorldToCell(_intersectionPoint);
                 
-                Debug.Log("Raycast cell: " + _cell);
+//                Debug.Log("Raycast cell: " + _cell);
             }
         }
     }

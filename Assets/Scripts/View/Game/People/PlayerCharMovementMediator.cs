@@ -139,6 +139,8 @@ namespace View.Game.People
             _playerWorldPosition += (Vector3)delta;
 
             _playerCharView.transform.position = _playerWorldPosition;
+
+            _eventBus.Dispatch(new PlayerCharPositionChangedEvent(_playerWorldPosition));
         }
 
         private Vector2 ClampMoveDirection(Vector2 moveDirection)

@@ -7,7 +7,9 @@ using Systems;
 using Tools.GameObjectsCache;
 using UnityEngine;
 using Utils;
+using View.Camera;
 using View.Game;
+using View.Game.Shared;
 using View.UI;
 
 public class InitScript : MonoBehaviour
@@ -27,6 +29,7 @@ public class InitScript : MonoBehaviour
     private GameRootMediator _gameRootMediator;
     private UIRootMediator _uiRootMediator;
     private RootSystem _rootSystem;
+    private MainCameraMediator _mainCameraMediator;
 
     private void Awake()
     {
@@ -56,6 +59,9 @@ public class InitScript : MonoBehaviour
 
         _uiRootMediator = new UIRootMediator();
         _uiRootMediator.Mediate(_uiRootView.transform);
+
+        _mainCameraMediator = new MainCameraMediator();
+        _mainCameraMediator.Mediate(_mainCamera.transform);
     }
 
     private void SetupInstances()
@@ -73,6 +79,7 @@ public class InitScript : MonoBehaviour
         SetupNewInstance<ShopModelHolder, IShopModelHolder>();
         SetupNewInstance<OwnedCellsDataHolder, IOwnedCellsDataHolder>();
         SetupNewInstance<ShelfSettingsProvider, IShelfSettingsProvider>();
+        SetupNewInstance<PlayerCharViewSharedDataHolder, IPlayerCharViewSharedDataHolder>();
         
         _playerModelHolder = SetupNewInstance<PlayerModelHolder, IPlayerModelHolder>();
         var commandExecutor = SetupNewInstance<CommandExecutor, ICommandExecutor>();

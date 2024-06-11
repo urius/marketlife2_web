@@ -1,9 +1,14 @@
 using Data;
+using Infra.EventBus;
+using Infra.Instance;
+using View.Game.Shared;
 
 namespace View.Game.People
 {
     public class PlayerCharMediator : MediatorBase
     {
+        private readonly IPlayerCharViewSharedDataHolder _playerCharViewSharedDataHolder = Instance.Get<IPlayerCharViewSharedDataHolder>();
+        
         private ManView _playerCharView;
 
         protected override void MediateInternal()
@@ -12,6 +17,8 @@ namespace View.Game.People
             
             MediateChild<PlayerCharMovementMediator>(_playerCharView.transform);
             MediateChild(new PlayerCharSpendAnimationMediator(_playerCharView));
+
+            _playerCharViewSharedDataHolder.SetView(_playerCharView);
         }
 
         protected override void UnmediateInternal()
