@@ -1,28 +1,14 @@
-using System;
-using Data;
 using Other;
 using UnityEngine;
 using View.Game.Shared;
-using View.Game.ShopObjects.Common;
 
-namespace View.Game.ShopObjects.Shelf
+namespace View.Game.Misc
 {
-    [SelectionBase]
-    public class ShelfView : ShopObjectViewBase
+    public class ProductsBoxView : MonoBehaviour
     {
-        [SerializeField] 
-        private ShopObjectType _shelfType;
-        
-        [SerializeField] 
-        private int _shelfUpgradeIndex;
-
         [SerializeField]
         [LabeledArray(nameof(ProductPlaceholder.Transform))]
         private ProductPlaceholder[] _productPlaceholders;
-
-        public ShopObjectType ShelfType => _shelfType;
-        public int ShelfUpgradeIndex => _shelfUpgradeIndex;
-        public int SlotsAmount => _productPlaceholders.Length;
         
         [ExecuteInEditMode]
         private void OnDrawGizmos()

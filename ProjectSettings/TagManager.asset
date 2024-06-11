@@ -47,6 +47,9 @@ TagManager:
   - name: GUIOnFloor
     uniqueID: 1777312917
     locked: 0
+  - name: Truck
+    uniqueID: 2699149395
+    locked: 0
   - name: Walls
     uniqueID: 1581635257
     locked: 0
