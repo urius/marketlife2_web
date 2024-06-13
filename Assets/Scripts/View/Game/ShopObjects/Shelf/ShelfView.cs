@@ -2,6 +2,7 @@ using System;
 using Data;
 using Other;
 using UnityEngine;
+using View.Game.Product;
 using View.Game.Shared;
 using View.Game.ShopObjects.Common;
 
@@ -20,9 +21,12 @@ namespace View.Game.ShopObjects.Shelf
         [LabeledArray(nameof(ProductPlaceholder.Transform))]
         private ProductPlaceholder[] _productPlaceholders;
 
+        [SerializeField]
+        private ProductView[] _productViews;
+        
         public ShopObjectType ShelfType => _shelfType;
         public int ShelfUpgradeIndex => _shelfUpgradeIndex;
-        public int SlotsAmount => _productPlaceholders.Length;
+        public int SlotsAmount => _productViews.Length;
         
         [ExecuteInEditMode]
         private void OnDrawGizmos()

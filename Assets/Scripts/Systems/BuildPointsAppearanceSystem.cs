@@ -19,6 +19,7 @@ namespace Systems
         private ShopModel _shopModel;
         private List<LinkedList<ShopObjectModelBase>> _shelfsByRow;
         private int _cashDesksAmount;
+        private int _truckPointsAmount;
 
         public void Start()
         {
@@ -39,9 +40,18 @@ namespace Systems
         {
             if (_cashDesksAmount > 0)
             {
-                if (_shelfsByRow.Count <= 0)
+                var shelfRowsCount = _shelfsByRow.Count;
+                if (shelfRowsCount <= 0)
                 {
                     if (_buildPointsDataHolder.TryGetShelfBuildPointData(_shelfsByRow.Count, 0, out var buildPointDto))
+                    {
+                        TryAddBuildPoint(buildPointDto);
+                    }
+                }
+
+                if (shelfRowsCount > _truckPointsAmount)
+                {
+                    if (_buildPointsDataHolder.TryGetTruckGateBuildPointData(_truckPointsAmount, out var buildPointDto))
                     {
                         TryAddBuildPoint(buildPointDto);
                     }
@@ -73,6 +83,8 @@ namespace Systems
                 .OrderBy(g => g.Key)
                 .Select(g => new LinkedList<ShopObjectModelBase>(g))
                 .ToList();
+            
+            _truckPointsAmount = shopObjects.Count(o => o.ShopObjectType == ShopObjectType.TruckPoint);
         }
 
         private void Subscribe()
@@ -103,6 +115,9 @@ namespace Systems
             {
                 case ShopObjectType.CashDesk:
                     _cashDesksAmount++;
+                    break;
+                case ShopObjectType.TruckPoint:
+                    _truckPointsAmount++;
                     break;
                 default:
                     throw new NotImplementedException(

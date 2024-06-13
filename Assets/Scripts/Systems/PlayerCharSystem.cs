@@ -1,12 +1,12 @@
 using System;
-using Data;
+using Commands;
 using Events;
 using Holders;
+using Infra.CommandExecutor;
 using Infra.EventBus;
 using Infra.Instance;
 using Model;
 using Model.BuildPoint;
-using Model.ShopObjects;
 using UnityEngine;
 
 namespace Systems
@@ -15,7 +15,7 @@ namespace Systems
     {
         private readonly IPlayerModelHolder _playerModelHolder = Instance.Get<IPlayerModelHolder>();
         private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
-        private readonly IShelfSettingsProvider _shelfSettingsProvider = Instance.Get<IShelfSettingsProvider>();
+        private readonly ICommandExecutor _commandExecutor = Instance.Get<ICommandExecutor>();
         
         private ShopModel _shopModel;
         private PlayerModel _playerModel;
@@ -80,67 +80,9 @@ namespace Systems
             
                 if (buildPoint.MoneyToBuildLeft <= 0)
                 {
-                    _shopModel.RemoveBuildPoint(buildPoint.CellCoords);
-                    
-                    var shopObject = GetShopObjectByBuildPoint(buildPoint);
-                    _shopModel.AddShopObject(shopObject);
+                    _commandExecutor.Execute<BuildShopObjectCommand, BuildPointModel>(buildPoint);
                 }
             }
-        }
-
-        private ShopObjectModelBase GetShopObjectByBuildPoint(BuildPointModel buildPoint)
-        {
-            ShopObjectModelBase result;
-            
-            var shopObjectType = buildPoint.ShopObjectType;
-            var pointOffset = GetBuildPointOffset(shopObjectType);
-            var buildCoords = buildPoint.CellCoords + pointOffset;
-            
-            switch (shopObjectType)
-            {
-                case ShopObjectType.CashDesk:
-                    result = new CashDeskModel(buildCoords);
-                    break;
-                default:
-                    if (shopObjectType.IsShelf())
-                    {
-                        _shelfSettingsProvider.TryGetShelfSetting(shopObjectType, 0, out var shelfSettings);
-                        
-                        result = new ShelfModel(buildCoords, shopObjectType, shelfSettings.SlotsAmount);
-                    }
-                    else
-                    {
-                        throw new NotImplementedException(
-                            $"{nameof(GetShopObjectByBuildPoint)}: unknown shopObjectType {shopObjectType}");
-                    }
-                    break;
-            }
-
-            return result;
-        }
-
-        private Vector2Int GetBuildPointOffset(ShopObjectType shopObjectType)
-        {
-            var result = Vector2Int.zero;
-            
-            switch (shopObjectType)
-            {
-                case ShopObjectType.CashDesk:
-                    result = Vector2Int.left;
-                    break;
-                default:
-                    if (shopObjectType.IsShelf())
-                    {
-                        result = Vector2Int.left;
-                    }
-                    else
-                    {
-                        Debug.LogError($"{nameof(GetBuildPointOffset)}: Unknown shopObjectType: {shopObjectType}");
-                    }
-                    break;
-            }
-
-            return result;
         }
 
         private void TriggerSpendOnBuildPointIterationAnimationIfNeeded(Vector2Int cellPosition)

@@ -1,5 +1,6 @@
 using Other;
 using UnityEngine;
+using View.Game.Product;
 using View.Game.Shared;
 
 namespace View.Game.Misc
@@ -8,16 +9,16 @@ namespace View.Game.Misc
     {
         [SerializeField]
         [LabeledArray(nameof(ProductPlaceholder.Transform))]
-        private ProductPlaceholder[] _productPlaceholders;
+        private ProductView[] _products;
         
         [ExecuteInEditMode]
         private void OnDrawGizmos()
         {
-            if (_productPlaceholders == null) return;
+            if (_products == null) return;
             
-            foreach (var productPlaceholder in _productPlaceholders)
+            foreach (var productPlaceholder in _products)
             {
-                Gizmos.DrawSphere(productPlaceholder.Transform.position, 0.1f);
+                //Gizmos.DrawSphere(productPlaceholder.Transform.position, 0.1f);
             }
         }
     }

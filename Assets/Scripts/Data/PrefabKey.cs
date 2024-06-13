@@ -18,5 +18,6 @@ namespace Data
         Shelf4,
         Shelf4U1,
         Shelf4U2,
+        ProductTruck,
     }
 }

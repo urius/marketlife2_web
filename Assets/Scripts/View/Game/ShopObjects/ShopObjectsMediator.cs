@@ -6,6 +6,7 @@ using Model;
 using Model.ShopObjects;
 using View.Game.ShopObjects.CashDesk;
 using View.Game.ShopObjects.Shelf;
+using View.Game.ShopObjects.TruckPoint;
 
 namespace View.Game.ShopObjects
 {
@@ -53,6 +54,9 @@ namespace View.Game.ShopObjects
             {
                 case ShopObjectType.CashDesk:
                     MediateChild<CashDeskMediator, CashDeskModel>(TargetTransform, (CashDeskModel)shopObjectModel);
+                    break;
+                case ShopObjectType.TruckPoint:
+                    MediateChild<TruckPointMediator, TruckPointModel>(TargetTransform, (TruckPointModel)shopObjectModel);
                     break;
                 default:
                     if (shopObjectModel.ShopObjectType.IsShelf())

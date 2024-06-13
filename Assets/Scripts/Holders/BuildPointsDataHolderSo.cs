@@ -1,6 +1,7 @@
 using System;
 using Data;
 using Data.Dto.ShopObjects;
+using Data.Internal;
 using Other;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -11,30 +12,28 @@ namespace Holders
     public class BuildPointsDataHolderSo : ScriptableObject
     {
         [LabeledArray(nameof(ShopObjectDto.CellCoords))]
-        public BuildPointDto[] CashDesks;
+        [SerializeField]
+        private BuildPointDto[] _cashDesks;
         
-        public ShelfBuildPointRowData[] ShelfsByRow;
-        
-        [LabeledArray(nameof(ShopObjectDto.CellCoords))]
-        public BuildPointDto[] TruckGates;
+        [SerializeField]
+        private ShelfBuildPointRowData[] _shelfsByRow;
 
-        [Serializable]
-        public struct ShelfBuildPointRowData
-        {
-            [LabeledArray(nameof(ShopObjectDto.CellCoords))]
-            public BuildPointDto[] Shelfs;
-        }
+        [SerializeField] 
+        private TruckGatePositionSettings _truckGatePositionSettings;
+        
+        [SerializeField]
+        private TruckGateBuildPointData[] _truckGates;
 
         public BuildPointDto GetCashDeskBuildPointData(int index)
         {
-            if (index < CashDesks.Length)
+            if (index < _cashDesks.Length)
             {
-                return CashDesks[index];
+                return _cashDesks[index];
             }
             else
             {
-                var buildCost = InterpolateBuildCostFor(index, CashDesks.Length - 1, CashDesks[^1], CashDesks[^2]);
-                var coords = InterpolateCellCoordsFor(index, CashDesks.Length - 1, CashDesks[^1], CashDesks[^2]);
+                var buildCost = InterpolateBuildCostFor(index, _cashDesks.Length - 1, _cashDesks[^1], _cashDesks[^2]);
+                var coords = InterpolateCellCoordsFor(index, _cashDesks.Length - 1, _cashDesks[^1], _cashDesks[^2]);
                 
                 return new BuildPointDto()
                 {
@@ -47,9 +46,9 @@ namespace Holders
 
         public bool TryGetShelfBuildPointData(int rowIndex, int index, out BuildPointDto buildPointDto)
         {
-            if (rowIndex < ShelfsByRow.Length)
+            if (rowIndex < _shelfsByRow.Length)
             {
-                var shelfsInRow = ShelfsByRow[rowIndex].Shelfs;
+                var shelfsInRow = _shelfsByRow[rowIndex].Shelfs;
                 
                 if (index < shelfsInRow.Length)
                 {
@@ -74,6 +73,27 @@ namespace Holders
             buildPointDto = default;
             
             return false;
+        }
+
+        public bool TryGetTruckGateBuildPointData(int truckGateIndex, out BuildPointDto result)
+        {
+            result = default;
+            
+            var haveData = truckGateIndex < _truckGates.Length;
+            
+            if (haveData)
+            {
+                var data = _truckGates[truckGateIndex];
+                
+                result = new BuildPointDto()
+                {
+                    ShopObjectType = ShopObjectType.TruckPoint,
+                    CellCoords = new Vector2Int(0, _truckGatePositionSettings.FirstGateOffset + truckGateIndex * _truckGatePositionSettings.DefaultGateOffset),
+                    MoneyToBuildLeft = data.BuildCost,
+                };
+            }
+
+            return haveData;
         }
 
         private static int InterpolateBuildCostFor(int index, int lastIndex, BuildPointDto lastItem,

@@ -8,5 +8,6 @@ namespace Data
         Shelf2 = 102,
         Shelf3 = 103,
         Shelf4 = 104,
+        TruckPoint = 300,
     }
 }
