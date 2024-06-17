@@ -50,8 +50,6 @@ namespace View.Game.People
 
         private void PlayAnimationByKey(AnimationKey animationKey)
         {
-            Debug.Log($"PlayAnimationByKey: {animationKey}");
-            
             if (_currentAnimationKey == animationKey) return;
             
             _currentAnimationKey = animationKey;
