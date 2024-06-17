@@ -13,8 +13,11 @@ namespace Holders
         [LabeledArray(nameof(SpritesHolderFloorItem.Key))] [SerializeField]
         private SpritesHolderFloorItem[] _floorItems;
 
-        [LabeledArray(nameof(SpritesHolderFloorItem.Key))] [SerializeField]
+        [LabeledArray(nameof(SpritesHolderWallItem.Key))] [SerializeField]
         private SpritesHolderWallItem[] _wallItems;
+        
+        [LabeledArray(nameof(SpritesHolderProductItem.Key))] [SerializeField]
+        private SpritesHolderProductItem[] _productItems;
 
         public Tile GetFloorTileByKey(FloorType key)
         {
@@ -24,6 +27,11 @@ namespace Holders
         public Sprite GetWallSpriteByKey(WallType key)
         {
             return _wallItems.First(i => i.Key == key).Sprite;
+        }
+
+        public Sprite GetProductSpriteByKey(ProductType key)
+        {
+            return _productItems.First(i => i.Key == key).Sprite;
         }
 
         [Serializable]
@@ -37,6 +45,13 @@ namespace Holders
         private struct SpritesHolderWallItem
         {
             public WallType Key;
+            public Sprite Sprite;
+        }
+
+        [Serializable]
+        private struct SpritesHolderProductItem
+        {
+            public ProductType Key;
             public Sprite Sprite;
         }
     }

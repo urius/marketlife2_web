@@ -1,3 +1,4 @@
+using Data;
 using UnityEngine;
 using View.Game.Misc;
 
@@ -13,7 +14,7 @@ namespace View.Game.ShopObjects.TruckPoint
         [SerializeField] private Transform _truckFarPositionTransform;
 
         private const float CapAnimationDuration = 0.5f;
-        private const float TruckArriveAnimationDuration = 1.5f;
+        private const float TruckArriveAnimationDuration = Constants.TruckArrivingDuration - CapAnimationDuration;
         
         public ProductsBoxView GetProductBoxView(int index)
         {
@@ -26,9 +27,28 @@ namespace View.Game.ShopObjects.TruckPoint
 
             SetCapOpenedState(false);
             
+            gameObject.SetActive(true);
+            
             _spritesContainer.LeanMoveLocal(Vector3.zero, TruckArriveAnimationDuration)
                 .setEaseOutQuad()
                 .setOnComplete(OnTruckArriveAnimationFinished);
+        }
+
+        public void SetTruckArrived()
+        {
+            _spritesContainer.localPosition = Vector3.zero;
+            SetCapOpenedState(true);
+            
+            gameObject.SetActive(true);
+        }
+        
+        public void SetTruckMovedOut()
+        {
+            _spritesContainer.position = _truckFarPositionTransform.position;
+            
+            SetCapOpenedState(false);
+            
+            gameObject.SetActive(false);
         }
 
         private void OnTruckArriveAnimationFinished()

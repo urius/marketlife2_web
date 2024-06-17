@@ -29,10 +29,10 @@ MonoBehaviour:
       MoneyToBuildLeft: 30
   - Shelfs:
     - ShopObjectType: 104
-      CellCoords: {x: 4, y: 6}
+      CellCoords: {x: 4, y: 7}
       MoneyToBuildLeft: 40
     - ShopObjectType: 104
-      CellCoords: {x: 7, y: 6}
+      CellCoords: {x: 7, y: 7}
       MoneyToBuildLeft: 50
   _truckGatePositionSettings:
     FirstGateOffset: 5

@@ -29,6 +29,7 @@ namespace View.Game.People
         private (Vector2Int direction, Vector3[] offsets)[] _detectorOffsets;
         private Vector3 _playerWorldPosition;
         private DynamicViewSortingLogic _sortingLogic;
+        private Vector2 _prevMoveDirection;
 
         protected override void MediateInternal()
         {
@@ -109,6 +110,9 @@ namespace View.Game.People
         {
             ProcessMove();
             CheckCellCoords();
+            UpdateAnimation();
+
+            _prevMoveDirection = _moveDirection;
         }
 
         private void CheckCellCoords()
@@ -141,6 +145,30 @@ namespace View.Game.People
             _playerCharView.transform.position = _playerWorldPosition;
 
             _eventBus.Dispatch(new PlayerCharPositionChangedEvent(_playerWorldPosition));
+        }
+
+        private void UpdateAnimation()
+        {
+            if (_prevMoveDirection == _moveDirection) return;
+
+            switch (_moveDirection.x)
+            {
+                case > 0:
+                    _playerCharView.ToRightSide();
+                    break;
+                case < 0:
+                    _playerCharView.ToLeftSide();
+                    break;
+            }
+
+            if (_moveDirection == Vector2.zero)
+            {
+                _playerCharView.ToIdleState();
+            }
+            else
+            {
+                _playerCharView.ToWalkState();
+            }
         }
 
         private Vector2 ClampMoveDirection(Vector2 moveDirection)

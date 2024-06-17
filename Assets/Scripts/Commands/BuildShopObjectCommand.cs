@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Data;
 using Holders;
 using Infra.CommandExecutor;
@@ -34,7 +35,17 @@ namespace Commands
                     result = new CashDeskModel(buildCoords);
                     break;
                 case ShopObjectType.TruckPoint:
-                    result = new TruckPointModel(buildCoords);
+                    if (TryGetTruckPointsSettings(out var truckPointsSettings))
+                    {
+                        result = new TruckPointModel(buildCoords, truckPointsSettings,
+                            truckPointsSettings.Products.Select(p => 1).ToArray(),
+                            Constants.TruckArrivingDuration);
+                    }
+                    else
+                    {
+                        throw new NotSupportedException(
+                            $"{nameof(GetShopObjectByBuildPoint)}: unable to provide truck point setting for build point {buildPoint.CellCoords}");
+                    }
                     break;
                 default:
                     if (shopObjectType.IsShelf())
@@ -52,6 +63,23 @@ namespace Commands
                     }
                     break;
             }
+
+            return result;
+        }
+
+        private bool TryGetTruckPointsSettings(out TruckPointSetting setting)
+        {
+            var shopModel = Instance.Get<IShopModelHolder>().ShopModel;
+            var truckPointsSettingsProvider = Instance.Get<TruckPointsSettingsProviderSo>();
+
+            var truckPointsAmount =
+                shopModel.ShopObjects.Values.Count(o => o.ShopObjectType == ShopObjectType.TruckPoint);
+
+            var result =
+                truckPointsSettingsProvider.TryGetSettingByTruckPointIndex(truckPointsAmount,
+                    out var truckPointSetting);
+
+            setting = truckPointSetting;
 
             return result;
         }
