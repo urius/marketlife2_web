@@ -1,4 +1,5 @@
 using Data;
+using Holders;
 using Infra.Instance;
 using Model.ShopObjects;
 using Utils;
@@ -8,6 +9,7 @@ namespace View.Game.ShopObjects.TruckPoint
     public class TruckPointMediator : MediatorWithModelBase<TruckPointModel>
     {
         private readonly IGridCalculator _gridCalculator = Instance.Get<IGridCalculator>();
+        private readonly SpritesHolderSo _spritesHolderSo = Instance.Get<SpritesHolderSo>();
         
         private TruckView _truckView;
         private bool _truckArrivingTriggeredFlag = false;
@@ -18,6 +20,7 @@ namespace View.Game.ShopObjects.TruckPoint
             _truckView.transform.position = _gridCalculator.GetCellCenterWorld(TargetModel.CellCoords);
             
             SetTruckState();
+            UpdateProductViews();
 
             Subscribe();
         }
@@ -29,14 +32,47 @@ namespace View.Game.ShopObjects.TruckPoint
             Destroy(_truckView);
         }
 
+        private void UpdateProductViews()
+        {
+            for (var i = 0; i < _truckView.ProductBoxesAmount; i++)
+            {
+                UpdateProductView(i);
+            }
+        }
+
+        private void UpdateProductView(int index)
+        {
+            var productInBox = TargetModel.GetProductTypeAtBoxIndex(index);
+
+            if (_truckView.TryGetProductBoxView(index, out var boxView))
+            {
+                var hasProduct = productInBox != ProductType.Undefined;
+
+                boxView.SetVisible(hasProduct);
+
+                if (hasProduct)
+                {
+                    var productSprite = _spritesHolderSo.GetProductSpriteByKey(productInBox);
+                    boxView.SetProductsSprite(productSprite);
+                }
+            }
+        }
+
         private void Subscribe()
         {
-            TargetModel.DelivarTimeUpdated += OnDeliverTimeUpdated;
+            TargetModel.DeliverTimeUpdated += OnDeliverTimeUpdated;
+            TargetModel.BoxRemoved += OnBoxRemoved;
         }
 
         private void Unsubscribe()
         {
-            TargetModel.DelivarTimeUpdated -= OnDeliverTimeUpdated;
+            TargetModel.DeliverTimeUpdated -= OnDeliverTimeUpdated;
+            TargetModel.BoxRemoved -= OnBoxRemoved;
+        }
+
+        private void OnBoxRemoved(int boxIndex)
+        {
+            
         }
 
         private void SetTruckState()

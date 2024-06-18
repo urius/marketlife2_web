@@ -10,6 +10,19 @@ namespace View.Game.Misc
         [SerializeField]
         [LabeledArray(nameof(ProductPlaceholder.Transform))]
         private ProductView[] _products;
+
+        public void SetVisible(bool isVisible)
+        {
+            gameObject.SetActive(isVisible);
+        }
+
+        public void SetProductsSprite(Sprite sprite)
+        {
+            foreach (var productView in _products)
+            {
+                productView.SetSprite(sprite);
+            }
+        }
         
         [ExecuteInEditMode]
         private void OnDrawGizmos()

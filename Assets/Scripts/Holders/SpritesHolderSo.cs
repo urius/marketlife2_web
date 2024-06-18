@@ -31,7 +31,7 @@ namespace Holders
 
         public Sprite GetProductSpriteByKey(ProductType key)
         {
-            return _productItems.First(i => i.Key == key).Sprite;
+            return _productItems.FirstOrDefault(i => i.Key == key).Sprite;
         }
 
         [Serializable]

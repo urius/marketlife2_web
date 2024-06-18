@@ -15,10 +15,20 @@ namespace View.Game.ShopObjects.TruckPoint
 
         private const float CapAnimationDuration = 0.5f;
         private const float TruckArriveAnimationDuration = Constants.TruckArrivingDuration - CapAnimationDuration;
-        
-        public ProductsBoxView GetProductBoxView(int index)
+
+        public int ProductBoxesAmount => _productsBoxViews.Length;
+
+        public bool TryGetProductBoxView(int index, out ProductsBoxView productBoxView)
         {
-            return _productsBoxViews[index];
+            productBoxView = null;
+
+            if (index >= 0 && index < _productsBoxViews.Length)
+            {
+                productBoxView = _productsBoxViews[index];
+                return true;
+            }
+
+            return false;
         }
 
         public void AnimateTruckArrive()
