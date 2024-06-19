@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3586990688674558296}
   - component: {fileID: 4448938026612649612}
   m_Layer: 0
-  m_Name: TruckProductView
+  m_Name: BoxProductView
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

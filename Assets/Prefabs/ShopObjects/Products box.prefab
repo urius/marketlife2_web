@@ -47,7 +47,7 @@ GameObject:
   - component: {fileID: 2404289989378325935}
   - component: {fileID: 5466509442139185683}
   m_Layer: 0
-  m_Name: Truck products box
+  m_Name: Products box
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -61,8 +61,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3998808810290989356}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.95371693, y: -0, z: -0, w: 0.3007058}
-  m_LocalPosition: {x: 0.714, y: -1.103, z: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -70,7 +70,7 @@ Transform:
   - {fileID: 2015876928479194253}
   - {fileID: 557661601765042972}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 145, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &2404289989378325935
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -88,6 +88,7 @@ MonoBehaviour:
   - {fileID: 3341967161561387878}
   - {fileID: 801337690433407619}
   - {fileID: 8791230826695105431}
+  _sortingGroup: {fileID: 5466509442139185683}
 --- !u!210 &5466509442139185683
 SortingGroup:
   m_ObjectHideFlags: 0
@@ -282,11 +283,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3858311144903498297, guid: a3f5ac2c122a94508ace6e28b1936b39, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.11799984
+      value: -0.118
       objectReference: {fileID: 0}
     - target: {fileID: 3858311144903498297, guid: a3f5ac2c122a94508ace6e28b1936b39, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.0829999
+      value: -0.001
       objectReference: {fileID: 0}
     - target: {fileID: 3858311144903498297, guid: a3f5ac2c122a94508ace6e28b1936b39, type: 3}
       propertyPath: m_LocalRotation.w
@@ -322,7 +323,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6657630474949256045, guid: a3f5ac2c122a94508ace6e28b1936b39, type: 3}
       propertyPath: m_Name
-      value: TruckProductView (2)
+      value: BoxProductView (2)
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -355,15 +356,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3858311144903498297, guid: a3f5ac2c122a94508ace6e28b1936b39, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.216
+      value: -0.21599999
       objectReference: {fileID: 0}
     - target: {fileID: 3858311144903498297, guid: a3f5ac2c122a94508ace6e28b1936b39, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.114999816
+      value: -0.11499998
       objectReference: {fileID: 0}
     - target: {fileID: 3858311144903498297, guid: a3f5ac2c122a94508ace6e28b1936b39, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.080999866
+      value: 0.001000084
       objectReference: {fileID: 0}
     - target: {fileID: 3858311144903498297, guid: a3f5ac2c122a94508ace6e28b1936b39, type: 3}
       propertyPath: m_LocalRotation.w
@@ -399,7 +400,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6657630474949256045, guid: a3f5ac2c122a94508ace6e28b1936b39, type: 3}
       propertyPath: m_Name
-      value: TruckProductView (3)
+      value: BoxProductView (3)
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -440,7 +441,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3858311144903498297, guid: a3f5ac2c122a94508ace6e28b1936b39, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.168
+      value: -0.007
       objectReference: {fileID: 0}
     - target: {fileID: 3858311144903498297, guid: a3f5ac2c122a94508ace6e28b1936b39, type: 3}
       propertyPath: m_LocalRotation.w
@@ -476,7 +477,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6657630474949256045, guid: a3f5ac2c122a94508ace6e28b1936b39, type: 3}
       propertyPath: m_Name
-      value: TruckProductView (4)
+      value: BoxProductView (4)
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -549,7 +550,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6657630474949256045, guid: a3f5ac2c122a94508ace6e28b1936b39, type: 3}
       propertyPath: m_Name
-      value: TruckProductView (1)
+      value: BoxProductView (1)
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

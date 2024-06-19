@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Data;
 using UnityEngine;
 
@@ -13,48 +14,60 @@ namespace Model.ShopObjects
 
         public TruckPointModel(Vector2Int cellCoords,
             TruckPointSetting setting,
-            int[] productsFillList,
+            ProductType[] currentProductBoxes,
             int deliverTimeSecondsRest) : base(cellCoords)
         {
             _setting = setting;
             
-            ProductsFillList = productsFillList;
+            CurrentProductBoxes = currentProductBoxes;
             DeliverTimeSecondsRest = deliverTimeSecondsRest;
         }
 
         public override ShopObjectType ShopObjectType => ShopObjectType.TruckPoint;
-        public int[] ProductsFillList { get; private set; }
+        public ProductType[] CurrentProductBoxes { get; private set; }
         public int DeliverTimeSecondsRest { get; private set; }
+        public bool HasProducts => CurrentProductBoxes.Any(p => p != ProductType.None);
 
         public void RemoveBox(int boxIndex)
         {
-            if (boxIndex < ProductsFillList.Length
-                && ProductsFillList[boxIndex] > 0)
+            if (boxIndex < CurrentProductBoxes.Length
+                && CurrentProductBoxes[boxIndex] != ProductType.None)
             {
-                ProductsFillList[boxIndex] = 0;
-                
+                CurrentProductBoxes[boxIndex] = ProductType.None;
+
                 BoxRemoved?.Invoke(boxIndex);
             }
         }
 
         public ProductType GetProductTypeAtBoxIndex(int boxIndex)
         {
-            if (boxIndex < ProductsFillList.Length
-                && ProductsFillList[boxIndex] > 0)
-            {
-                return _setting.Products[boxIndex];
-            }
-
-            return ProductType.Undefined;
+            return boxIndex < CurrentProductBoxes.Length ? CurrentProductBoxes[boxIndex] : ProductType.None;
         }
 
-        public void AdvanceDeliverTime()
+        public int GetFirstNotEmptyProductBoxIndex()
         {
-            if (DeliverTimeSecondsRest <= 0) return;
+            for (var i = 0; i < CurrentProductBoxes.Length; i++)
+            {
+                var currentProductBox = CurrentProductBoxes[i];
+
+                if (currentProductBox != ProductType.None)
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+
+        public bool AdvanceDeliverTime()
+        {
+            if (DeliverTimeSecondsRest <= 0) return false;
 
             DeliverTimeSecondsRest--;
 
             DeliverTimeUpdated?.Invoke(DeliverTimeSecondsRest);
+
+            return true;
         }
     }
 }

@@ -2,7 +2,7 @@ namespace Data
 {
     public enum ProductType
     {
-        Undefined,
+        None,
         Banana,
         Beer,
         Bread,

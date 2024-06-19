@@ -1,5 +1,4 @@
 using Data;
-using Infra.EventBus;
 using Infra.Instance;
 using View.Game.Shared;
 
@@ -17,6 +16,7 @@ namespace View.Game.People
             
             MediateChild<PlayerCharMovementMediator>(_playerCharView.transform);
             MediateChild(new PlayerCharSpendAnimationMediator(_playerCharView));
+            MediateChild(new PlayerCharProductsMediator(_playerCharView));
 
             _playerCharViewSharedDataHolder.SetView(_playerCharView);
         }

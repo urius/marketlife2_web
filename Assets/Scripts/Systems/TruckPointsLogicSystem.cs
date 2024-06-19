@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Data;
+using Events;
 using Holders;
+using Infra.EventBus;
 using Infra.Instance;
 using Model;
 using Model.ShopObjects;
@@ -12,6 +14,8 @@ namespace Systems
     {
         private readonly IShopModelHolder _shopModelHolder = Instance.Get<IShopModelHolder>();
         private readonly IUpdatesProvider _updatesProvider = Instance.Get<IUpdatesProvider>();
+        private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
+        
         private readonly List<TruckPointModel> _truckPointList = new();
 
         private ShopModel _shopModel;
@@ -46,7 +50,12 @@ namespace Systems
         {
             foreach (var truckPointModel in _truckPointList)
             {
-                truckPointModel.AdvanceDeliverTime();
+                var isAdvanced = truckPointModel.AdvanceDeliverTime();
+                
+                if (isAdvanced && truckPointModel.DeliverTimeSecondsRest <= 0)
+                {
+                    _eventBus.Dispatch(new TruckArrivedEvent(truckPointModel));
+                }
             }
         }
 

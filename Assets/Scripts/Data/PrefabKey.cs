@@ -19,5 +19,6 @@ namespace Data
         Shelf4U1,
         Shelf4U2,
         ProductTruck,
+        ProductsBox,
     }
 }

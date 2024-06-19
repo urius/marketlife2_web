@@ -38,8 +38,8 @@ namespace Commands
                     if (TryGetTruckPointsSettings(out var truckPointsSettings))
                     {
                         result = new TruckPointModel(buildCoords, truckPointsSettings,
-                            truckPointsSettings.Products.Select(p => 1).ToArray(),
-                            Constants.TruckArrivingDuration);
+                            truckPointsSettings.Products.ToArray(),
+                            Constants.TruckArrivingDuration + 1);
                     }
                     else
                     {

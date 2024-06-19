@@ -3,6 +3,7 @@ using Events;
 using Holders;
 using Infra.EventBus;
 using Infra.Instance;
+using Model;
 using UnityEngine;
 using Utils;
 using View.Game.Shared;
@@ -20,6 +21,7 @@ namespace View.Game.People
         private readonly IUpdatesProvider _updatesProvider = Instance.Get<IUpdatesProvider>();
         private readonly IGridCalculator _gridCalculator = Instance.Get<IGridCalculator>();
         private readonly IOwnedCellsDataHolder _ownedCellsDataHolder = Instance.Get<IOwnedCellsDataHolder>();
+        private readonly IPlayerModelHolder _playerModelHolder = Instance.Get<IPlayerModelHolder>();
 
         private Dictionary<Vector2Int, (Vector3 worldDirection, Vector3 worldDirectionToProject)> _detectorWorldDirections;
 
@@ -30,9 +32,12 @@ namespace View.Game.People
         private Vector3 _playerWorldPosition;
         private DynamicViewSortingLogic _sortingLogic;
         private Vector2 _prevMoveDirection;
+        private PlayerCharModel _playerCharModel;
 
         protected override void MediateInternal()
         {
+            _playerCharModel = _playerModelHolder.PlayerModel.PlayerCharModel;
+            
             FillDetectorOffsets();
             
             _playerCharView = TargetTransform.GetComponent<ManView>();
@@ -163,11 +168,11 @@ namespace View.Game.People
 
             if (_moveDirection == Vector2.zero)
             {
-                _playerCharView.ToIdleState();
+                _playerCharView.ToIdleState(_playerCharModel.HasProducts);
             }
             else
             {
-                _playerCharView.ToWalkState();
+                _playerCharView.ToWalkState(_playerCharModel.HasProducts);
             }
         }
 

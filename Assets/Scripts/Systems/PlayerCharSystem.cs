@@ -1,5 +1,7 @@
 using System;
+using System.Linq;
 using Commands;
+using Data;
 using Events;
 using Holders;
 using Infra.CommandExecutor;
@@ -40,6 +42,7 @@ namespace Systems
             _eventBus.Subscribe<RequestPlayerCellChangeEvent>(OnRequestPlayerCellChanged);
             _eventBus.Subscribe<SpendMoneyOnBuildPointAnimationHalfEvent>(OnSpendMoneyOnBuildPointHalfAnimation);
             _eventBus.Subscribe<SpendMoneyOnBuildPointAnimationFinishedEvent>(OnSpendMoneyOnBuildPointAnimationFinished);
+            _eventBus.Subscribe<TruckArrivedEvent>(OnTruckArrivedEvent);
             _playerCharModel.CellPositionChanged += OnCellPositionChanged;
         }
 
@@ -48,6 +51,7 @@ namespace Systems
             _eventBus.Unsubscribe<RequestPlayerCellChangeEvent>(OnRequestPlayerCellChanged);
             _eventBus.Unsubscribe<SpendMoneyOnBuildPointAnimationHalfEvent>(OnSpendMoneyOnBuildPointHalfAnimation);
             _eventBus.Unsubscribe<SpendMoneyOnBuildPointAnimationFinishedEvent>(OnSpendMoneyOnBuildPointAnimationFinished);
+            _eventBus.Unsubscribe<TruckArrivedEvent>(OnTruckArrivedEvent);
             _playerCharModel.CellPositionChanged -= OnCellPositionChanged;
         }
 
@@ -59,6 +63,34 @@ namespace Systems
         private void OnCellPositionChanged(Vector2Int cellPosition)
         {
             TriggerSpendOnBuildPointIterationAnimationIfNeeded(cellPosition);
+            TakeTruckProductBoxIfNeeded(cellPosition);
+        }
+
+        private void OnTruckArrivedEvent(TruckArrivedEvent e)
+        {
+            TakeTruckProductBoxIfNeeded(_playerCharModel.CellPosition);
+        }
+
+        private void TakeTruckProductBoxIfNeeded(Vector2Int cellPos)
+        {
+            if (cellPos.x == 0
+                && (_shopModel.TryGetTruckPoint(new Vector2Int(-1, cellPos.y), out var truckPointModel)
+                    || _shopModel.TryGetTruckPoint(new Vector2Int(-1, cellPos.y + 1), out truckPointModel)))
+            {
+                if (truckPointModel.DeliverTimeSecondsRest <= 0
+                    && truckPointModel.HasProducts
+                    && _playerCharModel.HasProducts == false)
+                {
+                    var productBoxIndexToTake = truckPointModel.GetFirstNotEmptyProductBoxIndex();
+                    var productTypeToTake = truckPointModel.GetProductTypeAtBoxIndex(productBoxIndexToTake);
+                    var productsToAdd = Enumerable.Repeat(productTypeToTake, Constants.ProductsAmountInBox);
+                    
+                    truckPointModel.RemoveBox(productBoxIndexToTake);
+                    _playerCharModel.AddProductsBox(productsToAdd);
+                    
+                    _eventBus.Dispatch(new AnimateTakeBoxFromTruckEvent(truckPointModel, productBoxIndexToTake));
+                }
+            }
         }
 
         private void OnSpendMoneyOnBuildPointHalfAnimation(SpendMoneyOnBuildPointAnimationHalfEvent e)

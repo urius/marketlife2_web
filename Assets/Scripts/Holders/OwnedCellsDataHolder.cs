@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Infra.Instance;
 using Model.ShopObjects;
 using UnityEngine;
 
@@ -6,6 +7,8 @@ namespace Holders
 {
     public class OwnedCellsDataHolder : IOwnedCellsDataHolder
     {
+        private readonly IShopModelHolder _shopModelHolder = Instance.Get<IShopModelHolder>();
+        
         private readonly Dictionary<Vector2Int, OwnedCellData> _ownedCellDataByCoords = new();
         private readonly LinkedList<OwnedCellData> _ownedCellDataList = new();
         
@@ -65,7 +68,14 @@ namespace Holders
         
         public bool IsWalkableForPlayerChar(Vector2Int cellCoords)
         {
-            return IsOwnedByShopObject(cellCoords) == false;
+            return IsOutOfShop(cellCoords) == false && IsOwnedByShopObject(cellCoords) == false;
+        }
+
+        private bool IsOutOfShop(Vector2Int cellCoords)
+        {
+            var shopSize = _shopModelHolder.ShopModel.Size;
+            
+            return cellCoords.x < 0 || cellCoords.y < 0 || cellCoords.x >= shopSize.x || cellCoords.y >= shopSize.y;
         }
 
         private bool CheckShopObjectExist(ShopObjectModelBase shopObjectModel)

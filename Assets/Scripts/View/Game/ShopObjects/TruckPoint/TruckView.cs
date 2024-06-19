@@ -4,7 +4,7 @@ using View.Game.Misc;
 
 namespace View.Game.ShopObjects.TruckPoint
 {
-    public class TruckView : MonoBehaviour
+    public class TruckView : MonoBehaviour, ITruckBoxPositionsProvider
     {
         [SerializeField] private ProductsBoxView[] _productsBoxViews;
         [SerializeField] private Transform _spritesContainer;
@@ -17,6 +17,13 @@ namespace View.Game.ShopObjects.TruckPoint
         private const float TruckArriveAnimationDuration = Constants.TruckArrivingDuration - CapAnimationDuration;
 
         public int ProductBoxesAmount => _productsBoxViews.Length;
+
+        public Vector3 GetBoxWorldPosition(int boxIndex)
+        {
+            return boxIndex < ProductBoxesAmount
+                ? _productsBoxViews[boxIndex].transform.position
+                : _productsBoxViews[0].transform.position;
+        }
 
         public bool TryGetProductBoxView(int index, out ProductsBoxView productBoxView)
         {

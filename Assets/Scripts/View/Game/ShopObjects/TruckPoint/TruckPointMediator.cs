@@ -10,6 +10,7 @@ namespace View.Game.ShopObjects.TruckPoint
     {
         private readonly IGridCalculator _gridCalculator = Instance.Get<IGridCalculator>();
         private readonly SpritesHolderSo _spritesHolderSo = Instance.Get<SpritesHolderSo>();
+        private readonly ISharedViewsDataHolder _sharedViewsDataHolder = Instance.Get<ISharedViewsDataHolder>();
         
         private TruckView _truckView;
         private bool _truckArrivingTriggeredFlag = false;
@@ -19,6 +20,8 @@ namespace View.Game.ShopObjects.TruckPoint
             _truckView = InstantiatePrefab<TruckView>(PrefabKey.ProductTruck);
             _truckView.transform.position = _gridCalculator.GetCellCenterWorld(TargetModel.CellCoords);
             
+            _sharedViewsDataHolder.RegisterTruckBoxPositionProvider(TargetModel, _truckView);
+            
             SetTruckState();
             UpdateProductViews();
 
@@ -27,6 +30,8 @@ namespace View.Game.ShopObjects.TruckPoint
 
         protected override void UnmediateInternal()
         {
+            _sharedViewsDataHolder.UnregisterTruckBoxPositionProvider(TargetModel);
+            
             Unsubscribe();
             
             Destroy(_truckView);
@@ -46,7 +51,7 @@ namespace View.Game.ShopObjects.TruckPoint
 
             if (_truckView.TryGetProductBoxView(index, out var boxView))
             {
-                var hasProduct = productInBox != ProductType.Undefined;
+                var hasProduct = productInBox != ProductType.None;
 
                 boxView.SetVisible(hasProduct);
 
@@ -72,7 +77,7 @@ namespace View.Game.ShopObjects.TruckPoint
 
         private void OnBoxRemoved(int boxIndex)
         {
-            
+            UpdateProductView(boxIndex);
         }
 
         private void SetTruckState()
@@ -82,7 +87,7 @@ namespace View.Game.ShopObjects.TruckPoint
                 case <= 0:
                     SetTruckArrived();
                     break;
-                case <= Constants.TruckArrivingDuration:
+                case <= Constants.TruckArrivingDuration + 1:
                     AnimateTruckArrive();
                     break;
                 default:

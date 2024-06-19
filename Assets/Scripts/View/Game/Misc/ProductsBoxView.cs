@@ -1,5 +1,8 @@
+using System.Runtime.CompilerServices;
+using Data;
 using Other;
 using UnityEngine;
+using UnityEngine.Rendering;
 using View.Game.Product;
 using View.Game.Shared;
 
@@ -10,6 +13,10 @@ namespace View.Game.Misc
         [SerializeField]
         [LabeledArray(nameof(ProductPlaceholder.Transform))]
         private ProductView[] _products;
+        
+        [SerializeField]
+        private SortingGroup _sortingGroup;
+
 
         public void SetVisible(bool isVisible)
         {
@@ -22,6 +29,29 @@ namespace View.Game.Misc
             {
                 productView.SetSprite(sprite);
             }
+        }
+        
+        public void SetProductSprite(int index, Sprite sprite)
+        {
+            if (index < _products.Length)
+            {
+                _products[index].SetSprite(sprite);
+            }
+        }
+        
+        public void SetSortingOrder(int order)
+        {
+            _sortingGroup.sortingOrder = order;
+        }
+        
+        public void SetSortingLayerId(int sortingLayerId)
+        {
+            _sortingGroup.sortingLayerID = sortingLayerId;
+        }
+        
+        public void SetTopSortingLayer()
+        {
+            _sortingGroup.sortingLayerName = Constants.GeneralTopSortingLayerName;
         }
         
         [ExecuteInEditMode]
