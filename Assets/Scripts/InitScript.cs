@@ -34,6 +34,9 @@ public class InitScript : MonoBehaviour
 
     private void Awake()
     {
+        QualitySettings.vSyncCount = 1;
+        //Application.targetFrameRate = 60;
+
         SetupInstances();
     }
 
@@ -82,6 +85,7 @@ public class InitScript : MonoBehaviour
         SetupNewInstance<OwnedCellsDataHolder, IOwnedCellsDataHolder>();
         SetupNewInstance<ShelfSettingsProvider, IShelfSettingsProvider>();
         SetupNewInstance<PlayerCharViewSharedDataHolder, IPlayerCharViewSharedDataHolder>();
+        SetupNewInstance<SharedViewsDataHolder, ISharedViewsDataHolder>();
         
         _playerModelHolder = SetupNewInstance<PlayerModelHolder, IPlayerModelHolder>();
         var commandExecutor = SetupNewInstance<CommandExecutor, ICommandExecutor>();
