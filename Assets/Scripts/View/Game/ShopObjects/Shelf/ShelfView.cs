@@ -1,9 +1,6 @@
-using System;
 using Data;
-using Other;
 using UnityEngine;
 using View.Game.Product;
-using View.Game.Shared;
 using View.Game.ShopObjects.Common;
 
 namespace View.Game.ShopObjects.Shelf
@@ -18,24 +15,22 @@ namespace View.Game.ShopObjects.Shelf
         private int _shelfUpgradeIndex;
 
         [SerializeField]
-        [LabeledArray(nameof(ProductPlaceholder.Transform))]
-        private ProductPlaceholder[] _productPlaceholders;
-
-        [SerializeField]
         private ProductView[] _productViews;
         
         public ShopObjectType ShelfType => _shelfType;
         public int ShelfUpgradeIndex => _shelfUpgradeIndex;
         public int SlotsAmount => _productViews.Length;
-        
-        [ExecuteInEditMode]
-        private void OnDrawGizmos()
+
+        public Vector3 GetSlotPosition(int productIndex)
         {
-            if (_productPlaceholders == null) return;
-            
-            foreach (var productPlaceholder in _productPlaceholders)
+            return productIndex < _productViews.Length ? _productViews[productIndex].transform.position : Vector3.zero;
+        }
+
+        public void SetProductSprite(int productIndex, Sprite sprite)
+        {
+            if (productIndex < _productViews.Length)
             {
-                Gizmos.DrawSphere(productPlaceholder.Transform.position, 0.1f);
+                _productViews[productIndex].SetSprite(sprite);
             }
         }
     }

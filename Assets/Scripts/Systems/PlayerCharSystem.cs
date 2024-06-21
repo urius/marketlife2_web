@@ -9,6 +9,7 @@ using Infra.EventBus;
 using Infra.Instance;
 using Model;
 using Model.BuildPoint;
+using Model.ShopObjects;
 using UnityEngine;
 
 namespace Systems
@@ -22,6 +23,7 @@ namespace Systems
         private ShopModel _shopModel;
         private PlayerModel _playerModel;
         private PlayerCharModel _playerCharModel;
+        private bool _putProductsIsBlocked;
 
         public void Start()
         {
@@ -43,6 +45,7 @@ namespace Systems
             _eventBus.Subscribe<SpendMoneyOnBuildPointAnimationHalfEvent>(OnSpendMoneyOnBuildPointHalfAnimation);
             _eventBus.Subscribe<SpendMoneyOnBuildPointAnimationFinishedEvent>(OnSpendMoneyOnBuildPointAnimationFinished);
             _eventBus.Subscribe<TruckArrivedEvent>(OnTruckArrivedEvent);
+            _eventBus.Subscribe<PutProductOnShelfHalfAnimationEvent>(OnPutProductOnShelfHalfAnimationEvent);
             _playerCharModel.CellPositionChanged += OnCellPositionChanged;
         }
 
@@ -52,6 +55,7 @@ namespace Systems
             _eventBus.Unsubscribe<SpendMoneyOnBuildPointAnimationHalfEvent>(OnSpendMoneyOnBuildPointHalfAnimation);
             _eventBus.Unsubscribe<SpendMoneyOnBuildPointAnimationFinishedEvent>(OnSpendMoneyOnBuildPointAnimationFinished);
             _eventBus.Unsubscribe<TruckArrivedEvent>(OnTruckArrivedEvent);
+            _eventBus.Unsubscribe<PutProductOnShelfHalfAnimationEvent>(OnPutProductOnShelfHalfAnimationEvent);
             _playerCharModel.CellPositionChanged -= OnCellPositionChanged;
         }
 
@@ -64,6 +68,53 @@ namespace Systems
         {
             TriggerSpendOnBuildPointIterationAnimationIfNeeded(cellPosition);
             TakeTruckProductBoxIfNeeded(cellPosition);
+            PutProductOnShelfIfNeeded(cellPosition);
+        }
+
+        private void PutProductOnShelfIfNeeded(Vector2Int cellPosition)
+        {
+            if (!_playerCharModel.HasProducts || _putProductsIsBlocked) return;
+
+            var nearEmptyShelf = GetNearEmptyShelf(cellPosition);
+
+            if (nearEmptyShelf != null)
+            {
+                _putProductsIsBlocked = true;
+                
+                var shelfSlotIndex = nearEmptyShelf.GetEmptySlotIndex();
+
+                var boxSlotIndex = _playerCharModel.GetNextNotEmptySlotIndex();
+                var productToMove = _playerCharModel.ProductsInBox[boxSlotIndex];
+                
+                _playerCharModel.RemoveProductFromSlot(boxSlotIndex);
+
+                nearEmptyShelf.AddProductToSlot(shelfSlotIndex, productToMove);
+                
+                _eventBus.Dispatch(
+                    new AnimatePutProductOnShelfEvent(nearEmptyShelf, productToMove, boxSlotIndex, shelfSlotIndex));
+            }
+        }
+
+        private void OnPutProductOnShelfHalfAnimationEvent(PutProductOnShelfHalfAnimationEvent e)
+        {
+            _putProductsIsBlocked = false;
+            
+            PutProductOnShelfIfNeeded(_playerCharModel.CellPosition);
+        }
+
+        private ShelfModel GetNearEmptyShelf(Vector2Int cellPosition)
+        {
+            foreach (var cellOffset in Constants.NearCells)
+            {
+                var cellToCheck = cellPosition + cellOffset;
+                if (_shopModel.TryGetShelfModel(cellToCheck, out var shelfModel)
+                    && shelfModel.HasEmptySlots())
+                {
+                    return shelfModel;
+                }
+            }
+
+            return null;
         }
 
         private void OnTruckArrivedEvent(TruckArrivedEvent e)
@@ -83,10 +134,10 @@ namespace Systems
                 {
                     var productBoxIndexToTake = truckPointModel.GetFirstNotEmptyProductBoxIndex();
                     var productTypeToTake = truckPointModel.GetProductTypeAtBoxIndex(productBoxIndexToTake);
-                    var productsToAdd = Enumerable.Repeat(productTypeToTake, Constants.ProductsAmountInBox);
+                    var productsToAdd = Enumerable.Repeat(productTypeToTake, Constants.ProductsAmountInBox).ToArray();
                     
                     truckPointModel.RemoveBox(productBoxIndexToTake);
-                    _playerCharModel.AddProductsBox(productsToAdd);
+                    _playerCharModel.SetProductsInBox(productsToAdd);
                     
                     _eventBus.Dispatch(new AnimateTakeBoxFromTruckEvent(truckPointModel, productBoxIndexToTake));
                 }

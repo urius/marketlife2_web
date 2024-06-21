@@ -99,6 +99,8 @@ namespace View.Game.People
         {
             _eventBus.Subscribe<MovingVectorChangedEvent>(OnMovingVectorChangedEvent);
             _updatesProvider.FixedUpdateHappened += OnFixedUpdateHappened;
+            _playerCharModel.ProductsBoxAdded += OnProductsBoxAdded;
+            _playerCharModel.ProductRemoved += OnProductRemoved;
 
             DebugDrawGizmosDispatcher.DrawGizmosHappened += OnDrawGizmosHappened;
         }
@@ -107,8 +109,18 @@ namespace View.Game.People
         {
             _eventBus.Unsubscribe<MovingVectorChangedEvent>(OnMovingVectorChangedEvent);
             _updatesProvider.FixedUpdateHappened -= OnFixedUpdateHappened;
+            _playerCharModel.ProductsBoxAdded -= OnProductsBoxAdded;
+            _playerCharModel.ProductRemoved -= OnProductRemoved;
             
             DebugDrawGizmosDispatcher.DrawGizmosHappened -= OnDrawGizmosHappened;
+        }
+
+        private void OnProductRemoved(int slotIndex)
+        {
+            if (_playerCharModel.HasProducts == false)
+            {
+                UpdateAnimation();
+            }
         }
 
         private void OnFixedUpdateHappened()
@@ -118,6 +130,11 @@ namespace View.Game.People
             UpdateAnimation();
 
             _prevMoveDirection = _moveDirection;
+        }
+
+        private void OnProductsBoxAdded()
+        {
+            UpdateAnimation();
         }
 
         private void CheckCellCoords()

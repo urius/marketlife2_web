@@ -8,7 +8,7 @@ using View.Game.Shared;
 
 namespace View.Game.People
 {
-    public class ManView : MonoBehaviour, ISortableView
+    public class ManView : MonoBehaviour, ISortableView, IManViewBoxProductsPositionsProvider
     {
         [SerializeField] private SortingGroup _sortingGroup;
         [SerializeField] private Animation _animation;
@@ -21,12 +21,17 @@ namespace View.Game.People
         private ProductsBoxView _productsBoxView;
 
         public Transform ProductsBoxPlaceholderTransform => _productsBoxPlaceholderTransform;
-        
-        public ProductsBoxView GetProductBoxView()
+
+        public Vector3 GetProductInBoxPosition(int productIndex)
         {
-            return _productsBoxView;
+            if (productIndex < _productsBoxView.ProductViews.Length)
+            {
+                return _productsBoxView.ProductViews[productIndex].transform.position;
+            }
+
+            return _productsBoxView != null ? _productsBoxView.transform.position : Vector3.zero;
         }
-        
+
         public void SetProductsBoxVisibility(bool isVisible)
         {
             if (isVisible)

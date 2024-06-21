@@ -15,5 +15,10 @@ namespace View.Game.Product
         {
             _spriteRenderer.sortingOrder = order;
         }
+        
+        public void SetSortingLayerName(string sortingLayerName)
+        {
+            _spriteRenderer.sortingLayerName = sortingLayerName;
+        }
     }
 }

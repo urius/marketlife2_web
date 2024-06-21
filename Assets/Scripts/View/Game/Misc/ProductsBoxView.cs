@@ -17,6 +17,7 @@ namespace View.Game.Misc
         [SerializeField]
         private SortingGroup _sortingGroup;
 
+        public ProductView[] ProductViews => _products;
 
         public void SetVisible(bool isVisible)
         {

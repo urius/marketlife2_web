@@ -16,6 +16,7 @@ namespace View.Game.People
         private readonly ISharedViewsDataHolder _sharedViewsDataHolder = Instance.Get<ISharedViewsDataHolder>();
         private readonly SpritesHolderSo _spritesHolderSo = Instance.Get<SpritesHolderSo>();
         private readonly IUpdatesProvider _updatesProvider = Instance.Get<IUpdatesProvider>();
+        private readonly ISharedViewsDataHolder _viewsDataHolder = Instance.Get<ISharedViewsDataHolder>();
 
         private readonly ManView _playerCharView;
         private readonly PlayerCharModel _playerCharModel;
@@ -30,11 +31,15 @@ namespace View.Game.People
 
         protected override void MediateInternal()
         {
+            _viewsDataHolder.RegisterPlayerCharBoxProductsPositionProvider(_playerCharView);
+            
             Subscribe();
         }
 
         protected override void UnmediateInternal()
         {
+            _viewsDataHolder.UnregisterPlayerCharBoxPositionProvider();
+            
             Unsubscribe();
         }
 
@@ -42,12 +47,14 @@ namespace View.Game.People
         {
             _eventBus.Subscribe<AnimateTakeBoxFromTruckEvent>(AnimateTakeBoxFromTruckEventHandler);
             _playerCharModel.ProductsBoxAdded += OnProductsBoxAdded;
+            _playerCharModel.ProductRemoved += OnProductRemoved;
         }
 
         private void Unsubscribe()
         {
             _eventBus.Unsubscribe<AnimateTakeBoxFromTruckEvent>(AnimateTakeBoxFromTruckEventHandler);
             _playerCharModel.ProductsBoxAdded -= OnProductsBoxAdded;
+            _playerCharModel.ProductRemoved -= OnProductRemoved;
 
             _updatesProvider.FixedUpdateHappened -= OnTakeBoxAnimationFixedUpdate;
         }
@@ -55,6 +62,12 @@ namespace View.Game.People
         private void OnProductsBoxAdded()
         {
             UpdateProductBoxView();
+        }
+
+        private void OnProductRemoved(int slotIndex)
+        {
+            _playerCharView.SetProductsBoxVisibility(_playerCharModel.HasProducts);
+            DisplayProduct(slotIndex);
         }
 
         private void UpdateProductBoxView()
@@ -66,16 +79,21 @@ namespace View.Game.People
             {
                 for (var i = 0; i < _playerCharModel.ProductsInBox.Count; i++)
                 {
-                    var sprite = _spritesHolderSo.GetProductSpriteByKey(_playerCharModel.ProductsInBox[i]);
-                    _playerCharView.SetProductSprite(i, sprite);
+                    DisplayProduct(i);
                 }
             }
+        }
+
+        private void DisplayProduct(int slotIndex)
+        {
+            var sprite = _spritesHolderSo.GetProductSpriteByKey(_playerCharModel.ProductsInBox[slotIndex]);
+            _playerCharView.SetProductSprite(slotIndex, sprite);
         }
 
         private void AnimateTakeBoxFromTruckEventHandler(AnimateTakeBoxFromTruckEvent e)
         {
             var startPosition = _sharedViewsDataHolder
-                .GetPositionsProvider(e.TruckPointModel)
+                .GetTruckBoxPositionsProvider(e.TruckPointModel)
                 .GetBoxWorldPosition(e.ProductBoxIndexToTake);
 
             var animatedBoxView = InstantiatePrefab<ProductsBoxView>(PrefabKey.ProductsBox);
