@@ -59,6 +59,23 @@ namespace View.Game.ShopObjects.TruckPoint
             gameObject.SetActive(true);
         }
         
+        public void AnimateTruckMovedOut()
+        {
+            _spritesContainer.localPosition = Vector3.zero;
+
+            AnimateCapClose();
+            
+            _spritesContainer.LeanMove(_truckFarPositionTransform.position, TruckArriveAnimationDuration)
+                .setEaseInQuad()
+                .setDelay(CapAnimationDuration)
+                .setOnComplete(OnTruckMovedOutAnimationFinished);
+        }
+
+        private void OnTruckMovedOutAnimationFinished()
+        {
+            gameObject.SetActive(false);
+        }
+
         public void SetTruckMovedOut()
         {
             _spritesContainer.position = _truckFarPositionTransform.position;

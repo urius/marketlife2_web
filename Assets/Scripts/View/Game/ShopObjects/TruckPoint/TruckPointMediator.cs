@@ -23,7 +23,6 @@ namespace View.Game.ShopObjects.TruckPoint
             _sharedViewsDataHolder.RegisterTruckBoxPositionProvider(TargetModel, _truckView);
             
             SetTruckState();
-            UpdateProductViews();
 
             Subscribe();
         }
@@ -65,13 +64,15 @@ namespace View.Game.ShopObjects.TruckPoint
 
         private void Subscribe()
         {
-            TargetModel.DeliverTimeUpdated += OnDeliverTimeUpdated;
+            TargetModel.DeliverTimeAdvanced += OnDeliverTimeAdvanced;
+            TargetModel.DeliverTimeReset += OnDeliverTimeReset;
             TargetModel.BoxRemoved += OnBoxRemoved;
         }
 
         private void Unsubscribe()
         {
-            TargetModel.DeliverTimeUpdated -= OnDeliverTimeUpdated;
+            TargetModel.DeliverTimeAdvanced -= OnDeliverTimeAdvanced;
+            TargetModel.DeliverTimeReset -= OnDeliverTimeReset;
             TargetModel.BoxRemoved -= OnBoxRemoved;
         }
 
@@ -96,7 +97,7 @@ namespace View.Game.ShopObjects.TruckPoint
             }
         }
 
-        private void OnDeliverTimeUpdated(int deliverTimeRest)
+        private void OnDeliverTimeAdvanced(int deliverTimeRest)
         {
             if (deliverTimeRest <= Constants.TruckArrivingDuration
                 && _truckArrivingTriggeredFlag == false)
@@ -105,9 +106,17 @@ namespace View.Game.ShopObjects.TruckPoint
             }
         }
 
+        private void OnDeliverTimeReset()
+        {
+            _truckArrivingTriggeredFlag = false;
+            AnimateTruckMovedOut();
+        }
+
         private void AnimateTruckArrive()
         {
             _truckArrivingTriggeredFlag = true;
+            
+            UpdateProductViews();
             
             _truckView.AnimateTruckArrive();
         }
@@ -116,7 +125,18 @@ namespace View.Game.ShopObjects.TruckPoint
         {
             _truckArrivingTriggeredFlag = true;
             
+            UpdateProductViews();
+            
             _truckView.SetTruckArrived();
+        }
+        
+        
+
+        private void AnimateTruckMovedOut()
+        {
+            _truckArrivingTriggeredFlag = false;
+            
+            _truckView.AnimateTruckMovedOut();
         }
 
         private void SetTruckMovedOut()

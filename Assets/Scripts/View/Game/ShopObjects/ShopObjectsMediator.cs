@@ -56,7 +56,8 @@ namespace View.Game.ShopObjects
                     MediateChild<CashDeskMediator, CashDeskModel>(TargetTransform, (CashDeskModel)shopObjectModel);
                     break;
                 case ShopObjectType.TruckPoint:
-                    MediateChild<TruckPointMediator, TruckPointModel>(TargetTransform, (TruckPointModel)shopObjectModel);
+                    var truckPointModel = (TruckPointModel)shopObjectModel;
+                    MediateChild<TruckPointMediator, TruckPointModel>(TargetTransform, truckPointModel);
                     break;
                 default:
                     if (shopObjectModel.ShopObjectType.IsShelf())

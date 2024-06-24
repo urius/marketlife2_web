@@ -7,7 +7,8 @@ namespace Model.ShopObjects
 {
     public class TruckPointModel : ShopObjectModelBase
     {
-        public event Action<int> DeliverTimeUpdated;
+        public event Action<int> DeliverTimeAdvanced;
+        public event Action DeliverTimeReset;
         public event Action<int> BoxRemoved;
         
         private readonly TruckPointSetting _setting;
@@ -39,6 +40,11 @@ namespace Model.ShopObjects
             }
         }
 
+        public void ResetProductsSilently()
+        {
+            Array.Copy(_setting.Products, CurrentProductBoxes, CurrentProductBoxes.Length);
+        }
+
         public ProductType GetProductTypeAtBoxIndex(int boxIndex)
         {
             return boxIndex < CurrentProductBoxes.Length ? CurrentProductBoxes[boxIndex] : ProductType.None;
@@ -65,9 +71,16 @@ namespace Model.ShopObjects
 
             DeliverTimeSecondsRest--;
 
-            DeliverTimeUpdated?.Invoke(DeliverTimeSecondsRest);
+            DeliverTimeAdvanced?.Invoke(DeliverTimeSecondsRest);
 
             return true;
+        }
+
+        public void ResetDeliverTime()
+        {
+            DeliverTimeSecondsRest = _setting.DeliverTimeSeconds;
+            
+            DeliverTimeReset?.Invoke();
         }
     }
 }

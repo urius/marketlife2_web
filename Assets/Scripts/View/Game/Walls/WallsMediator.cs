@@ -6,6 +6,7 @@ using Model;
 using Model.ShopObjects;
 using UnityEngine;
 using Utils;
+using View.Game.ShopObjects.TruckPoint;
 
 namespace View.Game.Walls
 {
@@ -48,6 +49,8 @@ namespace View.Game.Walls
             {
                 RemoveWall(shopObjectModel.CellCoords.y);
                 RemoveWall(shopObjectModel.CellCoords.y-1);
+                
+                MediateChild<TruckGatesMediator, TruckPointModel>(TargetTransform, (TruckPointModel)shopObjectModel);
             }
         }
 

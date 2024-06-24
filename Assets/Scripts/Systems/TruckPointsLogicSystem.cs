@@ -55,6 +55,14 @@ namespace Systems
                 if (isAdvanced && truckPointModel.DeliverTimeSecondsRest <= 0)
                 {
                     _eventBus.Dispatch(new TruckArrivedEvent(truckPointModel));
+                    return;
+                }
+
+                if (truckPointModel.DeliverTimeSecondsRest <= 0 
+                    && truckPointModel.HasProducts == false)
+                {
+                    truckPointModel.ResetDeliverTime();
+                    truckPointModel.ResetProductsSilently();
                 }
             }
         }

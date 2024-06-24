@@ -21,5 +21,6 @@ namespace Data
         ProductTruck,
         ProductsBox,
         ProductView,
+        TruckGates,
     }
 }
