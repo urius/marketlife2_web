@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using Data;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Model.ShopObjects
 {
@@ -27,6 +28,45 @@ namespace Model.ShopObjects
         public bool HasEmptySlots()
         {
             return ProductSlots.Any(slot => slot == ProductType.None);
+        }
+
+        public bool HasProducts()
+        {
+            foreach (var product in ProductSlots)
+            {
+                if (product != ProductType.None)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public bool HasProduct(ProductType productType)
+        {
+            return ProductSlots.Any(slot => slot == productType);
+        }
+        
+        public int GetProductSlotIndex(ProductType productType)
+        {
+            return Array.IndexOf(ProductSlots, productType);
+        }
+        
+        public ProductType GetRandomNotEmptyProductOrDefault()
+        {
+            var nonEmptySlots = ProductSlots
+                .Where(slot => slot != ProductType.None)
+                .ToArray();
+    
+            if (nonEmptySlots.Length > 0)
+            {
+                var randomIndex = Random.Range(0, nonEmptySlots.Length);
+                
+                return nonEmptySlots[randomIndex];
+            }
+    
+            return ProductType.None;
         }
         
         public int GetEmptySlotIndex()

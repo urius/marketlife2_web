@@ -13,7 +13,7 @@ namespace View.Game.ShopObjects.TruckPoint
         [SerializeField] private Transform _truckBoxCapClosedPositionTransform;
         [SerializeField] private Transform _truckFarPositionTransform;
 
-        private const float CapAnimationDuration = 0.5f;
+        private const float CapAnimationDuration = 0.8f;
         private const float TruckArriveAnimationDuration = Constants.TruckArrivingDuration - CapAnimationDuration;
 
         public int ProductBoxesAmount => _productsBoxViews.Length;

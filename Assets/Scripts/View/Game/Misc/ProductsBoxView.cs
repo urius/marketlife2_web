@@ -1,4 +1,4 @@
-using System.Runtime.CompilerServices;
+using System;
 using Data;
 using Other;
 using UnityEngine;
@@ -18,6 +18,11 @@ namespace View.Game.Misc
         private SortingGroup _sortingGroup;
 
         public ProductView[] ProductViews => _products;
+
+        private void Awake()
+        {
+            SetProductsSprite(null);
+        }
 
         public void SetVisible(bool isVisible)
         {

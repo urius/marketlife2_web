@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Data;
+using Model.ShopObjects;
 using UnityEngine;
 
 namespace Model
@@ -15,16 +16,17 @@ namespace Model
         private readonly ProductType[] _productsInBox =
             Enumerable.Repeat(ProductType.None, Constants.ProductsAmountInBox).ToArray();
 
+        private CashDeskModel _nearCashDesk;
+
         public PlayerCharModel(Vector2Int cellPosition)
         {
             CellPosition = cellPosition;
         }
 
         public Vector2Int CellPosition { get; private set; }
-
         public bool HasProducts => HasProductsInternal();
-
         public IReadOnlyList<ProductType> ProductsInBox => _productsInBox;
+        public CashDeskModel NearCashDesk => _nearCashDesk;
 
         public void SetCellPosition(Vector2Int cellPosition)
         {
@@ -68,6 +70,16 @@ namespace Model
             }
 
             return -1;
+        }
+
+        public void SetNearCashDesk(CashDeskModel cashDeskModel)
+        {
+            _nearCashDesk = cashDeskModel;
+        }
+        
+        public void ResetNearCashDesk()
+        {
+            _nearCashDesk = null;
         }
 
         private bool HasProductsInternal()

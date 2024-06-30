@@ -22,6 +22,7 @@ namespace View.Game.Walls
         protected override void MediateInternal()
         {
             DisplayWalls();
+            AddTruckPoints();
 
             Subscribe();
         }
@@ -31,6 +32,17 @@ namespace View.Game.Walls
             RemoveWalls();
             
             Unsubscribe();
+        }
+
+        private void AddTruckPoints()
+        {
+            foreach (var kvp in ShopModel.ShopObjects)
+            {
+                if (kvp.Value.ShopObjectType == ShopObjectType.TruckPoint)
+                {
+                    AddTruckPoint((TruckPointModel)kvp.Value);
+                }
+            }
         }
 
         private void Subscribe()
@@ -47,11 +59,16 @@ namespace View.Game.Walls
         {
             if (shopObjectModel.ShopObjectType == ShopObjectType.TruckPoint)
             {
-                RemoveWall(shopObjectModel.CellCoords.y);
-                RemoveWall(shopObjectModel.CellCoords.y-1);
-                
-                MediateChild<TruckGatesMediator, TruckPointModel>(TargetTransform, (TruckPointModel)shopObjectModel);
+                AddTruckPoint((TruckPointModel)shopObjectModel);
             }
+        }
+
+        private void AddTruckPoint(TruckPointModel model)
+        {
+            RemoveWall(model.CellCoords.y);
+            RemoveWall(model.CellCoords.y-1);
+
+            MediateChild<TruckGatesMediator, TruckPointModel>(TargetTransform, model);
         }
 
         private void RemoveWall(int yCoords)
@@ -73,6 +90,8 @@ namespace View.Game.Walls
             
             for (var x = 0; x < shopSize.x; x++)
             {
+                if (ShopModel.HaveDoorOn(x)) continue;
+                
                 var coords = new Vector2Int(x, -1);
                 var wallView = CreateOrGetWall(coords);
                 wallView.ToXMode(x == shopSize.x - 1);

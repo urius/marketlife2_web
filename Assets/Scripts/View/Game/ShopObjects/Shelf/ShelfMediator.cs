@@ -33,6 +33,7 @@ namespace View.Game.ShopObjects.Shelf
             if (_shelfSettingsProvider.TryGetShelfSetting(TargetModel.ShopObjectType, TargetModel.UpgradeIndex, out var shelfSettings))
             {
                 _view = InstantiatePrefab<ShelfView>(shelfSettings.PrefabKey);
+                _sharedViewsDataHolder.RegisterShelfSlotPositionProvider(TargetModel, _view);
                 
                 _view.transform.position = _gridCalculator.GetCellCenterWorld(TargetModel.CellCoords);
 
@@ -53,6 +54,7 @@ namespace View.Game.ShopObjects.Shelf
         {
             Unsubscribe();
             
+            _sharedViewsDataHolder.UnregisterShelfSlotPositionProvider(TargetModel);
             _ownedCellsDataHolder.UnregisterShopObject(TargetModel);
             
             Destroy(_view);

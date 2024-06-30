@@ -17,6 +17,7 @@ namespace Systems
             StartSystem<PlayerCharSystem>();
             StartSystem<BuildPointsAppearanceSystem>();
             StartSystem<TruckPointsLogicSystem>();
+            StartSystem<CustomersControlSystem>();
         }
 
         public void Stop()

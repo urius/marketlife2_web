@@ -25,6 +25,7 @@ namespace View.Game
             MediateChild<ShopObjectsMediator>(_gameRootView.ShopObjectsContainerTransform);
             MediateChild<BuildPointsMediator>(_gameRootView.ShopObjectsContainerTransform);
             MediateChild<PlayerCharMediator>(_gameRootView.PeopleContainerTransform);
+            MediateChild<CustomersMediator>(_gameRootView.PeopleContainerTransform);
         }
 
         protected override void UnmediateInternal()

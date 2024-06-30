@@ -6,7 +6,7 @@ using View.Game.ShopObjects.Common;
 namespace View.Game.ShopObjects.Shelf
 {
     [SelectionBase]
-    public class ShelfView : ShopObjectViewBase
+    public class ShelfView : ShopObjectViewBase, IShelfProductSlotPositionProvider
     {
         [SerializeField] 
         private ShopObjectType _shelfType;
@@ -32,6 +32,16 @@ namespace View.Game.ShopObjects.Shelf
             {
                 _productViews[productIndex].SetSprite(sprite);
             }
+        }
+
+        public Vector3 GetSlotWorldPosition(int slotIndex)
+        {
+            if (slotIndex < _productViews.Length)
+            {
+                return _productViews[slotIndex].transform.position;
+            }
+
+            return Vector3.zero;
         }
     }
 }

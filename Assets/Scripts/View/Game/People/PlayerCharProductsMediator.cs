@@ -56,7 +56,7 @@ namespace View.Game.People
             _playerCharModel.ProductsBoxAdded -= OnProductsBoxAdded;
             _playerCharModel.ProductRemoved -= OnProductRemoved;
 
-            _updatesProvider.FixedUpdateHappened -= OnTakeBoxAnimationFixedUpdate;
+            _updatesProvider.GameplayFixedUpdate -= OnTakeBoxAnimationGameplayFixedUpdate;
         }
 
         private void OnProductsBoxAdded()
@@ -87,7 +87,7 @@ namespace View.Game.People
         private void DisplayProduct(int slotIndex)
         {
             var sprite = _spritesHolderSo.GetProductSpriteByKey(_playerCharModel.ProductsInBox[slotIndex]);
-            _playerCharView.SetProductSprite(slotIndex, sprite);
+            _playerCharView.SetProductInBoxSprite(slotIndex, sprite);
         }
 
         private void AnimateTakeBoxFromTruckEventHandler(AnimateTakeBoxFromTruckEvent e)
@@ -115,15 +115,15 @@ namespace View.Game.People
             
             _playerCharView.SetProductsBoxVisibility(false);
 
-            _updatesProvider.FixedUpdateHappened -= OnTakeBoxAnimationFixedUpdate;
-            _updatesProvider.FixedUpdateHappened += OnTakeBoxAnimationFixedUpdate;
+            _updatesProvider.GameplayFixedUpdate -= OnTakeBoxAnimationGameplayFixedUpdate;
+            _updatesProvider.GameplayFixedUpdate += OnTakeBoxAnimationGameplayFixedUpdate;
         }
 
-        private void OnTakeBoxAnimationFixedUpdate()
+        private void OnTakeBoxAnimationGameplayFixedUpdate()
         {
             if (_takeBoxAnimationContext == null)
             {
-                _updatesProvider.FixedUpdateHappened -= OnTakeBoxAnimationFixedUpdate;
+                _updatesProvider.GameplayFixedUpdate -= OnTakeBoxAnimationGameplayFixedUpdate;
                 return;
             }
 

@@ -42,13 +42,13 @@ namespace View.Camera
 
         private void Subscribe()
         {
-            _updatesProvider.FixedUpdateHappened += OnFixedUpdateHappened;
+            _updatesProvider.GameplayFixedUpdate += OnGameplayFixedUpdate;
             _eventBus.Subscribe<PlayerCharPositionChangedEvent>(OnPlayerCharPositionChanged);
         }
 
         private void Unsubscribe()
         {
-            _updatesProvider.FixedUpdateHappened -= OnFixedUpdateHappened;
+            _updatesProvider.GameplayFixedUpdate -= OnGameplayFixedUpdate;
             _eventBus.Unsubscribe<PlayerCharPositionChangedEvent>(OnPlayerCharPositionChanged);
         }
 
@@ -57,7 +57,7 @@ namespace View.Camera
             _playerCharPos = e.Position;
         }
 
-        private void OnFixedUpdateHappened()
+        private void OnGameplayFixedUpdate()
         {
             FollowMainChar();
         }

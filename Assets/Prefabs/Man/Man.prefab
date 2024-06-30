@@ -58,8 +58,11 @@ MonoBehaviour:
     Animation: {fileID: 7400000, guid: 64107eecb21ac4ad38d270ceb88d29c1, type: 2}
   - AnimationKey: 3
     Animation: {fileID: 7400000, guid: 599868c2852f94dcd9c075462f6536d2, type: 2}
+  - AnimationKey: 5
+    Animation: {fileID: 7400000, guid: 897b4f326d9e84610be958c6329f68d9, type: 2}
   _productsBoxPlaceholderTransform: {fileID: 212763377410095167}
   _productsBoxPrefab: {fileID: 3998808810290989356, guid: 7ec4afe83f23b45618b8a02092f3b60f, type: 3}
+  _productsBasketPrefab: {fileID: 788191810681536239, guid: 0c34518120986492899b3cfd0701bb00, type: 3}
   _hand2SpriteRenderer: {fileID: 8876772103234394379}
 --- !u!210 &8420657866138207180
 SortingGroup:
@@ -70,7 +73,7 @@ SortingGroup:
   m_GameObject: {fileID: 5965797449240045478}
   m_Enabled: 1
   m_SortingLayerID: 1419607231
-  m_SortingLayer: 5
+  m_SortingLayer: 6
   m_SortingOrder: 0
   m_SortAtRoot: 0
 --- !u!1001 &1313754762126981625
@@ -143,6 +146,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 8365550853940748297}
     m_Modifications:
+    - target: {fileID: 3471575152118566654, guid: 1a23f95622c714718b008a6f5ffda471, type: 3}
+      propertyPath: m_Animations.Array.size
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3471575152118566654, guid: 1a23f95622c714718b008a6f5ffda471, type: 3}
+      propertyPath: m_Animations.Array.data[4]
+      value: 
+      objectReference: {fileID: 7400000, guid: 897b4f326d9e84610be958c6329f68d9, type: 2}
+    - target: {fileID: 5587391881389376114, guid: 1a23f95622c714718b008a6f5ffda471, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: -42.778
+      objectReference: {fileID: 0}
+    - target: {fileID: 5587391882359455008, guid: 1a23f95622c714718b008a6f5ffda471, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: -43.839
+      objectReference: {fileID: 0}
     - target: {fileID: 5587391882423970216, guid: 1a23f95622c714718b008a6f5ffda471, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

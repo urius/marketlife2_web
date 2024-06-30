@@ -1,5 +1,5 @@
+using System;
 using System.Collections.Generic;
-using Infra.Instance;
 using Model.ShopObjects;
 using UnityEngine;
 
@@ -7,8 +7,6 @@ namespace Holders
 {
     public class OwnedCellsDataHolder : IOwnedCellsDataHolder
     {
-        private readonly IShopModelHolder _shopModelHolder = Instance.Get<IShopModelHolder>();
-        
         private readonly Dictionary<Vector2Int, OwnedCellData> _ownedCellDataByCoords = new();
         private readonly LinkedList<OwnedCellData> _ownedCellDataList = new();
         
@@ -52,7 +50,7 @@ namespace Holders
         {
             return _ownedCellDataByCoords.ContainsKey(cellCoords);
         }
-        
+
         public bool TryGetShopObjectOwner(Vector2Int shopObjectCellCoords, out OwnedCellByShopObjectData ownerData)
         {
             ownerData = null;
@@ -66,16 +64,24 @@ namespace Holders
             return ownerData != null;
         }
         
-        public bool IsWalkableForPlayerChar(Vector2Int cellCoords)
+        public Vector2Int[] GetShopObjectOwnedCells(ShopObjectModelBase shopObjectModel)
         {
-            return IsOutOfShop(cellCoords) == false && IsOwnedByShopObject(cellCoords) == false;
+            if (TryGetShopObjectOwner(shopObjectModel.CellCoords, out var ownerData))
+            {
+                return ownerData.OwnedCells;
+            }
+
+            return Array.Empty<Vector2Int>();
         }
 
-        private bool IsOutOfShop(Vector2Int cellCoords)
+        public bool IsWalkableForPlayerChar(Vector2Int cellCoords)
         {
-            var shopSize = _shopModelHolder.ShopModel.Size;
-            
-            return cellCoords.x < 0 || cellCoords.y < 0 || cellCoords.x >= shopSize.x || cellCoords.y >= shopSize.y;
+            return IsOwnedByShopObject(cellCoords) == false;
+        }
+
+        public bool IsWalkableForCustomerChar(Vector2Int cellCoords)
+        {
+            return IsOwnedByShopObject(cellCoords) == false;
         }
 
         private bool CheckShopObjectExist(ShopObjectModelBase shopObjectModel)
@@ -98,7 +104,9 @@ namespace Holders
         public bool RegisterShopObject(ShopObjectModelBase shopObjectModel, Vector2Int[] ownedCells);
         public bool IsOwnedByShopObject(Vector2Int cellCoords);
         public bool TryGetShopObjectOwner(Vector2Int shopObjectCellCoords, out OwnedCellByShopObjectData ownedData);
+        public Vector2Int[] GetShopObjectOwnedCells(ShopObjectModelBase shopObjectModel);
         public bool IsWalkableForPlayerChar(Vector2Int cellCoords);
+        public bool IsWalkableForCustomerChar(Vector2Int cellCoords);
         public void UnregisterShopObject(ShopObjectModelBase shopObjectModel);
     }
 

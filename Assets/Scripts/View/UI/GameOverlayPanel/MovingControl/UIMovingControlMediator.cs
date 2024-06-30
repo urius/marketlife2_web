@@ -45,7 +45,7 @@ namespace View.UI.GameOverlayPanel.MovingControl
             _eventBus.Unsubscribe<GameLayerPointerDownEvent>(OnGameLayerPointerDownEvent);
             _eventBus.Unsubscribe<GameLayerPointerUpEvent>(OnGameLayerPointerUpEvent);
             
-            _updatesProvider.FixedUpdateHappened -= OnFixedUpdateHappened;
+            _updatesProvider.GameplayFixedUpdate -= OnGameplayFixedUpdate;
         }
 
         private void OnGameLayerPointerDownEvent(GameLayerPointerDownEvent e)
@@ -56,11 +56,11 @@ namespace View.UI.GameOverlayPanel.MovingControl
             _movingControlView.SetAnchoredPosition(_viewZeroPoint);
             _movingControlView.ResetAndActivate();
 
-            _updatesProvider.FixedUpdateHappened -= OnFixedUpdateHappened;
-            _updatesProvider.FixedUpdateHappened += OnFixedUpdateHappened;
+            _updatesProvider.GameplayFixedUpdate -= OnGameplayFixedUpdate;
+            _updatesProvider.GameplayFixedUpdate += OnGameplayFixedUpdate;
         }
 
-        private void OnFixedUpdateHappened()
+        private void OnGameplayFixedUpdate()
         {
             if (Input.mousePosition == _lastMousePosition) return;
             
@@ -90,7 +90,7 @@ namespace View.UI.GameOverlayPanel.MovingControl
             _movingControlView ??= CreateView();
             _movingControlView.Deactivate();
             
-            _updatesProvider.FixedUpdateHappened -= OnFixedUpdateHappened;
+            _updatesProvider.GameplayFixedUpdate -= OnGameplayFixedUpdate;
             
             _eventBus.Dispatch(new MovingVectorChangedEvent(Vector2.zero));
         }

@@ -10,7 +10,7 @@ namespace View.Game.ShopObjects.Common
         
         public OwnedCellView[] OwnedCellViews { get; private set; }
 
-        private void Awake()
+        protected virtual void Awake()
         {
             OwnedCellViews = GetComponentsInChildren<OwnedCellView>();
             
@@ -23,6 +23,11 @@ namespace View.Game.ShopObjects.Common
         public void SetSortingOrder(int order)
         {
             _sortingGroup.sortingOrder = order;
+        }
+
+        public void SetSortingLayerName(string sortingLayerName)
+        {
+            _sortingGroup.sortingLayerName = sortingLayerName;
         }
     }
 }

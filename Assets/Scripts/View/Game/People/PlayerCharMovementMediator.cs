@@ -30,21 +30,21 @@ namespace View.Game.People
         private Vector2Int _cellCoords;
         private (Vector2Int direction, Vector3[] offsets)[] _detectorOffsets;
         private Vector3 _playerWorldPosition;
-        private DynamicViewSortingLogic _sortingLogic;
         private Vector2 _prevMoveDirection;
         private PlayerCharModel _playerCharModel;
+        private ShopModel _shopModel;
 
         protected override void MediateInternal()
         {
             _playerCharModel = _playerModelHolder.PlayerModel.PlayerCharModel;
+            _shopModel = _playerModelHolder.PlayerModel.ShopModel;
             
             FillDetectorOffsets();
             
             _playerCharView = TargetTransform.GetComponent<ManView>();
             _playerWorldPosition = _playerCharView.transform.position;
 
-            _sortingLogic = new DynamicViewSortingLogic(_playerCharView, _ownedCellsDataHolder);
-            _sortingLogic.UpdateSorting(_cellCoords);
+            UpdateSorting();
             
             Subscribe();
         }
@@ -98,7 +98,7 @@ namespace View.Game.People
         private void Subscribe()
         {
             _eventBus.Subscribe<MovingVectorChangedEvent>(OnMovingVectorChangedEvent);
-            _updatesProvider.FixedUpdateHappened += OnFixedUpdateHappened;
+            _updatesProvider.GameplayFixedUpdate += OnGameplayFixedUpdate;
             _playerCharModel.ProductsBoxAdded += OnProductsBoxAdded;
             _playerCharModel.ProductRemoved += OnProductRemoved;
 
@@ -108,7 +108,7 @@ namespace View.Game.People
         private void Unsubscribe()
         {
             _eventBus.Unsubscribe<MovingVectorChangedEvent>(OnMovingVectorChangedEvent);
-            _updatesProvider.FixedUpdateHappened -= OnFixedUpdateHappened;
+            _updatesProvider.GameplayFixedUpdate -= OnGameplayFixedUpdate;
             _playerCharModel.ProductsBoxAdded -= OnProductsBoxAdded;
             _playerCharModel.ProductRemoved -= OnProductRemoved;
             
@@ -123,11 +123,15 @@ namespace View.Game.People
             }
         }
 
-        private void OnFixedUpdateHappened()
+        private void OnGameplayFixedUpdate()
         {
             ProcessMove();
             CheckCellCoords();
-            UpdateAnimation();
+
+            if (_prevMoveDirection != _moveDirection)
+            {
+                UpdateAnimation();
+            }
 
             _prevMoveDirection = _moveDirection;
         }
@@ -147,10 +151,15 @@ namespace View.Game.People
             {
                 _cellCoords = newCellCoords;
                 
-                _sortingLogic.UpdateSorting(_cellCoords);
+                UpdateSorting();
                 
                 _eventBus.Dispatch(new RequestPlayerCellChangeEvent(_cellCoords));
             }
+        }
+
+        private void UpdateSorting()
+        {
+            DynamicViewSortingLogic.UpdateSorting(_playerCharView, _ownedCellsDataHolder, _cellCoords);
         }
 
         private void ProcessMove()
@@ -171,8 +180,6 @@ namespace View.Game.People
 
         private void UpdateAnimation()
         {
-            if (_prevMoveDirection == _moveDirection) return;
-
             switch (_moveDirection.x)
             {
                 case > 0:
@@ -232,7 +239,8 @@ namespace View.Game.People
 
         private bool IsWalkable(Vector2Int cellPos)
         {
-            return _ownedCellsDataHolder.IsWalkableForPlayerChar(cellPos);
+            return _shopModel.IsOutOfShop(cellPos) == false
+                   && _ownedCellsDataHolder.IsWalkableForPlayerChar(cellPos);
         }
 
 

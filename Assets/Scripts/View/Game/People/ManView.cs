@@ -15,10 +15,12 @@ namespace View.Game.People
         [SerializeField, LabeledArray(nameof(AnimationData.AnimationKey))] private AnimationData[] _animationsData;
         [SerializeField] private Transform _productsBoxPlaceholderTransform;
         [SerializeField] private GameObject _productsBoxPrefab;
+        [SerializeField] private GameObject _productsBasketPrefab;
         [SerializeField] private SpriteRenderer _hand2SpriteRenderer;
         
         private AnimationKey _currentAnimationKey = AnimationKey.None;
         private ProductsBoxView _productsBoxView;
+        private ProductsBasketView _productsBasketView;
 
         public Transform ProductsBoxPlaceholderTransform => _productsBoxPlaceholderTransform;
 
@@ -30,6 +32,16 @@ namespace View.Game.People
             }
 
             return _productsBoxView != null ? _productsBoxView.transform.position : Vector3.zero;
+        }
+        
+        public Vector3 GetProductInBasketPosition(int productIndex)
+        {
+            if (productIndex < _productsBasketView.ProductViews.Length)
+            {
+                return _productsBasketView.ProductViews[productIndex].transform.position;
+            }
+
+            return _productsBasketView != null ? _productsBasketView.transform.position : Vector3.zero;
         }
 
         public void SetProductsBoxVisibility(bool isVisible)
@@ -45,17 +57,43 @@ namespace View.Game.People
                 _productsBoxView.SetVisible(isVisible);
             }
         }
+        
+        public void SetProductsBasketVisibility(bool isVisible)
+        {
+            if (isVisible)
+            {
+                CreateProductsBasketViewIfNeeded();
+            }
 
-        public void SetProductSprite(int productIndex, Sprite sprite)
+            if (_productsBasketView != null)
+            {
+                _productsBoxPlaceholderTransform.gameObject.SetActive(isVisible);
+                _productsBasketView.SetVisible(isVisible);
+            }
+        }
+
+        public void SetProductInBoxSprite(int productIndex, Sprite sprite)
         {
             CreateProductsBoxViewIfNeeded();
             
             _productsBoxView.SetProductSprite(productIndex, sprite);
         }
+        
+        public void SetProductInBasketSprite(int productIndex, Sprite sprite)
+        {
+            CreateProductsBasketViewIfNeeded();
+    
+            _productsBasketView.SetProductSprite(productIndex, sprite);
+        }
 
         public void SetSortingOrder(int order)
         {
             _sortingGroup.sortingOrder = order;
+        }
+        
+        public void SetSortingLayerName(string sortingLayerName)
+        {
+            _sortingGroup.sortingLayerName = sortingLayerName;
         }
 
         public void ToRightSide()
@@ -86,6 +124,11 @@ namespace View.Game.People
             PlayAnimationByKey(withPayloadInHands ? AnimationKey.WalkWithBox : AnimationKey.Walk);
         }
 
+        public void ToTakingProductState()
+        {
+            PlayAnimationByKey(AnimationKey.TakingProduct);
+        }
+
         private void CreateProductsBoxViewIfNeeded()
         {
             if (_productsBoxView == null)
@@ -97,19 +140,32 @@ namespace View.Game.People
                 _productsBoxView.SetSortingOrder(_hand2SpriteRenderer.sortingOrder - 1);
             }
         }
+        
+        private void CreateProductsBasketViewIfNeeded()
+        {
+            if (_productsBasketView == null)
+            {
+                var go = Instantiate(_productsBasketPrefab, _productsBoxPlaceholderTransform);
+                _productsBasketView = go.GetComponent<ProductsBasketView>();
+                
+                _productsBasketView.SetSortingLayerId(_hand2SpriteRenderer.sortingLayerID);
+                _productsBasketView.SetSortingOrder(_hand2SpriteRenderer.sortingOrder - 1);
+            }
+        }
 
         private void PlayAnimationByKey(AnimationKey animationKey)
         {
             if (_currentAnimationKey == animationKey) return;
             
             _currentAnimationKey = animationKey;
-            
+
             if (_animationsData.Any(a => a.AnimationKey == animationKey))
             {
                 var animationData = _animationsData.FirstOrDefault(a => a.AnimationKey == animationKey);
 
-                _animation.clip = animationData.Animation;
-                _animation.Play();
+                //_animation.Stop();
+                //_animation.clip = animationData.Animation;
+                _animation.Play(animationData.Animation.name);
             }
         }
 
@@ -127,6 +183,7 @@ namespace View.Game.People
             Walk,
             WalkWithBox,
             IdleWithBox,
+            TakingProduct,
         }
     }
 }

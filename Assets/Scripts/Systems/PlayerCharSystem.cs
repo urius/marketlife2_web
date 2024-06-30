@@ -69,6 +69,23 @@ namespace Systems
             TriggerSpendOnBuildPointIterationAnimationIfNeeded(cellPosition);
             TakeTruckProductBoxIfNeeded(cellPosition);
             PutProductOnShelfIfNeeded(cellPosition);
+            CheckNearCashDesk(cellPosition);
+        }
+
+        private void CheckNearCashDesk(Vector2Int cellPosition)
+        {
+            CashDeskModel result = null;
+            foreach (var cellOffset in Constants.NearCells8)
+            {
+                var nearCell = cellPosition + cellOffset;
+                if (_shopModel.TryGetCashDesk(nearCell, out result))
+                {
+                    _playerCharModel.SetNearCashDesk(result);
+                    return;
+                }
+            }
+
+            _playerCharModel.ResetNearCashDesk();
         }
 
         private void PutProductOnShelfIfNeeded(Vector2Int cellPosition)
@@ -104,7 +121,7 @@ namespace Systems
 
         private ShelfModel GetNearEmptyShelf(Vector2Int cellPosition)
         {
-            foreach (var cellOffset in Constants.NearCells)
+            foreach (var cellOffset in Constants.NearCells8)
             {
                 var cellToCheck = cellPosition + cellOffset;
                 if (_shopModel.TryGetShelfModel(cellToCheck, out var shelfModel)
@@ -186,11 +203,12 @@ namespace Systems
         {
             var result = moneyToBuildLeft switch
             {
-                > 500 => 50,
-                > 100 => 20,
-                > 50 => 10,
-                > 10 => 3,
-                > 5 => 2,
+                > 500 => 300,
+                > 100 => 50,
+                > 50 => 25,
+                > 20 => 10,
+                > 10 => 5,
+                > 5 => 3,
                 _ => 1
             };
 

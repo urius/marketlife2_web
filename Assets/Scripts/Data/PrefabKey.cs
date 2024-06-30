@@ -22,5 +22,7 @@ namespace Data
         ProductsBox,
         ProductView,
         TruckGates,
+        ProductsBasket,
+        MoneyCashDesk,
     }
 }

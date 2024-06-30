@@ -14,5 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _truckPointsSettings:
   - Products: 0100000011000000
-    DeliverTimeSeconds: 5
-    Cost: 20
+    DeliverTimeSeconds: 15

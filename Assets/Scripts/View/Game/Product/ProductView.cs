@@ -6,6 +6,11 @@ namespace View.Game.Product
     {
         [SerializeField] private SpriteRenderer _spriteRenderer;
 
+        private void OnDisable()
+        {
+            SetAlpha(1);
+        }
+
         public void SetSprite(Sprite sprite)
         {
             _spriteRenderer.sprite = sprite;
@@ -19,6 +24,13 @@ namespace View.Game.Product
         public void SetSortingLayerName(string sortingLayerName)
         {
             _spriteRenderer.sortingLayerName = sortingLayerName;
+        }
+
+        public void SetAlpha(float alpha)
+        {
+            var color = _spriteRenderer.color;
+            color.a = alpha;
+            _spriteRenderer.color = color;
         }
     }
 }
