@@ -93,7 +93,7 @@ namespace View.Game.ShopObjects.Shelf
             };
             _putProductAnimationContexts.Enqueue(putProductAnimationContext);
 
-            var charBoxPositionProvider = _sharedViewsDataHolder.GetPlayerCharBoxPositionProvider();
+            var charBoxPositionProvider = _sharedViewsDataHolder.GetPlayerCharPositionProvider();
             productView.transform.position = charBoxPositionProvider.GetProductInBoxPosition(e.BoxSlotIndex);
 
             var targetPosition = _view.GetSlotPosition(shelfSlotIndex);

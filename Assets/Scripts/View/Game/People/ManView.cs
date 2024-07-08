@@ -8,7 +8,7 @@ using View.Game.Shared;
 
 namespace View.Game.People
 {
-    public class ManView : MonoBehaviour, ISortableView, IManViewBoxProductsPositionsProvider
+    public class ManView : MonoBehaviour, ISortableView, IPlayerCharPositionsProvider
     {
         [SerializeField] private SortingGroup _sortingGroup;
         [SerializeField] private Animation _animation;
@@ -17,12 +17,14 @@ namespace View.Game.People
         [SerializeField] private GameObject _productsBoxPrefab;
         [SerializeField] private GameObject _productsBasketPrefab;
         [SerializeField] private SpriteRenderer _hand2SpriteRenderer;
+        [SerializeField] private Transform _bodyTransform;
         
         private AnimationKey _currentAnimationKey = AnimationKey.None;
         private ProductsBoxView _productsBoxView;
         private ProductsBasketView _productsBasketView;
 
         public Transform ProductsBoxPlaceholderTransform => _productsBoxPlaceholderTransform;
+        public Transform CenterPointTransform => _bodyTransform;
 
         public Vector3 GetProductInBoxPosition(int productIndex)
         {

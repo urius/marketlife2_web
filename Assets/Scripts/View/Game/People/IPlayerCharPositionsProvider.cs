@@ -2,8 +2,10 @@ using UnityEngine;
 
 namespace View.Game.People
 {
-    public interface IManViewBoxProductsPositionsProvider
+    public interface IPlayerCharPositionsProvider
     {
+        public Transform CenterPointTransform { get; }
+        
         public Vector3 GetProductInBoxPosition(int productIndex);
     }
 }

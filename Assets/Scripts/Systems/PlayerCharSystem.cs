@@ -19,6 +19,7 @@ namespace Systems
         private readonly IPlayerModelHolder _playerModelHolder = Instance.Get<IPlayerModelHolder>();
         private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
         private readonly ICommandExecutor _commandExecutor = Instance.Get<ICommandExecutor>();
+        private readonly IUpdatesProvider _updatesProvider = Instance.Get<IUpdatesProvider>();
         
         private ShopModel _shopModel;
         private PlayerModel _playerModel;
@@ -46,6 +47,7 @@ namespace Systems
             _eventBus.Subscribe<SpendMoneyOnBuildPointAnimationFinishedEvent>(OnSpendMoneyOnBuildPointAnimationFinished);
             _eventBus.Subscribe<TruckArrivedEvent>(OnTruckArrivedEvent);
             _eventBus.Subscribe<PutProductOnShelfHalfAnimationEvent>(OnPutProductOnShelfHalfAnimationEvent);
+            _updatesProvider.QuarterSecondPassed += OnQuarterSecondPassed;
             _playerCharModel.CellPositionChanged += OnCellPositionChanged;
         }
 
@@ -56,12 +58,26 @@ namespace Systems
             _eventBus.Unsubscribe<SpendMoneyOnBuildPointAnimationFinishedEvent>(OnSpendMoneyOnBuildPointAnimationFinished);
             _eventBus.Unsubscribe<TruckArrivedEvent>(OnTruckArrivedEvent);
             _eventBus.Unsubscribe<PutProductOnShelfHalfAnimationEvent>(OnPutProductOnShelfHalfAnimationEvent);
+            _updatesProvider.QuarterSecondPassed -= OnQuarterSecondPassed;
             _playerCharModel.CellPositionChanged -= OnCellPositionChanged;
         }
 
         private void OnRequestPlayerCellChanged(RequestPlayerCellChangeEvent e)
         {
             _playerCharModel.SetCellPosition(e.CellCoords);
+        }
+
+        private void OnQuarterSecondPassed()
+        {
+            if (_playerCharModel.NearCashDesk is { MoneyAmount: > 0 })
+            {
+                var moneyAmount = _playerCharModel.NearCashDesk.MoneyAmount;
+                
+                _playerCharModel.NearCashDesk.ResetMoney();
+                _playerModel.ChangeMoney(moneyAmount);
+                
+                _eventBus.Dispatch(new AnimateTakeMoneyFromCashDeskEvent(_playerCharModel.NearCashDesk, moneyAmount));
+            }
         }
 
         private void OnCellPositionChanged(Vector2Int cellPosition)

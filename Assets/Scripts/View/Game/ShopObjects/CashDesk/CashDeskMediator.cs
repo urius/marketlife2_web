@@ -14,17 +14,19 @@ namespace View.Game.ShopObjects.CashDesk
     {
         private readonly IGridCalculator _gridCalculator = Instance.Get<IGridCalculator>();
         private readonly IOwnedCellsDataHolder _ownedCellsDataHolder = Instance.Get<IOwnedCellsDataHolder>();
-        private readonly LinkedList<MoneyView> _moneyItems = new();
+        private readonly ISharedViewsDataHolder _sharedViewsDataHolder = Instance.Get<ISharedViewsDataHolder>();
         
+        private readonly LinkedList<MoneyView> _moneyItems = new();
+
         private CashDeskView _view;
 
         protected override void MediateInternal()
         {
             var go = InstantiatePrefab(PrefabKey.CashDesk);
             _view = go.GetComponent<CashDeskView>();
-
             _view.transform.position = _gridCalculator.GetCellCenterWorld(TargetModel.CellCoords);
 
+            _sharedViewsDataHolder.RegisterCashDeskMoneyPositionProvider(TargetModel, _view);
             OwnCells();
 
             Subscribe();
@@ -33,7 +35,8 @@ namespace View.Game.ShopObjects.CashDesk
         protected override void UnmediateInternal()
         {
             Unsubscribe();
-            
+
+            _sharedViewsDataHolder.UnregisterCashDeskMoneyPositionProvider(TargetModel);
             _ownedCellsDataHolder.UnregisterShopObject(TargetModel);
             
             Destroy(_view);
@@ -55,16 +58,33 @@ namespace View.Game.ShopObjects.CashDesk
         private void Subscribe()
         {
             TargetModel.MoneyAdded += OnMoneyAdded;
+            TargetModel.MoneyReset += OnMoneyReset;
         }
 
         private void Unsubscribe()
         {
             TargetModel.MoneyAdded -= OnMoneyAdded;
+            TargetModel.MoneyReset -= OnMoneyReset;
         }
 
         private void OnMoneyAdded()
         {
             ShowMoney(TargetModel.MoneyAmount);
+        }
+
+        private void OnMoneyReset()
+        {
+            ClearMoneyItems();
+        }
+
+        private void ClearMoneyItems()
+        {
+            foreach (var moneyView in _moneyItems)
+            {
+                ReturnToCache(moneyView.gameObject);
+            }
+
+            _moneyItems.Clear();
         }
 
         private void ShowMoney(int moneyAmount)

@@ -31,14 +31,14 @@ namespace View.Game.People
 
         protected override void MediateInternal()
         {
-            _viewsDataHolder.RegisterPlayerCharBoxProductsPositionProvider(_playerCharView);
+            _viewsDataHolder.RegisterPlayerCharPositionProvider(_playerCharView);
             
             Subscribe();
         }
 
         protected override void UnmediateInternal()
         {
-            _viewsDataHolder.UnregisterPlayerCharBoxPositionProvider();
+            _viewsDataHolder.UnregisterPlayerCharPositionProvider();
             
             Unsubscribe();
         }

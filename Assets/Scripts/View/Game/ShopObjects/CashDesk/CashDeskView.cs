@@ -5,7 +5,7 @@ using View.Game.ShopObjects.Common;
 namespace View.Game.ShopObjects.CashDesk
 {
     [SelectionBase]
-    public class CashDeskView : ShopObjectViewBase
+    public class CashDeskView : ShopObjectViewBase, ICashDeskMoneyPositionProvider
     {
         private const int MaxMoneyItemsAmountX = 5;
         private const int MaxMoneyItemsAmountY = 3;
@@ -41,6 +41,14 @@ namespace View.Game.ShopObjects.CashDesk
             moneyView.transform.localRotation = Quaternion.Euler(0, 0, -45);
 
             moneyView.SetSortingOrder((MaxMoneyItemsAmountX - position.x + MaxMoneyItemsAmountY - position.y) * (position.z + 1));
+        }
+
+        public Vector3 GetMoneySlotWorldPosition(int moneyPositionIndex)
+        {
+            var position = GetMoneyPositionFromFlatIndex(moneyPositionIndex);
+            var worldPosition = GetMoneySlotWorldPosition(position);
+            
+            return worldPosition;
         }
 
         private Vector3 GetMoneySlotWorldPosition(Vector3Int slotVectorizedIndex)

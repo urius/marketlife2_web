@@ -64,6 +64,7 @@ MonoBehaviour:
   _productsBoxPrefab: {fileID: 3998808810290989356, guid: 7ec4afe83f23b45618b8a02092f3b60f, type: 3}
   _productsBasketPrefab: {fileID: 788191810681536239, guid: 0c34518120986492899b3cfd0701bb00, type: 3}
   _hand2SpriteRenderer: {fileID: 8876772103234394379}
+  _bodyTransform: {fileID: 8876772102183039702}
 --- !u!210 &8420657866138207180
 SortingGroup:
   m_ObjectHideFlags: 0

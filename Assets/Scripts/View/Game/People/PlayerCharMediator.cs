@@ -15,7 +15,7 @@ namespace View.Game.People
             _playerCharView = InstantiatePrefab<ManView>(PrefabKey.Man);
             
             MediateChild<PlayerCharMovementMediator>(_playerCharView.transform);
-            MediateChild(new PlayerCharSpendAnimationMediator(_playerCharView));
+            MediateChild(new PlayerCharMoneyAnimationMediator(_playerCharView));
             MediateChild(new PlayerCharProductsMediator(_playerCharView));
 
             _playerCharViewSharedDataHolder.SetView(_playerCharView);

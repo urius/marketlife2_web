@@ -7,6 +7,7 @@ namespace Model.ShopObjects
     public class CashDeskModel : ShopObjectModelBase
     {
         public event Action MoneyAdded; 
+        public event Action MoneyReset; 
         
         public CashDeskModel(Vector2Int cellCoords) 
             : base(cellCoords)
@@ -22,6 +23,13 @@ namespace Model.ShopObjects
             MoneyAmount += moneyToAdd;
             
             MoneyAdded?.Invoke();
+        }
+        
+        public void ResetMoney()
+        {
+            MoneyAmount = 0;
+            
+            MoneyReset?.Invoke();
         }
     }
 }
