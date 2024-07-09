@@ -16,10 +16,11 @@ namespace Systems
 {
     public class PlayerCharSystem : ISystem
     {
-        private readonly IPlayerModelHolder _playerModelHolder = Instance.Get<IPlayerModelHolder>();
         private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
+        private readonly IPlayerModelHolder _playerModelHolder = Instance.Get<IPlayerModelHolder>();
         private readonly ICommandExecutor _commandExecutor = Instance.Get<ICommandExecutor>();
         private readonly IUpdatesProvider _updatesProvider = Instance.Get<IUpdatesProvider>();
+        private readonly IOwnedCellsDataHolder _ownedCellsDataHolder = Instance.Get<IOwnedCellsDataHolder>();
         
         private ShopModel _shopModel;
         private PlayerModel _playerModel;
@@ -69,7 +70,8 @@ namespace Systems
 
         private void OnQuarterSecondPassed()
         {
-            if (_playerCharModel.NearCashDesk is { MoneyAmount: > 0 })
+            if (_playerCharModel.NearCashDesk is { MoneyAmount: > 0 } 
+                && IsPlayerNearTheBottomPartOfCashDesk())
             {
                 var moneyAmount = _playerCharModel.NearCashDesk.MoneyAmount;
                 
@@ -78,6 +80,11 @@ namespace Systems
                 
                 _eventBus.Dispatch(new AnimateTakeMoneyFromCashDeskEvent(_playerCharModel.NearCashDesk, moneyAmount));
             }
+        }
+
+        private bool IsPlayerNearTheBottomPartOfCashDesk()
+        {
+            return _playerCharModel.CellPosition.y >= _playerCharModel.NearCashDesk.CellCoords.y;
         }
 
         private void OnCellPositionChanged(Vector2Int cellPosition)
@@ -90,13 +97,13 @@ namespace Systems
 
         private void CheckNearCashDesk(Vector2Int cellPosition)
         {
-            CashDeskModel result = null;
             foreach (var cellOffset in Constants.NearCells8)
             {
                 var nearCell = cellPosition + cellOffset;
-                if (_shopModel.TryGetCashDesk(nearCell, out result))
+
+                if (_ownedCellsDataHolder.TryGetCashDesk(nearCell, out var cashDeskModel))
                 {
-                    _playerCharModel.SetNearCashDesk(result);
+                    _playerCharModel.SetNearCashDesk(cashDeskModel);
                     return;
                 }
             }
