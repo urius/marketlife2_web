@@ -40,7 +40,7 @@ namespace View.Game.ShopObjects.CashDesk
             moneyView.transform.position = GetMoneySlotWorldPosition(position);
             moneyView.transform.localRotation = Quaternion.Euler(0, 0, -45);
 
-            moneyView.SetSortingOrder((MaxMoneyItemsAmountX - position.x + MaxMoneyItemsAmountY - position.y) * (position.z + 1));
+            moneyView.SetSortingOrder((position.x + MaxMoneyItemsAmountY - position.y) * (position.z + 1));
         }
 
         public Vector3 GetMoneySlotWorldPosition(int moneyPositionIndex)
