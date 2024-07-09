@@ -24,5 +24,6 @@ namespace Data
         TruckGates,
         ProductsBasket,
         MoneyCashDesk,
+        Doors,
     }
 }

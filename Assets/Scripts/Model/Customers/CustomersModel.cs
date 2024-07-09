@@ -41,6 +41,11 @@ namespace Model.Customers
             CustomerRemoved?.Invoke(customer);
         }
 
+        public bool IsCellOwnedByCustomer(Vector2Int cellCoords)
+        {
+            return _customerModelByCell.ContainsKey(cellCoords);
+        }
+        
         public void SetOwnedCell(CustomerCharModel customer, Vector2Int cellCoords)
         {
             TryRemoveOwnedCell(customer);
