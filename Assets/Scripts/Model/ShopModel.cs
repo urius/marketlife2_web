@@ -56,7 +56,7 @@ namespace Model
         private void UpdateDoors()
         {
             var result = new List<(int, int)>(_size.x);
-            var doorsLengthBefore = _doors.Length;
+            var doorsLengthBefore = _doors?.Length ?? 0;
 
             for (var i = 0; i < 100; i++)
             {
