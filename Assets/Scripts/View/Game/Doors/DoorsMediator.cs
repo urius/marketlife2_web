@@ -27,7 +27,7 @@ namespace View.Game.Doors
             _shopModel = _shopModelHolder.ShopModel;
             _playerCharModel = _playerModelHolder.PlayerCharModel;
             
-            DisplayDoors();
+            DisplayNewDoors();
 
             Subscribe();
         }
@@ -42,11 +42,18 @@ namespace View.Game.Doors
         private void Subscribe()
         {
             _updatesProvider.GameplayFixedUpdate += OnGameplayFixedUpdate;
+            _shopModel.DoorsAdded += OnDoorsAdded;
         }
 
         private void Unsubscribe()
         {            
             _updatesProvider.GameplayFixedUpdate -= OnGameplayFixedUpdate;
+            _shopModel.DoorsAdded -= OnDoorsAdded;
+        }
+
+        private void OnDoorsAdded()
+        {
+            DisplayNewDoors();
         }
 
         private void OnGameplayFixedUpdate()
@@ -112,7 +119,7 @@ namespace View.Game.Doors
                    || _playerCharModel.CellPosition == cell;
         }
 
-        private void DisplayDoors()
+        private void DisplayNewDoors()
         {
             if (_shopModel.Doors.Length <= _doorsViews.Count) return;
             

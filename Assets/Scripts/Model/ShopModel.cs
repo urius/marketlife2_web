@@ -13,6 +13,7 @@ namespace Model
         public event Action<ShopObjectModelBase> ShopObjectAdded;
         public event Action<BuildPointModel> BuildPointAdded;
         public event Action<BuildPointModel> BuildPointRemoved;
+        public event Action DoorsAdded;
 
         public readonly CustomersModel CustomersModel = new();
         
@@ -55,7 +56,8 @@ namespace Model
         private void UpdateDoors()
         {
             var result = new List<(int, int)>(_size.x);
-            
+            var doorsLengthBefore = _doors.Length;
+
             for (var i = 0; i < 100; i++)
             {
                 var doorsCoords = GetDoorsCoords(i);
@@ -72,6 +74,11 @@ namespace Model
             }
 
             _doors = result.ToArray();
+            
+            if (_doors.Length > doorsLengthBefore)
+            {
+                DoorsAdded?.Invoke();
+            }
         }
 
         public bool HaveBuildPoint(Vector2Int cellCoords)
