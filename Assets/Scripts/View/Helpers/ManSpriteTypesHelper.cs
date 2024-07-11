@@ -34,6 +34,14 @@ namespace View.Helpers
                 (ManSpriteType)footClothes);
         }
 
+        public static (ManSpriteType BodyClothes, ManSpriteType HandClothes, ManSpriteType FootClothes)
+            GetClothesByIntType(int clothesIntType)
+        {
+            return ((ManSpriteType)clothesIntType,
+                (ManSpriteType)(clothesIntType + HandBodyClothesDelta),
+                (ManSpriteType)clothesIntType + FootBodyClothesDelta);
+        }
+
         public static ManSpriteType GetRandomHair()
         {
             var resultInt = Random.Range((int)ManSpriteType.Hair1, MaxHairInt + 1);
