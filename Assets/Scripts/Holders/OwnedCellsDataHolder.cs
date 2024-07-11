@@ -73,11 +73,7 @@ namespace Holders
                 && ((OwnedCellByShopObjectData)ownedCellData).ShopObjectModel is CashDeskModel cashDesk)
             {
                 cashDeskModel = cashDesk;
-                
-                Debug.Log($"TryGetCashDesk set result: {cashDesk != null}");
             }
-
-            Debug.Log($"TryGetCashDesk result: {cashDeskModel != null}");
             
             return cashDeskModel != null;
         }
