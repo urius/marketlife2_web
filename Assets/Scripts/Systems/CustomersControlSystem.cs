@@ -300,7 +300,7 @@ namespace Systems
         private void SetMoveToExitState(CustomerCharModel model)
         {
             var closestDoor = GetClosestDoor(model.CellPosition);
-            var targetPoint = new Vector2Int(closestDoor.Right, 0);
+            var targetPoint = new Vector2Int(closestDoor.Right, -1);
 
             model.SetMovingToExitState(targetPoint);
 

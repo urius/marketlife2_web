@@ -10,6 +10,7 @@ using UnityEngine;
 using Utils;
 using View.Game.Product;
 using View.Game.Shared;
+using View.Helpers;
 
 namespace View.Game.People
 {
@@ -39,6 +40,8 @@ namespace View.Game.People
             _customerView.transform.position = _gridCalculator.GetCellCenterWorld(TargetModel.CellPosition);
 
             Subscribe();
+
+            SetClothes();
             
             _eventBus.Dispatch(new CustomerInitializedEvent(TargetModel));
         }
@@ -77,6 +80,40 @@ namespace View.Game.People
             else if (state.StateName == CustomerGlobalStateName.Paying)
             {
                 AnimatePaying();
+            }
+        }
+
+        private void SetClothes()
+        {
+            var clothes = ManSpriteTypesHelper.GetCustomerRandomClothes();
+            var hairType = ManSpriteTypesHelper.GetRandomHair();
+            var bodySprite = _spritesHolderSo.GetManSpriteByKey(clothes.BodyClothes);
+            var handSprite = _spritesHolderSo.GetManSpriteByKey(clothes.HandClothes);
+            var footSprite = _spritesHolderSo.GetManSpriteByKey(clothes.FootClothes);
+            var hairSprite = _spritesHolderSo.GetManSpriteByKey(hairType);
+
+            _customerView.SetClothesSprites(bodySprite, handSprite, footSprite);
+            _customerView.SetHairSprite(hairSprite);
+
+            if (Random.value < 0.8)
+            {
+                _customerView.SetGlassesSprite(null);
+            }
+            else
+            {
+                var glassesType = ManSpriteTypesHelper.GetRandomGlasses();
+                var glassesSprite = _spritesHolderSo.GetManSpriteByKey(glassesType);
+                _customerView.SetGlassesSprite(glassesSprite);
+            }
+
+            if (DateTimeHelper.IsNewYearsEve())
+            {
+                var hatSprite = _spritesHolderSo.GetManSpriteByKey(ManSpriteType.SantaHat);
+                _customerView.SetHatSprite(hatSprite);
+            }
+            else
+            {
+                _customerView.SetHatSprite(null);
             }
         }
 
@@ -285,24 +322,6 @@ namespace View.Game.People
             public Vector3 EndWalkPosition;
             public float Progress;
             public bool SteppedToNewCellFlag;
-        }
-        
-        private class FlyProductFromBasketContext
-        {
-            public ProductView ProductView;
-            public int BasketSlotIndex;
-            
-            public void Set(int basketSlotIndex, ProductView productView)
-            {
-                BasketSlotIndex = basketSlotIndex;
-                ProductView = productView;
-            }
-
-            public void Reset()
-            {
-                BasketSlotIndex = default;
-                ProductView = default;
-            }
         }
         
         private class TakeProductContext

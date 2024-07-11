@@ -18,6 +18,14 @@ namespace View.Game.People
         [SerializeField] private GameObject _productsBasketPrefab;
         [SerializeField] private SpriteRenderer _hand2SpriteRenderer;
         [SerializeField] private Transform _bodyTransform;
+        [SerializeField] private SpriteRenderer _hairSpriteRenderer;
+        [SerializeField] private SpriteRenderer _bodyClothesSpriteRenderer;
+        [SerializeField] private SpriteRenderer _hand1ClothesSpriteRenderer;
+        [SerializeField] private SpriteRenderer _hand2ClothesSpriteRenderer;
+        [SerializeField] private SpriteRenderer _leg1ClothesSpriteRenderer;
+        [SerializeField] private SpriteRenderer _leg2ClothesSpriteRenderer;
+        [SerializeField] private SpriteRenderer _hatSpriteRenderer;
+        [SerializeField] private SpriteRenderer _glassesSpriteRenderer;
         
         private AnimationKey _currentAnimationKey = AnimationKey.None;
         private ProductsBoxView _productsBoxView;
@@ -129,6 +137,30 @@ namespace View.Game.People
         public void ToTakingProductState()
         {
             PlayAnimationByKey(AnimationKey.TakingProduct);
+        }
+
+        public void SetClothesSprites(Sprite bodySprite, Sprite handSprite, Sprite footSprite)
+        {
+            _bodyClothesSpriteRenderer.sprite = bodySprite;
+            _hand1ClothesSpriteRenderer.sprite = handSprite;
+            _hand2ClothesSpriteRenderer.sprite = handSprite;
+            _leg1ClothesSpriteRenderer.sprite = footSprite;
+            _leg2ClothesSpriteRenderer.sprite = footSprite; 
+        }
+
+        public void SetHatSprite(Sprite hatSprite)
+        {
+            _hatSpriteRenderer.sprite = hatSprite;
+        }
+
+        public void SetGlassesSprite(Sprite glassesSprite)
+        {
+            _glassesSpriteRenderer.sprite = glassesSprite;
+        }
+
+        public void SetHairSprite(Sprite hairSprite)
+        {
+            _hairSpriteRenderer.sprite = hairSprite;
         }
 
         private void CreateProductsBoxViewIfNeeded()
