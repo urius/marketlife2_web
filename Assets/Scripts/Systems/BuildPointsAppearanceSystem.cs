@@ -48,6 +48,25 @@ namespace Systems
                         TryAddBuildPoint(buildPointDto);
                     }
                 }
+                else
+                {
+                    for (var rowIndex = 0; rowIndex <= _shelfsByRow.Count; rowIndex++)
+                    {
+                        var rowYCoord = _buildPointsDataHolder.RowIndexToYCoord(rowIndex);
+                        var shelfBuildPointsOnRow = _shopModel.GetShelfBuildPointsCountByRowYCoord(rowYCoord);
+
+                        if (shelfBuildPointsOnRow <= 0 && (rowIndex == 0 || _shelfsByRow[rowIndex - 1].Count > 0))
+                        {
+                            var shelfsOnRowCount = rowIndex < _shelfsByRow.Count ? _shelfsByRow[rowIndex].Count : 0;
+
+                            if (_buildPointsDataHolder.TryGetShelfBuildPointData(rowIndex, shelfsOnRowCount,
+                                    out var buildPointDto))
+                            {
+                                TryAddBuildPoint(buildPointDto);
+                            }
+                        }
+                    }
+                }
 
                 if (shelfRowsCount > _truckPointsAmount)
                 {
@@ -63,7 +82,7 @@ namespace Systems
         {
             if (_shopModel.HaveBuildPoint(buildPointData.CellCoords) == false
                 && _shopModel.Size.x > buildPointData.CellCoords.x
-                && _shopModel.Size.y > buildPointData.CellCoords.y)
+                && _shopModel.Size.y > buildPointData.CellCoords.y + 1)
             {
                 var buildPointModel = DataConverter.ToBuildPointModel(buildPointData);
                 

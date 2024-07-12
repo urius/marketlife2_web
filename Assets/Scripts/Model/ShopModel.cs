@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Data;
 using Model.BuildPoint;
 using Model.Customers;
@@ -47,6 +48,11 @@ namespace Model
         public bool HaveBuildPoint(Vector2Int cellCoords)
         {
             return _buildPoints.ContainsKey(cellCoords);
+        }
+
+        public int GetShelfBuildPointsCountByRowYCoord(int rowYCoord)
+        {
+            return _buildPoints.Count(kvp => kvp.Value.ShopObjectType.IsShelf() && kvp.Key.y == rowYCoord);
         }
 
         public void AddBuildPoint(BuildPointModel buildPoint)

@@ -75,6 +75,14 @@ namespace Holders
             return false;
         }
 
+        public int RowIndexToYCoord(int rowIndex)
+        {
+            var firstRowYCoord = _shelfsByRow[0].Shelfs[0].CellCoords.y;
+            var secondRowYCoords = _shelfsByRow[1].Shelfs[0].CellCoords.y;
+
+            return firstRowYCoord + rowIndex * (secondRowYCoords - firstRowYCoord);
+        }
+
         public bool TryGetTruckGateBuildPointData(int truckGateIndex, out BuildPointDto result)
         {
             result = default;
