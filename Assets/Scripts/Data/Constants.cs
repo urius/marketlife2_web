@@ -4,6 +4,8 @@ namespace Data
 {
     public class Constants
     {
+        public static readonly Vector2Int ShopObjectRelativeToBuildPointOffset = Vector2Int.left;
+        
         public const int TruckArrivingDuration = 2;
         public const int ProductsAmountInBox = 4;
         public const int YTopWalkableCoordForCustomers = -10;

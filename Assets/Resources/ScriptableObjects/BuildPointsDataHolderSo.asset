@@ -25,14 +25,14 @@ MonoBehaviour:
       CellCoords: {x: 5, y: 4}
       MoneyToBuildLeft: 20
     - ShopObjectType: 102
-      CellCoords: {x: 8, y: 4}
+      CellCoords: {x: 9, y: 4}
       MoneyToBuildLeft: 30
   - Shelfs:
     - ShopObjectType: 104
       CellCoords: {x: 5, y: 7}
       MoneyToBuildLeft: 40
     - ShopObjectType: 104
-      CellCoords: {x: 8, y: 7}
+      CellCoords: {x: 9, y: 7}
       MoneyToBuildLeft: 50
   _truckGatePositionSettings:
     FirstGateOffset: 5

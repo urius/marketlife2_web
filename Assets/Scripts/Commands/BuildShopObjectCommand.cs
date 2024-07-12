@@ -27,7 +27,7 @@ namespace Commands
             ShopObjectModelBase result;
             
             var shopObjectType = buildPoint.ShopObjectType;
-            var buildCoords = buildPoint.CellCoords + Vector2Int.left;;
+            var buildCoords = buildPoint.CellCoords + Constants.ShopObjectRelativeToBuildPointOffset;
             
             switch (shopObjectType)
             {
