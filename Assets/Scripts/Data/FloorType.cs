@@ -10,5 +10,6 @@ namespace Data
         GrassFloor1 = 101,
         GrassFloor2,
         Road1 = 201,
+        Road1Flipped,
     }
 }

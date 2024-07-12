@@ -27,10 +27,10 @@ MonoBehaviour:
     Tile: {fileID: 11400000, guid: 0362352fe185647b0a1baa69c67c58e4, type: 2}
   - Key: 102
     Tile: {fileID: 11400000, guid: cec2ce896fd71495895602a707435e1a, type: 2}
-  - Key: 102
-    Tile: {fileID: 11400000, guid: eb3507b9ee5754701b91b6272fa78cde, type: 2}
   - Key: 201
-    Tile: {fileID: 11400000, guid: cec2ce896fd71495895602a707435e1a, type: 2}
+    Tile: {fileID: 11400000, guid: eb3507b9ee5754701b91b6272fa78cde, type: 2}
+  - Key: 202
+    Tile: {fileID: 11400000, guid: 979178d4b560146dfa6600d568fa39ad, type: 2}
   _wallItems:
   - Key: 1
     Sprite: {fileID: 21300000, guid: 031cd9da9b78d485dbf6f4fa2c981d68, type: 3}

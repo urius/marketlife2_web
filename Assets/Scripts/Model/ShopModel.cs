@@ -44,43 +44,6 @@ namespace Model
 
         public IReadOnlyDictionary<Vector2Int, BuildPointModel> BuildPoints => _buildPoints;
 
-        private void SetSize(Vector2Int size)
-        {
-            if (_size.Equals(size)) return;
-            
-            _size = size;
-
-            UpdateDoors();
-        }
-
-        private void UpdateDoors()
-        {
-            var result = new List<(int, int)>(_size.x);
-            var doorsLengthBefore = _doors?.Length ?? 0;
-
-            for (var i = 0; i < 100; i++)
-            {
-                var doorsCoords = GetDoorsCoords(i);
-                
-                if (doorsCoords.Right < Size.x - 1)
-                {
-                    result.Add(doorsCoords);
-                }
-
-                if (doorsCoords.Left > _size.x)
-                {
-                    break;
-                }
-            }
-
-            _doors = result.ToArray();
-            
-            if (_doors.Length > doorsLengthBefore)
-            {
-                DoorsAdded?.Invoke();
-            }
-        }
-
         public bool HaveBuildPoint(Vector2Int cellCoords)
         {
             return _buildPoints.ContainsKey(cellCoords);
@@ -104,6 +67,17 @@ namespace Model
             }
 
             return truckPointModel != null;
+        }
+
+        public IEnumerable<TruckPointModel> GetTruckPointModels()
+        {
+            foreach (var kvp in _shopObjects)
+            {
+                if (kvp.Value.ShopObjectType == ShopObjectType.TruckPoint)
+                {
+                    yield return kvp.Value as TruckPointModel;
+                }
+            }
         }
         
         public bool TryGetCashDesk(Vector2Int cellCoords, out CashDeskModel truckPointModel)
@@ -205,6 +179,43 @@ namespace Model
         private static int GetDoorRightPoint(int doorIndex)
         {
             return GetDoorLeftPoint(doorIndex) + 1;
+        }
+
+        private void SetSize(Vector2Int size)
+        {
+            if (_size.Equals(size)) return;
+            
+            _size = size;
+
+            UpdateDoors();
+        }
+
+        private void UpdateDoors()
+        {
+            var result = new List<(int, int)>(_size.x);
+            var doorsLengthBefore = _doors?.Length ?? 0;
+
+            for (var i = 0; i < 100; i++)
+            {
+                var doorsCoords = GetDoorsCoords(i);
+                
+                if (doorsCoords.Right < Size.x - 1)
+                {
+                    result.Add(doorsCoords);
+                }
+
+                if (doorsCoords.Left > _size.x)
+                {
+                    break;
+                }
+            }
+
+            _doors = result.ToArray();
+            
+            if (_doors.Length > doorsLengthBefore)
+            {
+                DoorsAdded?.Invoke();
+            }
         }
     }
 }

@@ -1,6 +1,8 @@
 using Data;
 using Holders;
 using Infra.Instance;
+using Model;
+using Model.ShopObjects;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using Random = UnityEngine.Random;
@@ -13,16 +15,40 @@ namespace View.Game.Floors
         private readonly SpritesHolderSo _spritesHolder = Instance.Get<SpritesHolderSo>();
         
         private Tilemap _tilemap;
+        private ShopModel _shopModel;
 
         protected override void MediateInternal()
         {
+            _shopModel = _playerModelHolder.PlayerModel.ShopModel;
             _tilemap = TargetTransform.GetComponentInChildren<Tilemap>();
             
             DisplayFloors();
+            DisplayTruckRoads();
+
+            Subscribe();
         }
 
         protected override void UnmediateInternal()
         {
+            Unsubscribe();
+        }
+
+        private void Subscribe()
+        {
+            _shopModel.ShopObjectAdded += OnShopObjectAdded;
+        }
+
+        private void Unsubscribe()
+        {
+            _shopModel.ShopObjectAdded -= OnShopObjectAdded;
+        }
+
+        private void OnShopObjectAdded(ShopObjectModelBase model)
+        {
+            if (model.ShopObjectType == ShopObjectType.TruckPoint)
+            {
+                DisplayTruckRoad((TruckPointModel)model);
+            }
         }
 
         private void DisplayFloors()
@@ -65,6 +91,33 @@ namespace View.Game.Floors
 
             _tilemap.SetTile(cellPosition, tile);
             RotateTile(cellPosition, rotation);
+        }
+
+        private void DisplayTruckRoads()
+        {
+            var truckPointModels = _shopModel.GetTruckPointModels();
+            foreach (var truckPointModel in truckPointModels)
+            {
+                DisplayTruckRoad(truckPointModel);
+            }
+        }
+
+        private void DisplayTruckRoad(TruckPointModel truckPointModel)
+        {
+            var truckPointCoords = truckPointModel.CellCoords;
+            
+            var roadTile = _spritesHolder.GetFloorTileByKey(FloorType.Road1);
+            
+            for (var i = 0; i < 5; i++)
+            {
+                var cellCoords = new Vector3Int(truckPointCoords.x - i, truckPointCoords.y, 0);
+                _tilemap.SetTile(cellCoords, roadTile);
+                RotateTile(cellCoords, -90f);
+                
+                cellCoords = new Vector3Int(truckPointCoords.x - i, truckPointCoords.y - 1, 0);
+                _tilemap.SetTile(cellCoords, roadTile);
+                RotateTile(cellCoords, 90f);
+            }
         }
 
         private void RotateTile(Vector3Int cellPosition, float rotation)
