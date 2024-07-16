@@ -7,8 +7,18 @@ namespace Data.Internal
     [Serializable]
     public struct ShelfBuildPointRowData
     {
+        public int YCellCoord;
+        
         [LabeledArray(nameof(ShopObjectDto.CellCoords))]
-        public BuildPointDto[] Shelfs;
+        public ShelfBuildPointData[] Shelfs;
+    }
+    
+    [Serializable]
+    public struct ShelfBuildPointData
+    {
+        public ShopObjectType ShopObjectType;
+        public int XCellCoord;
+        public int Cost;
     }
         
     [Serializable]

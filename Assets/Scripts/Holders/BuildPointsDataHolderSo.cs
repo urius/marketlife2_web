@@ -1,4 +1,3 @@
-using System;
 using Data;
 using Data.Dto.ShopObjects;
 using Data.Internal;
@@ -32,8 +31,12 @@ namespace Holders
             }
             else
             {
-                var buildCost = InterpolateBuildCostFor(index, _cashDesks.Length - 1, _cashDesks[^1], _cashDesks[^2]);
-                var coords = InterpolateCellCoordsFor(index, _cashDesks.Length - 1, _cashDesks[^1], _cashDesks[^2]);
+                var buildCost = InterpolateBuildCostFor(index, _cashDesks.Length - 1,
+                    _cashDesks[^1].MoneyToBuildLeft,
+                    _cashDesks[^2].MoneyToBuildLeft);
+                var coords = InterpolateCellCoordsFor(index, _cashDesks.Length - 1,
+                    _cashDesks[^1].CellCoords,
+                    _cashDesks[^2].CellCoords);
                 
                 return new BuildPointDto()
                 {
@@ -49,15 +52,20 @@ namespace Holders
             if (rowIndex < _shelfsByRow.Length)
             {
                 var shelfsInRow = _shelfsByRow[rowIndex].Shelfs;
+                var yCoord = _shelfsByRow[rowIndex].YCellCoord;
                 
                 if (index < shelfsInRow.Length)
                 {
-                    buildPointDto = shelfsInRow[index];
+                    buildPointDto = ToBuildPointDto(yCoord, shelfsInRow[index]);
                 }
                 else
                 {
-                    var buildCost = InterpolateBuildCostFor(index, shelfsInRow.Length - 1, shelfsInRow[^1], shelfsInRow[^2]);
-                    var coords = InterpolateCellCoordsFor(index, shelfsInRow.Length - 1, shelfsInRow[^1], shelfsInRow[^2]);
+                    var buildCost = InterpolateBuildCostFor(index, shelfsInRow.Length - 1,
+                        shelfsInRow[^1].Cost,
+                        shelfsInRow[^2].Cost);
+                    var coords = InterpolateCellCoordsFor(index, shelfsInRow.Length - 1,
+                        new Vector2Int(shelfsInRow[^1].XCellCoord, yCoord),
+                        new Vector2Int(shelfsInRow[^2].XCellCoord, yCoord));
                 
                     buildPointDto = new BuildPointDto()
                     {
@@ -77,8 +85,8 @@ namespace Holders
 
         public int RowIndexToYCoord(int rowIndex)
         {
-            var firstRowYCoord = _shelfsByRow[0].Shelfs[0].CellCoords.y;
-            var secondRowYCoords = _shelfsByRow[1].Shelfs[0].CellCoords.y;
+            var firstRowYCoord = _shelfsByRow[0].YCellCoord;
+            var secondRowYCoords = _shelfsByRow[1].YCellCoord;
 
             return firstRowYCoord + rowIndex * (secondRowYCoords - firstRowYCoord);
         }
@@ -104,26 +112,35 @@ namespace Holders
             return haveData;
         }
 
-        private static int InterpolateBuildCostFor(int index, int lastIndex, BuildPointDto lastItem,
-            BuildPointDto preLastItem)
+        private static int InterpolateBuildCostFor(int index, int lastIndex, int lastItemCost, int preLastItemCost)
         {
-            var deltaMoney = lastItem.MoneyToBuildLeft - preLastItem.MoneyToBuildLeft;
+            var deltaMoney = lastItemCost - preLastItemCost;
             var deltaIndex = index - lastIndex;
 
             Assert.IsTrue(deltaIndex > 0);
             Assert.IsTrue(deltaMoney >= 0);
 
-            return deltaIndex * deltaMoney + lastItem.MoneyToBuildLeft;
+            return deltaIndex * deltaMoney + lastItemCost;
         }
 
-        private static Vector2Int InterpolateCellCoordsFor(int index, int lastIndex, BuildPointDto lastItem, BuildPointDto preLastItem)
+        private static Vector2Int InterpolateCellCoordsFor(int index, int lastIndex, Vector2Int lastItemCellCoords, Vector2Int preLastItemCellCoords)
         {
             var deltaIndex = index - lastIndex;
-            var deltaCoords = lastItem.CellCoords - preLastItem.CellCoords;
+            var deltaCoords = lastItemCellCoords - preLastItemCellCoords;
             
             Assert.IsTrue(deltaIndex > 0);
 
-            return deltaIndex * deltaCoords + lastItem.CellCoords;
+            return deltaIndex * deltaCoords + lastItemCellCoords;
+        }
+
+        private static BuildPointDto ToBuildPointDto(int yCoord, ShelfBuildPointData shelfBuildPointData)
+        {
+            return new BuildPointDto()
+            {
+                ShopObjectType = shelfBuildPointData.ShopObjectType,
+                CellCoords = new Vector2Int(shelfBuildPointData.XCellCoord, yCoord),
+                MoneyToBuildLeft = shelfBuildPointData.Cost,
+            };
         }
     }
 }
