@@ -5,12 +5,14 @@ namespace Events
     public struct TriggerSpendMoneyOnBuildPointAnimationEvent
     {
         public readonly BuildPointModel BuildPoint;
-        public readonly int MoneyAmount;
+        public readonly int StartMoneyAmount;
+        public readonly int FinishMoneyAmount;
 
-        public TriggerSpendMoneyOnBuildPointAnimationEvent(BuildPointModel buildPoint, int moneyAmount)
+        public TriggerSpendMoneyOnBuildPointAnimationEvent(BuildPointModel buildPoint, int startMoneyAmount, int finishMoneyAmount)
         {
             BuildPoint = buildPoint;
-            MoneyAmount = moneyAmount;
+            StartMoneyAmount = startMoneyAmount;
+            FinishMoneyAmount = finishMoneyAmount;
         }
     }
 }

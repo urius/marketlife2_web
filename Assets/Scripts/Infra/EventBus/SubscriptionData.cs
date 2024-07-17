@@ -2,8 +2,8 @@
 
 namespace Infra.EventBus
 {
-    internal static class SubscriptionData<T>
+    public static class SubscriptionData<T>
     {
-        public static Action<T> Action;
+        public static Action<T> Action = delegate {  };
     }
 }

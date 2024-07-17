@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Commands;
 using Data;
@@ -45,7 +46,7 @@ namespace Systems
         {
             _eventBus.Subscribe<RequestPlayerCellChangeEvent>(OnRequestPlayerCellChanged);
             _eventBus.Subscribe<SpendMoneyOnBuildPointAnimationHalfEvent>(OnSpendMoneyOnBuildPointHalfAnimation);
-            _eventBus.Subscribe<SpendMoneyOnBuildPointAnimationFinishedEvent>(OnSpendMoneyOnBuildPointAnimationFinished);
+            _eventBus.Subscribe<SpendMoneyOnBuildPointLastAnimationFinishedEvent>(OnSpendMoneyOnBuildPointLastAnimationFinished);
             _eventBus.Subscribe<TruckArrivedEvent>(OnTruckArrivedEvent);
             _eventBus.Subscribe<PutProductOnShelfHalfAnimationEvent>(OnPutProductOnShelfHalfAnimationEvent);
             _updatesProvider.QuarterSecondPassed += OnQuarterSecondPassed;
@@ -56,7 +57,7 @@ namespace Systems
         {
             _eventBus.Unsubscribe<RequestPlayerCellChangeEvent>(OnRequestPlayerCellChanged);
             _eventBus.Unsubscribe<SpendMoneyOnBuildPointAnimationHalfEvent>(OnSpendMoneyOnBuildPointHalfAnimation);
-            _eventBus.Unsubscribe<SpendMoneyOnBuildPointAnimationFinishedEvent>(OnSpendMoneyOnBuildPointAnimationFinished);
+            _eventBus.Unsubscribe<SpendMoneyOnBuildPointLastAnimationFinishedEvent>(OnSpendMoneyOnBuildPointLastAnimationFinished);
             _eventBus.Unsubscribe<TruckArrivedEvent>(OnTruckArrivedEvent);
             _eventBus.Unsubscribe<PutProductOnShelfHalfAnimationEvent>(OnPutProductOnShelfHalfAnimationEvent);
             _updatesProvider.QuarterSecondPassed -= OnQuarterSecondPassed;
@@ -184,41 +185,43 @@ namespace Systems
             }
         }
 
+        private void TriggerSpendOnBuildPointIterationAnimationIfNeeded(Vector2Int cellPosition)
+        {
+            if (_shopModel.BuildPoints.TryGetValue(cellPosition, out var buildPoint)
+                && buildPoint.MoneyToBuildLeft > 0
+                && _playerModel.MoneyAmount > 0)
+            {
+                var deltaMoneyAmount = GetMoneyPerSingleAnimation(buildPoint.MoneyToBuildLeft);
+                
+                _playerModel.ChangeMoney(-deltaMoneyAmount);
+                buildPoint.ChangeMoneyToBuildLeft(-deltaMoneyAmount);
+
+                _eventBus.Dispatch(new TriggerSpendMoneyOnBuildPointAnimationEvent(
+                    buildPoint,
+                    buildPoint.MoneyToBuildLeft + deltaMoneyAmount,
+                    buildPoint.MoneyToBuildLeft));
+            }
+        }
+
         private void OnSpendMoneyOnBuildPointHalfAnimation(SpendMoneyOnBuildPointAnimationHalfEvent e)
         {
             if (_shopModel.BuildPoints.TryGetValue(e.TargetBuildPointCellCoords, out var buildPoint))
             {
-                if (buildPoint.MoneyToBuildLeft > e.ActiveAnimationsAmount)
+                if (buildPoint.MoneyToBuildLeft > 0)
                 {
                     TriggerSpendOnBuildPointIterationAnimationIfNeeded(_playerCharModel.CellPosition);
                 }
             }
         }
 
-        private void OnSpendMoneyOnBuildPointAnimationFinished(SpendMoneyOnBuildPointAnimationFinishedEvent e)
+        private void OnSpendMoneyOnBuildPointLastAnimationFinished(SpendMoneyOnBuildPointLastAnimationFinishedEvent e)
         {
             if (_shopModel.BuildPoints.TryGetValue(e.TargetBuildPointCellCoords, out var buildPoint))
             {
-                buildPoint.ChangeMoneyToBuildLeft(-e.MoneyAmount);
-            
                 if (buildPoint.MoneyToBuildLeft <= 0)
                 {
                     _commandExecutor.Execute<BuildShopObjectCommand, BuildPointModel>(buildPoint);
                 }
-            }
-        }
-
-        private void TriggerSpendOnBuildPointIterationAnimationIfNeeded(Vector2Int cellPosition)
-        {
-            if (_shopModel.BuildPoints.TryGetValue(cellPosition, out var buildPoint)
-                && buildPoint.MoneyToBuildLeft > 0
-                && _playerModel.Money > 0)
-            {
-                var moneyAmount = GetMoneyPerSingleAnimation(buildPoint.MoneyToBuildLeft);
-                
-                _playerModel.ChangeMoney(-moneyAmount);
-
-                _eventBus.Dispatch(new TriggerSpendMoneyOnBuildPointAnimationEvent(buildPoint, moneyAmount));
             }
         }
 
@@ -235,7 +238,7 @@ namespace Systems
                 _ => 1
             };
 
-            return Math.Min(result, _playerModel.Money);
+            return Math.Min(result, _playerModel.MoneyAmount);
         }
     }
 }

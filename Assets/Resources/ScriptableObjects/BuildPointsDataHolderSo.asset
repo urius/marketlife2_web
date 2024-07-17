@@ -20,20 +20,22 @@ MonoBehaviour:
     CellCoords: {x: 6, y: 2}
     MoneyToBuildLeft: 50
   _shelfsByRow:
-  - Shelfs:
+  - YCellCoord: 4
+    Shelfs:
     - ShopObjectType: 102
-      CellCoords: {x: 5, y: 4}
-      MoneyToBuildLeft: 20
+      XCellCoord: 5
+      Cost: 20
     - ShopObjectType: 102
-      CellCoords: {x: 9, y: 4}
-      MoneyToBuildLeft: 30
-  - Shelfs:
+      XCellCoord: 9
+      Cost: 30
+  - YCellCoord: 7
+    Shelfs:
     - ShopObjectType: 104
-      CellCoords: {x: 5, y: 7}
-      MoneyToBuildLeft: 40
+      XCellCoord: 5
+      Cost: 40
     - ShopObjectType: 104
-      CellCoords: {x: 9, y: 7}
-      MoneyToBuildLeft: 50
+      XCellCoord: 9
+      Cost: 50
   _truckGatePositionSettings:
     FirstGateOffset: 5
     DefaultGateOffset: 4

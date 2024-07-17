@@ -1,12 +1,10 @@
 using System;
-using System.Collections.Generic;
 using Data;
 using Events;
 using Holders;
 using Infra.EventBus;
 using Infra.Instance;
 using UnityEngine;
-using Utils;
 using View.Game.Misc;
 using Random = UnityEngine.Random;
 
@@ -14,15 +12,10 @@ namespace View.Game.People
 {
     public class PlayerCharMoneyAnimationMediator : MediatorBase
     {
-        private const float AnimDuration = 0.22f;
-        private const float AnimDurationHalf = AnimDuration * 0.5f;
-        
         private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
-        private readonly IGridCalculator _gridCalculator = Instance.Get<IGridCalculator>();
         private readonly IUpdatesProvider _updatesProvider = Instance.Get<IUpdatesProvider>();
         private readonly ISharedViewsDataHolder _sharedViewsDataHolder = Instance.Get<ISharedViewsDataHolder>();
 
-        private readonly Queue<SpendAnimationContext> _contextsQueue = new();
         private readonly TakeMoneyAnimationContext _takeMoneyAnimationContext = new();
         
         private ManView _playerCharView;
@@ -48,38 +41,14 @@ namespace View.Game.People
 
         private void Subscribe()
         {
-            _eventBus.Subscribe<TriggerSpendMoneyOnBuildPointAnimationEvent>(OnTriggerSpendMoneyOnBuildPointAnimation);
             _eventBus.Subscribe<AnimateTakeMoneyFromCashDeskEvent>(OnAnimateTakeMoneyFromCashDeskEvent);
         }
 
         private void Unsubscribe()
         {
-            _eventBus.Unsubscribe<TriggerSpendMoneyOnBuildPointAnimationEvent>(OnTriggerSpendMoneyOnBuildPointAnimation);
             _eventBus.Unsubscribe<AnimateTakeMoneyFromCashDeskEvent>(OnAnimateTakeMoneyFromCashDeskEvent);
             
             _updatesProvider.GameplayFixedUpdate -= OnAnimateTakeMoneyGameplayFixedUpdate;
-        }
-
-        private void OnTriggerSpendMoneyOnBuildPointAnimation(TriggerSpendMoneyOnBuildPointAnimationEvent e)
-        {
-            var moneyGo = GetFromCache(PrefabKey.Money);
-            var targetCellCoords = e.BuildPoint.CellCoords;
-            
-            var context = new SpendAnimationContext(moneyGo, targetCellCoords, e.MoneyAmount);
-            
-            _contextsQueue.Enqueue(context);
-            
-            var pos = _playerCharView.transform.position;
-            pos.z = Random.value * 0.3f + 0.3f;
-            moneyGo.transform.position = pos;
-            moneyGo.transform.Rotate(Vector3.forward, Random.value * 360);
-
-            var targetPoint = _gridCalculator.GetCellCenterWorld(targetCellCoords);
-
-            LeanTween.delayedCall(AnimDurationHalf, OnSpendAnimationHalf);
-            LeanTween.move(moneyGo, targetPoint, AnimDuration)
-                .setEase(LeanTweenType.easeOutQuad)
-                .setOnComplete(OnSpendAnimationComplete);
         }
 
         private void OnAnimateTakeMoneyFromCashDeskEvent(AnimateTakeMoneyFromCashDeskEvent e)
@@ -156,35 +125,6 @@ namespace View.Game.People
             }
 
             _takeMoneyAnimationContext.Reset();
-        }
-
-        private void OnSpendAnimationHalf()
-        {
-            var context = _contextsQueue.Peek();
-            _eventBus.Dispatch(new SpendMoneyOnBuildPointAnimationHalfEvent(context.TargetCellCoords, _contextsQueue.Count));
-        }
-
-        private void OnSpendAnimationComplete()
-        {
-            var context = _contextsQueue.Dequeue();
-            
-            ReturnToCache(context.TargetMoneyGo);
-            
-            _eventBus.Dispatch(new SpendMoneyOnBuildPointAnimationFinishedEvent(context.TargetCellCoords, context.MoneyAmount));
-        }
-        
-        private struct SpendAnimationContext
-        {
-            public readonly GameObject TargetMoneyGo;
-            public readonly Vector2Int TargetCellCoords;
-            public readonly int MoneyAmount;
-
-            public SpendAnimationContext(GameObject targetMoneyGo, Vector2Int targetCellCoords, int moneyAmount)
-            {
-                TargetMoneyGo = targetMoneyGo;
-                TargetCellCoords = targetCellCoords;
-                MoneyAmount = moneyAmount;
-            }
         }
         
         private class TakeMoneyAnimationContext

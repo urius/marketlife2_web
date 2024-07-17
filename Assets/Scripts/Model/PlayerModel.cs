@@ -9,18 +9,18 @@ namespace Model
         public readonly ShopModel ShopModel;
         public readonly PlayerCharModel PlayerCharModel;
 
-        public PlayerModel(ShopModel shopModel, int money, PlayerCharModel playerCharModel)
+        public PlayerModel(ShopModel shopModel, int moneyAmount, PlayerCharModel playerCharModel)
         {
             ShopModel = shopModel;
-            Money = money;
+            MoneyAmount = moneyAmount;
             PlayerCharModel = playerCharModel;
         }
         
-        public int Money { get; private set; }
+        public int MoneyAmount { get; private set; }
 
         public void ChangeMoney(int deltaMoney)
         {
-            Money += deltaMoney;
+            MoneyAmount += deltaMoney;
             
             MoneyChanged?.Invoke(deltaMoney);
         }
