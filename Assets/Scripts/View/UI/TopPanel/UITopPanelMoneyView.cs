@@ -9,6 +9,8 @@ namespace View.UI.TopPanel
         
         private Color _textDefaultColor;
 
+        public Color TextDefaultColor => _textDefaultColor;
+
         private void Awake()
         {
             _textDefaultColor = _text.color;
