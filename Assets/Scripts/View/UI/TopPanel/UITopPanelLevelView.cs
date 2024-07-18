@@ -1,4 +1,3 @@
-using System;
 using TMPro;
 using UnityEngine;
 
@@ -8,6 +7,7 @@ namespace View.UI.TopPanel
     {
         [SerializeField] private TMP_Text _levelText;
         [SerializeField] private TMP_Text _progressText;
+        [SerializeField] private TMP_Text _levelStatusText;
         [SerializeField] private RectTransform _progressBarTransform;
         
         private Vector2 _defaultProgressBarSizeDelta;
@@ -31,6 +31,11 @@ namespace View.UI.TopPanel
         public void SetProgressText(string text)
         {
             _progressText.text = text;
+        }
+
+        public void SetLevelStatusText(string levelStatusText)
+        {
+            _levelStatusText.text = levelStatusText;
         }
     }
 }

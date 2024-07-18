@@ -1,0 +1,104 @@
+{
+	"localizations": [
+		{
+			"key": "test_key",
+			"en": "Test key",
+			"ru": "Тестовый ключ"
+		},
+		{
+			"key": "market_level_1",
+			"en": "Market stall",
+			"ru": "Торговая палатка"
+		},
+		{
+			"key": "market_level_2",
+			"en": "Kiosk",
+			"ru": "Киоск"
+		},
+		{
+			"key": "market_level_3",
+			"en": "Convenience store",
+			"ru": "Магазин у дома"
+		},
+		{
+			"key": "market_level_4",
+			"en": "Mini-market",
+			"ru": "Мини-маркет"
+		},
+		{
+			"key": "market_level_5",
+			"en": "24-hour store",
+			"ru": "Круглосуточный магазин"
+		},
+		{
+			"key": "market_level_6",
+			"en": "Supermarket",
+			"ru": "Супермаркет"
+		},
+		{
+			"key": "market_level_7",
+			"en": "Hypermarket",
+			"ru": "Гипермаркет"
+		},
+		{
+			"key": "market_level_8",
+			"en": "Shopping plaza",
+			"ru": "Торговая площадь"
+		},
+		{
+			"key": "market_level_9",
+			"en": "Retail complex",
+			"ru": "Торговый комплекс"
+		},
+		{
+			"key": "market_level_10",
+			"en": "Mall",
+			"ru": "Торговый центр"
+		},
+		{
+			"key": "market_level_11",
+			"en": "Megamall",
+			"ru": "Мегамолл"
+		},
+		{
+			"key": "market_level_12",
+			"en": "Shopping zone",
+			"ru": "Торговая зона"
+		},
+		{
+			"key": "market_level_13",
+			"en": "Retail park",
+			"ru": "Торговый парк"
+		},
+		{
+			"key": "market_level_14",
+			"en": "Shopping district",
+			"ru": "Торговый район"
+		},
+		{
+			"key": "market_level_15",
+			"en": "Retail village",
+			"ru": "Торговая деревня"
+		},
+		{
+			"key": "market_level_16",
+			"en": "Trading town",
+			"ru": "Торговый городок"
+		},
+		{
+			"key": "market_level_17",
+			"en": "Retail metropolis",
+			"ru": "Торговая метрополия"
+		},
+		{
+			"key": "market_level_18",
+			"en": "trading network",
+			"ru": "Торговая сеть"
+		},
+		{
+			"key": "market_level_19",
+			"en": "International trade center",
+			"ru": "Международный торговый центр"
+		}
+	]
+}

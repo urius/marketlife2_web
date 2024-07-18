@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: DefaultPlayerDataHolderSo
   m_EditorClassIdentifier: 
   _defaultPlayerData:
-    Money: 50
+    Money: 30
     Level: 1
     ShopData:
       Size: {x: 8, y: 8}

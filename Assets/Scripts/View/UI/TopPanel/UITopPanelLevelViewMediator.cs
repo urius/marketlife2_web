@@ -1,3 +1,4 @@
+using Data;
 using Holders;
 using Infra.Instance;
 using Model;
@@ -9,6 +10,7 @@ namespace View.UI.TopPanel
     {
         private readonly IPlayerModelHolder _playerModelHolder = Instance.Get<IPlayerModelHolder>();
         private readonly ICommonGameSettings _commonGameSettings = Instance.Get<ICommonGameSettings>();
+        private readonly ILocalizationProvider _localizationProvider = Instance.Get<ILocalizationProvider>();
         
         private UITopPanelLevelView _levelView;
         private PlayerModel _playerModel;
@@ -58,6 +60,9 @@ namespace View.UI.TopPanel
 
         private void DisplayLevel()
         {
+            var marketLevelStatus = _localizationProvider.GetLocale(Constants.LocalizationKeyMarketLevelPrefix + _playerModel.Level);
+            
+            _levelView.SetLevelStatusText(marketLevelStatus);
             _levelView.SetLevelText(_playerModel.Level.ToString());
         }
 
