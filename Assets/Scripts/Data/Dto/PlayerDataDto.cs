@@ -6,6 +6,7 @@ namespace Data.Dto
     public struct PlayerDataDto
     {
         public int Money;
+        public int Level;
         public ShopDataDto ShopData;
         public PlayerCharDataDto PlayerCharData;
     }

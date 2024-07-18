@@ -14,6 +14,7 @@ namespace Systems
         {
             await _playerModelHolder.PlayerModelSetTask;
 
+            StartSystem<PlayerLevelSystem>();
             StartSystem<PlayerCharSystem>();
             StartSystem<BuildPointsAppearanceSystem>();
             StartSystem<TruckPointsLogicSystem>();

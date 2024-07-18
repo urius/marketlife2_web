@@ -19,6 +19,7 @@ namespace View.UI
             await _playerModelHolder.PlayerModelSetTask;
             
             MediateChild<UITopPanelMoneyViewMediator>(view.UITopPanelMoneyView.transform);
+            MediateChild<UITopPanelLevelViewMediator>(view.UITopPanelLevelView.transform);
         }
 
         protected override void UnmediateInternal()

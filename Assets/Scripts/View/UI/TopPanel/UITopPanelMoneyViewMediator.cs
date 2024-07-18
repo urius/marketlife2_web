@@ -3,6 +3,7 @@ using Holders;
 using Infra.Instance;
 using Model;
 using UnityEngine;
+using Utils;
 
 namespace View.UI.TopPanel
 {
@@ -86,7 +87,9 @@ namespace View.UI.TopPanel
         {
             _currentMoneyDisplayed = moneyAmount;
             
-            _moneyView.SetMoneyText(_currentMoneyDisplayed.ToString());
+            var moneyAmountFormatted = FormattingHelper.ToCommaSeparatedNumber(_currentMoneyDisplayed); 
+
+            _moneyView.SetMoneyText(moneyAmountFormatted);
         }
         
         private class MoneyAnimationContext

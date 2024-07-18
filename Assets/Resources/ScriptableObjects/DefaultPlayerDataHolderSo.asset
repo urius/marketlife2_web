@@ -13,15 +13,13 @@ MonoBehaviour:
   m_Name: DefaultPlayerDataHolderSo
   m_EditorClassIdentifier: 
   _defaultPlayerData:
-    Money: 100
+    Money: 50
+    Level: 1
     ShopData:
       Size: {x: 8, y: 8}
       WallType: 1
       FloorType: 1
       ShopObjects: []
-      BuildPoints:
-      - ShopObjectType: 1
-        CellCoords: {x: 2, y: 2}
-        MoneyToBuildLeft: 30
+      BuildPoints: []
     PlayerCharData:
       CellPosition: {x: 3, y: 4}

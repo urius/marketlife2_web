@@ -20,6 +20,7 @@ public class InitScript : MonoBehaviour
     [SerializeField] private Camera _mainCamera;
     [SerializeField] private DefaultPlayerDataHolderSo _defaultPlayerDataHolder;
     [SerializeField] private PrefabsHolderSo _prefabsHolder;
+    [SerializeField] private CommonGameSettingsSo _commonGameSettings;
     [SerializeField] private SpritesHolderSo _spritesHolder;
     [SerializeField] private BuildPointsDataHolderSo _buildPointsDataHolder;
     [SerializeField] private TruckPointsSettingsProviderSo _truckPointsSettingsProvider;
@@ -79,6 +80,7 @@ public class InitScript : MonoBehaviour
         SetupInstance.From(_buildPointsDataHolder).AsSelf();
         SetupInstance.From(_truckPointsSettingsProvider).AsSelf();
         SetupInstance.From(_gameObjectsCache).As<IGameObjectsCache>();
+        SetupInstance.From(_commonGameSettings).As<ICommonGameSettings>();
         
         SetupNewInstance<ScreenCalculator, IScreenCalculator>();
         SetupNewInstance<ShopModelHolder, IShopModelHolder>();

@@ -15,32 +15,32 @@ MonoBehaviour:
   _cashDesks:
   - ShopObjectType: 1
     CellCoords: {x: 2, y: 2}
-    MoneyToBuildLeft: 30
+    MoneyToBuildLeft: 10
   - ShopObjectType: 1
     CellCoords: {x: 6, y: 2}
-    MoneyToBuildLeft: 50
+    MoneyToBuildLeft: 20
   _shelfsByRow:
   - YCellCoord: 4
     Shelfs:
     - ShopObjectType: 102
       XCellCoord: 5
-      Cost: 20
+      Cost: 10
     - ShopObjectType: 102
       XCellCoord: 9
-      Cost: 30
+      Cost: 15
   - YCellCoord: 7
     Shelfs:
     - ShopObjectType: 104
       XCellCoord: 5
-      Cost: 40
+      Cost: 20
     - ShopObjectType: 104
       XCellCoord: 9
-      Cost: 50
+      Cost: 25
   _truckGatePositionSettings:
     FirstGateOffset: 5
     DefaultGateOffset: 4
   _truckGates:
+  - BuildCost: 10
+  - BuildCost: 20
   - BuildCost: 30
   - BuildCost: 40
-  - BuildCost: 50
-  - BuildCost: 60
