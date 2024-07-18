@@ -185,6 +185,7 @@ namespace Systems
             if (minDistanceToTarget < 0 && CanMakeStepTo(customerCharModel.PreviousCellPosition))
             {
                 stepCell = customerCharModel.PreviousCellPosition;
+                minDistanceToTarget = (targetPoint - stepCell).magnitude;
             }
 
             if (minDistanceToTarget >= 0)
@@ -300,7 +301,7 @@ namespace Systems
         private void SetMoveToExitState(CustomerCharModel model)
         {
             var closestDoor = GetClosestDoor(model.CellPosition);
-            var targetPoint = new Vector2Int(closestDoor.Right, -1);
+            var targetPoint = new Vector2Int(closestDoor.Right, -2);
 
             model.SetMovingToExitState(targetPoint);
 
