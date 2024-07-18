@@ -38,6 +38,13 @@ namespace Systems
 
         private void UpdateBuildPoints()
         {
+            if (_cashDesksAmount <= 0)
+            {
+                var buildPointDto = _buildPointsDataHolder.GetCashDeskBuildPointData(0);
+                TryAddBuildPoint(buildPointDto);
+                return;
+            }
+
             if (_cashDesksAmount > 0)
             {
                 var shelfRowsCount = _shelfsByRow.Count;
