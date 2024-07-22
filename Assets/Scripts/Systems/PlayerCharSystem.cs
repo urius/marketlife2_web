@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using Commands;
 using Data;
@@ -49,6 +48,7 @@ namespace Systems
             _eventBus.Subscribe<SpendMoneyOnBuildPointLastAnimationFinishedEvent>(OnSpendMoneyOnBuildPointLastAnimationFinished);
             _eventBus.Subscribe<TruckArrivedEvent>(OnTruckArrivedEvent);
             _eventBus.Subscribe<PutProductOnShelfHalfAnimationEvent>(OnPutProductOnShelfHalfAnimationEvent);
+            _updatesProvider.SecondPassed += OnSecondPassed;
             _updatesProvider.QuarterSecondPassed += OnQuarterSecondPassed;
             _playerCharModel.CellPositionChanged += OnCellPositionChanged;
         }
@@ -60,8 +60,14 @@ namespace Systems
             _eventBus.Unsubscribe<SpendMoneyOnBuildPointLastAnimationFinishedEvent>(OnSpendMoneyOnBuildPointLastAnimationFinished);
             _eventBus.Unsubscribe<TruckArrivedEvent>(OnTruckArrivedEvent);
             _eventBus.Unsubscribe<PutProductOnShelfHalfAnimationEvent>(OnPutProductOnShelfHalfAnimationEvent);
+            _updatesProvider.SecondPassed -= OnSecondPassed;
             _updatesProvider.QuarterSecondPassed -= OnQuarterSecondPassed;
             _playerCharModel.CellPositionChanged -= OnCellPositionChanged;
+        }
+
+        private void OnSecondPassed()
+        {
+            PutProductOnShelfIfNeeded(_playerCharModel.CellPosition);
         }
 
         private void OnRequestPlayerCellChanged(RequestPlayerCellChangeEvent e)

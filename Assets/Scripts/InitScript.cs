@@ -3,6 +3,7 @@ using Holders;
 using Infra.CommandExecutor;
 using Infra.EventBus;
 using Infra.Instance;
+using Model.ViewModel;
 using Systems;
 using Tools.GameObjectsCache;
 using UnityEngine;
@@ -90,6 +91,7 @@ public class InitScript : MonoBehaviour
         SetupNewInstance<ShelfSettingsProvider, IShelfSettingsProvider>();
         SetupNewInstance<PlayerCharViewSharedDataHolder, IPlayerCharViewSharedDataHolder>();
         SetupNewInstance<SharedViewsDataHolder, ISharedViewsDataHolder>();
+        SetupNewInstance<MainViewModel, IMainViewModel>();
         
         _playerModelHolder = SetupNewInstance<PlayerModelHolder, IPlayerModelHolder>();
         var commandExecutor = SetupNewInstance<CommandExecutor, ICommandExecutor>();
