@@ -1,5 +1,5 @@
-using System;
 using Data;
+using Other;
 using UnityEngine;
 
 namespace Holders
@@ -7,7 +7,9 @@ namespace Holders
     [CreateAssetMenu(fileName = "TruckPointsSettingsProviderSo", menuName = "ScriptableObjects/TruckPointsSettingsProvider")]
     public class TruckPointsSettingsProviderSo : ScriptableObject
     {
-        [SerializeField] private TruckPointSetting[] _truckPointsSettings;
+        [SerializeField]
+        [LabeledArray(nameof(TruckPointSetting.Products))]
+        private TruckPointSetting[] _truckPointsSettings;
 
         public bool TryGetSettingByTruckPointIndex(int index, out TruckPointSetting setting)
         {
