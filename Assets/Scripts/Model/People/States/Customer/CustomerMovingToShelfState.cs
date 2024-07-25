@@ -2,7 +2,7 @@ using Data;
 using Model.ShopObjects;
 using UnityEngine;
 
-namespace Model.Customers.States
+namespace Model.People.States.Customer
 {
     public class CustomerMovingToShelfState : CustomerMovingStateBase
     {
@@ -16,6 +16,6 @@ namespace Model.Customers.States
             TargetProduct = targetProduct;
         }
 
-        public override CustomerGlobalStateName StateName => CustomerGlobalStateName.MovingToShelf;
+        public override ShopCharStateName StateName => ShopCharStateName.MovingToShelf;
     }
 }

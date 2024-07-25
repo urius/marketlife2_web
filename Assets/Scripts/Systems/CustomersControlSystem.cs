@@ -6,8 +6,8 @@ using Holders;
 using Infra.EventBus;
 using Infra.Instance;
 using Model;
-using Model.Customers;
-using Model.Customers.States;
+using Model.People;
+using Model.People.States.Customer;
 using Model.ShopObjects;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -92,7 +92,7 @@ namespace Systems
             }
             else
             {
-                if (movingState.StateName == CustomerGlobalStateName.MovingToCashDesk)
+                if (movingState.StateName == ShopCharStateName.MovingToCashDesk)
                 {
                     var cashDesk = ((CustomerMovingToCashDeskState)movingState).TargetCashDesk;
                     var queueIndex = GetCustomerCashDeskQueueIndex(cashDesk, customerModel);
@@ -210,10 +210,10 @@ namespace Systems
         {
             switch (model.State.StateName)
             {
-                case CustomerGlobalStateName.MovingToEnter:
+                case ShopCharStateName.MovingToEnter:
                     SetMoveToRandomShelfState(model);
                     break;
-                case CustomerGlobalStateName.MovingToShelf:
+                case ShopCharStateName.MovingToShelf:
                     var targetProduct = ((CustomerMovingToShelfState)model.State).TargetProduct;
                     if (targetProduct != ProductType.None)
                     {
@@ -232,22 +232,22 @@ namespace Systems
                         SetMoveToExitState(model);
                     }
                     break;
-                case CustomerGlobalStateName.TakingProduct:
+                case ShopCharStateName.TakingProduct:
                     SetMoveToCashDeskState(model);
                     break;
-                case CustomerGlobalStateName.MovingToCashDesk:
+                case ShopCharStateName.MovingToCashDesk:
                     TrySetPayingState(((CustomerMovingToCashDeskState)model.State).TargetCashDesk, model);
                     break;
-                case CustomerGlobalStateName.Paying:
+                case ShopCharStateName.Paying:
                     var targetCashDesk = ((CustomerPayingState)model.State).TargetCashDesk;
                     AddMoneyToCashDesk(targetCashDesk, model);
                     SetMoveToExitState(model);
                     RemoveFromCashDeskQueue(targetCashDesk);
                     break;
-                case CustomerGlobalStateName.MovingToExit:
+                case ShopCharStateName.MovingToExit:
                     SetMoveOutOfShopState(model);
                     break;
-                case CustomerGlobalStateName.MovingToDespawn:
+                case ShopCharStateName.MovingToDespawn:
                     _customersModel.RemoveCustomer(model);
                     break;
             }
@@ -459,7 +459,7 @@ namespace Systems
             if (customer.IsStepInProgress == false
                 && customer.State is CustomerMovingStateBase movingStateBase)
             {
-                if (movingStateBase.StateName == CustomerGlobalStateName.MovingToCashDesk)
+                if (movingStateBase.StateName == ShopCharStateName.MovingToCashDesk)
                 {
                     var moveToCashDeskState = (CustomerMovingToCashDeskState)movingStateBase;
                     var cashDesk = moveToCashDeskState.TargetCashDesk;

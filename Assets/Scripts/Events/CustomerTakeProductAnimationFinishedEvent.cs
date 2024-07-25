@@ -1,4 +1,4 @@
-using Model.Customers;
+using Model.People;
 
 namespace Events
 {

@@ -1,9 +1,9 @@
 using Data;
 using Model.ShopObjects;
 
-namespace Model.Customers.States
+namespace Model.People.States.Customer
 {
-    public class CustomerTakeProductFromShelfState : CustomerStateBase
+    public class CustomerTakeProductFromShelfState : ShopSharStateBase
     {
         public readonly ShelfModel TargetShelfModel;
         public readonly int SlotIndex;
@@ -19,6 +19,6 @@ namespace Model.Customers.States
             BasketSlotIndex = basketSlotIndex;
         }
 
-        public override CustomerGlobalStateName StateName => CustomerGlobalStateName.TakingProduct;
+        public override ShopCharStateName StateName => ShopCharStateName.TakingProduct;
     }
 }

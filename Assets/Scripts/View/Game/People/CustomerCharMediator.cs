@@ -4,8 +4,9 @@ using Events;
 using Holders;
 using Infra.EventBus;
 using Infra.Instance;
-using Model.Customers;
-using Model.Customers.States;
+using Model.People;
+using Model.People.States;
+using Model.People.States.Customer;
 using UnityEngine;
 using Utils;
 using View.Game.Product;
@@ -70,14 +71,14 @@ namespace View.Game.People
             _updatesProvider.GameplayFixedUpdate -= GameplayFixedUpdateWalkHandler;
         }
 
-        private void OnStateChanged(CustomerStateBase state)
+        private void OnStateChanged(ShopSharStateBase state)
         {
-            if (state.StateName == CustomerGlobalStateName.TakingProduct)
+            if (state.StateName == ShopCharStateName.TakingProduct)
             {
                 var takeProductState = (CustomerTakeProductFromShelfState)state;
                 AnimateTakingProductFromShelf(takeProductState);
             }
-            else if (state.StateName == CustomerGlobalStateName.Paying)
+            else if (state.StateName == ShopCharStateName.Paying)
             {
                 AnimatePaying();
             }

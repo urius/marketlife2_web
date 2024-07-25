@@ -1,6 +1,6 @@
 namespace Data
 {
-    public enum CustomerGlobalStateName
+    public enum ShopCharStateName
     {
         Undefined,
         MovingToEnter,

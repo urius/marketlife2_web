@@ -2,7 +2,7 @@ using Data;
 using Model.ShopObjects;
 using UnityEngine;
 
-namespace Model.Customers.States
+namespace Model.People.States.Customer
 {
     public class CustomerMovingToCashDeskState : CustomerMovingStateBase
     {
@@ -14,6 +14,6 @@ namespace Model.Customers.States
             TargetCashDesk = targetCashDesk;
         }
 
-        public override CustomerGlobalStateName StateName => CustomerGlobalStateName.MovingToCashDesk;
+        public override ShopCharStateName StateName => ShopCharStateName.MovingToCashDesk;
     }
 }

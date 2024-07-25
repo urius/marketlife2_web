@@ -2,54 +2,27 @@ using System;
 using System.Collections.Generic;
 using Data;
 using Events;
-using Model.Customers.States;
+using Model.People.States.Customer;
 using Model.ShopObjects;
 using UnityEngine;
 
-namespace Model.Customers
+namespace Model.People
 {
-    public class CustomerCharModel
+    public class CustomerCharModel : ShopCharModelBase
     {
         private const int MaxProductsAmount = 4;
         
-        public event Action<Vector2Int> CellPositionChanged;
         public event Action<int> ProductAdded;
-        public event Action<CustomerStateBase> StateChanged;
-
-        public bool IsStepInProgress = false;
         
         private readonly List<ProductType> _products = new(MaxProductsAmount);
-        
-        private Vector2Int _prevCellPosition;
-        private Vector2Int _cellPosition;
-        private int _stepIndex;
 
-        public CustomerCharModel(Vector2Int cellPosition)
+        public CustomerCharModel(Vector2Int cellPosition) 
+            : base(cellPosition)
         {
-            CellPosition = cellPosition;
         }
 
         public int ProductsCount => _products.Count;
         public bool HasProducts => ProductsCount > 0;
-        public Vector2Int PreviousCellPosition => _prevCellPosition;
-        public Vector2Int CellPosition
-        {
-            get => _cellPosition;
-            private set
-            {
-                _prevCellPosition = _cellPosition;
-                _cellPosition = value;
-                CellPositionChanged?.Invoke(value);
-            }
-        }
-
-        public CustomerStateBase State { get; private set; }
-
-
-        public void SetCellPosition(Vector2Int stepCell)
-        {
-            CellPosition = stepCell;
-        }
 
         public void SetTakingProductState(ShelfModel targetShelfModel, int slotIndex, ProductType productType,
             int addedProductSlotIndex)
@@ -85,13 +58,6 @@ namespace Model.Customers
         public void SetPayingState(CashDeskModel targetCashDesk)
         {
             SetState(new CustomerPayingState(targetCashDesk));
-        }
-
-        private void SetState(CustomerStateBase state)
-        {
-            State = state;
-
-            StateChanged?.Invoke(State);
         }
 
         public int AddProduct(ProductType productType)

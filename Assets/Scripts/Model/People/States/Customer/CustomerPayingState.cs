@@ -1,9 +1,9 @@
 using Data;
 using Model.ShopObjects;
 
-namespace Model.Customers.States
+namespace Model.People.States.Customer
 {
-    public class CustomerPayingState : CustomerStateBase
+    public class CustomerPayingState : ShopSharStateBase
     {
         public readonly CashDeskModel TargetCashDesk;
 
@@ -12,6 +12,6 @@ namespace Model.Customers.States
             TargetCashDesk = targetCashDesk;
         }
 
-        public override CustomerGlobalStateName StateName => CustomerGlobalStateName.Paying;
+        public override ShopCharStateName StateName => ShopCharStateName.Paying;
     }
 }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Data;
 using Model.BuildPoint;
-using Model.Customers;
+using Model.People;
 using Model.ShopObjects;
 using UnityEngine;
 

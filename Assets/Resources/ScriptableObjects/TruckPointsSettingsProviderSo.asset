@@ -13,5 +13,8 @@ MonoBehaviour:
   m_Name: TruckPointsSettingsProviderSo
   m_EditorClassIdentifier: 
   _truckPointsSettings:
-  - Products: 0100000011000000
-    DeliverTimeSeconds: 15
+  - DeliverTimeSecondsDefault: 15
+    Products: 01000000110000001200000006000000
+    UpgradesSetting:
+      InitialDeliverTimeUpgradeValue: 4
+      MinDeliverTimeSeconds: 3

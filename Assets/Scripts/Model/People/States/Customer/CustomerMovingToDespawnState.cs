@@ -1,7 +1,7 @@
 using Data;
 using UnityEngine;
 
-namespace Model.Customers.States
+namespace Model.People.States.Customer
 {
     public class CustomerMovingToDespawnState : CustomerMovingStateBase
     {
@@ -9,6 +9,6 @@ namespace Model.Customers.States
         {
         }
 
-        public override CustomerGlobalStateName StateName => CustomerGlobalStateName.MovingToDespawn;
+        public override ShopCharStateName StateName => ShopCharStateName.MovingToDespawn;
     }
 }

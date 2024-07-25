@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Holders;
 using Infra.Instance;
-using Model.Customers;
+using Model.People;
 using UnityEngine;
 
 namespace View.Game.People

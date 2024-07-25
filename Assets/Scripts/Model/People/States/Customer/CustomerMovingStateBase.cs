@@ -1,8 +1,8 @@
 using UnityEngine;
 
-namespace Model.Customers.States
+namespace Model.People.States.Customer
 {
-    public abstract class CustomerMovingStateBase : CustomerStateBase
+    public abstract class CustomerMovingStateBase : ShopSharStateBase
     {
         public readonly Vector2Int TargetCell;
 

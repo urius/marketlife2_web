@@ -1,5 +1,6 @@
 using Data;
-using Model.Customers.States;
+using Model.People.States;
+using Model.People.States.Customer;
 using UnityEngine;
 
 namespace Events
@@ -10,6 +11,6 @@ namespace Events
         {
         }
 
-        public override CustomerGlobalStateName StateName => CustomerGlobalStateName.MovingToExit;
+        public override ShopCharStateName StateName => ShopCharStateName.MovingToExit;
     }
 }
