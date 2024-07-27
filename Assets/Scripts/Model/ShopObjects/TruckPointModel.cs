@@ -13,11 +13,13 @@ namespace Model.ShopObjects
         
         public event Action<int> DeliverTimeAdvanced;
         public event Action DeliverTimeReset;
+        public event Action ProductsReset;
         public event Action<int> BoxRemoved;
         public event Action Upgraded;
         
         private readonly TruckPointSetting _setting;
         private readonly int[] _deliverTimesByUpgradeIndex;
+        private readonly ProductType[] _currentProductBoxes;
         
         private int _upgradesCount;
         private int _productBoxesAmount;
@@ -34,35 +36,37 @@ namespace Model.ShopObjects
             UpdateProductBoxesAmount();
             _deliverTimesByUpgradeIndex = GetDeliverTimes(setting);
 
-            CurrentProductBoxes = currentProductBoxes;
+            _currentProductBoxes = new ProductType[_setting.Products.Length];
+            Array.Copy(currentProductBoxes, _currentProductBoxes, currentProductBoxes.Length);
+            
             DeliverTimeSecondsRest = deliverTimeSecondsRest;
         }
 
         public override ShopObjectType ShopObjectType => ShopObjectType.TruckPoint;
 
-        public ProductType[] CurrentProductBoxes { get; private set; }
-
         public int DeliverTimeSecondsRest { get; private set; }
 
         public int UpgradesCount => _upgradesCount;
 
-        public bool HasProducts => CurrentProductBoxes.Any(p => p != ProductType.None);
+        public bool HasProducts => _currentProductBoxes.Any(p => p != ProductType.None);
 
         public void RemoveBox(int boxIndex)
         {
-            if (boxIndex < CurrentProductBoxes.Length
-                && CurrentProductBoxes[boxIndex] != ProductType.None)
+            if (boxIndex < _currentProductBoxes.Length
+                && _currentProductBoxes[boxIndex] != ProductType.None)
             {
-                CurrentProductBoxes[boxIndex] = ProductType.None;
+                _currentProductBoxes[boxIndex] = ProductType.None;
 
                 BoxRemoved?.Invoke(boxIndex);
             }
         }
 
-        public void ResetProductsSilently()
+        public void ResetProducts()
         {
             var amountToCopy = Math.Min(_setting.Products.Length, _productBoxesAmount);
-            Array.Copy(_setting.Products, CurrentProductBoxes, amountToCopy);
+            Array.Copy(_setting.Products, _currentProductBoxes, amountToCopy);
+            
+            ProductsReset?.Invoke();
         }
 
         public bool CanUpgrade()
@@ -87,14 +91,29 @@ namespace Model.ShopObjects
 
         public ProductType GetProductTypeAtBoxIndex(int boxIndex)
         {
-            return boxIndex < CurrentProductBoxes.Length ? CurrentProductBoxes[boxIndex] : ProductType.None;
+            return boxIndex < _currentProductBoxes.Length ? _currentProductBoxes[boxIndex] : ProductType.None;
         }
 
         public int GetFirstNotEmptyProductBoxIndex()
         {
-            for (var i = 0; i < CurrentProductBoxes.Length; i++)
+            for (var i = 0; i < _currentProductBoxes.Length; i++)
             {
-                var currentProductBox = CurrentProductBoxes[i];
+                var currentProductBox = _currentProductBoxes[i];
+
+                if (currentProductBox != ProductType.None)
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+        
+        public int GetLastNotEmptyProductBoxIndex()
+        {
+            for (var i = _currentProductBoxes.Length - 1; i >= 0; i--)
+            {
+                var currentProductBox = _currentProductBoxes[i];
 
                 if (currentProductBox != ProductType.None)
                 {
@@ -118,11 +137,22 @@ namespace Model.ShopObjects
 
         public void ResetDeliverTime()
         {
-            DeliverTimeSecondsRest = _upgradesCount > 0
-                ? _deliverTimesByUpgradeIndex[_upgradesCount - 1]
-                : _setting.DeliverTimeSecondsDefault;
+            DeliverTimeSecondsRest = GetDeliverTimeSettingSeconds();
 
             DeliverTimeReset?.Invoke();
+        }
+
+        public int GetDeliverTimeSettingSeconds()
+        {
+            return _upgradesCount > 0
+                ? _deliverTimesByUpgradeIndex[_upgradesCount - 1]
+                : _setting.DeliverTimeSecondsDefault;
+        }
+
+
+        public ProductType[] GetAvailableProducts()
+        {
+            return _setting.Products.Take(_productBoxesAmount).ToArray();
         }
 
         private void UpdateProductBoxesAmount()
@@ -137,8 +167,8 @@ namespace Model.ShopObjects
             var tempDeliverTime = setting.DeliverTimeSecondsDefault;
             var i = 0;
             var productUpgradesAmount = setting.Products.Length - DefaultProductBoxesAmount;
-            var upgradeTimeDelta = setting.UpgradesSetting.InitialDeliverTimeUpgradeValue;
-            var minDeliverTimeSeconds = setting.UpgradesSetting.MinDeliverTimeSeconds;
+            var upgradeTimeDelta = setting.InitialDeliverTimeUpgradeValue;
+            const int minDeliverTimeSeconds = Constants.MinDeliverTimeSeconds;
 
             while (i < 100)
             {

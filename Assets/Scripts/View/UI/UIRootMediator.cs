@@ -1,5 +1,6 @@
 using Holders;
 using Infra.Instance;
+using View.UI.BottomPanel;
 using View.UI.GameOverlayPanel;
 using View.UI.TopPanel;
 
@@ -14,12 +15,12 @@ namespace View.UI
             var view = TargetTransform.GetComponent<UIRootView>();
             
             MediateChild<UIGameOverlayPanelMediator>(view.UIGameOverlayPanelTransform);
-
             
             await _playerModelHolder.PlayerModelSetTask;
             
             MediateChild<UITopPanelMoneyViewMediator>(view.UITopPanelMoneyView.transform);
             MediateChild<UITopPanelLevelViewMediator>(view.UITopPanelLevelView.transform);
+            MediateChild<UITruckPointPanelMediator>(view.UIBottomPanelTruckPointPanelView.transform);
         }
 
         protected override void UnmediateInternal()

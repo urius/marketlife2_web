@@ -77,6 +77,20 @@ namespace Holders
             
             return cashDeskModel != null;
         }
+        
+        public bool TryGetShelf(Vector2Int shopObjectCellCoords, out ShelfModel shelfModel)
+        {
+            shelfModel = null;
+
+            if (_ownedCellDataByCoords.TryGetValue(shopObjectCellCoords, out var ownedCellData)
+                && ownedCellData.OwnedCellDataObjectType == OwnedCellDataObjectType.ShopObject
+                && ((OwnedCellByShopObjectData)ownedCellData).ShopObjectModel is ShelfModel shelf)
+            {
+                shelfModel = shelf;
+            }
+    
+            return shelfModel != null;
+        }
 
         public Vector2Int[] GetShopObjectOwnedCells(ShopObjectModelBase shopObjectModel)
         {
@@ -119,6 +133,7 @@ namespace Holders
         public bool IsOwnedByShopObject(Vector2Int cellCoords);
         public bool TryGetShopObjectOwner(Vector2Int shopObjectCellCoords, out OwnedCellByShopObjectData ownedData);
         public bool TryGetCashDesk(Vector2Int shopObjectCellCoords, out CashDeskModel cashDeskModel);
+        public bool TryGetShelf(Vector2Int shopObjectCellCoords, out ShelfModel shelfModel);
         public Vector2Int[] GetShopObjectOwnedCells(ShopObjectModelBase shopObjectModel);
         public bool IsWalkableForPlayerChar(Vector2Int cellCoords);
         public bool IsWalkableForCustomerChar(Vector2Int cellCoords);

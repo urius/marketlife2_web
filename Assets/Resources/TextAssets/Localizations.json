@@ -99,6 +99,36 @@
 			"key": "market_level_19",
 			"en": "International trade center",
 			"ru": "Международный торговый центр"
+		},
+		{
+			"key": "bottom_panel_delivery_title",
+			"en": "доставка",
+			"ru": "delivery"
+		},
+		{
+			"key": "bottom_panel_staff_title",
+			"en": "персонал",
+			"ru": "staff"
+		},
+		{
+			"key": "hire_button",
+			"en": "нанять",
+			"ru": "hire"
+		},
+		{
+			"key": "upgrade_button",
+			"en": "улучшить",
+			"ru": "upgrade"
+		},
+		{
+			"key": "max_upgrade",
+			"en": "макс.\nуровень",
+			"ru": "max\nlevel"
+		},
+		{
+			"key": "seconds_short_postfix",
+			"en": "с.",
+			"ru": "s."
 		}
 	]
 }

@@ -7,23 +7,25 @@ using Infra.EventBus;
 using Infra.Instance;
 using Model;
 using Model.ShopObjects;
-using UnityEngine;
 
 namespace Systems
 {
     public class TruckPointsLogicSystem : ISystem
     {
-        private readonly IShopModelHolder _shopModelHolder = Instance.Get<IShopModelHolder>();
+        private readonly IPlayerModelHolder _playerModelHolder = Instance.Get<IPlayerModelHolder>();
         private readonly IUpdatesProvider _updatesProvider = Instance.Get<IUpdatesProvider>();
+        private readonly IUpgradeCostProvider _upgradeCostProvider = Instance.Get<IUpgradeCostProvider>();
         private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
         
         private readonly List<TruckPointModel> _truckPointList = new();
 
         private ShopModel _shopModel;
+        private PlayerModel _playerModel;
 
         public void Start()
         {
-            _shopModel = _shopModelHolder.ShopModel;
+            _playerModel = _playerModelHolder.PlayerModel;
+            _shopModel = _playerModelHolder.PlayerModel.ShopModel;
                 
             PopulateTruckPointModels();
 
@@ -39,12 +41,23 @@ namespace Systems
         {
             _shopModel.ShopObjectAdded += OnShopObjectAdded;
             _updatesProvider.SecondPassed += OnSecondPassed;
+            _eventBus.Subscribe<TruckArriveAnimationFinishedEvent>(OnTruckArriveAnimationFinished);
+            
+            _eventBus.Subscribe<UpgradeTruckPointButtonClickedEvent>(OnUpgradeTruckPointButtonClickedEvent);
         }
 
         private void Unsubscribe()
         {
             _shopModel.ShopObjectAdded -= OnShopObjectAdded;
             _updatesProvider.SecondPassed -= OnSecondPassed;
+            _eventBus.Unsubscribe<TruckArriveAnimationFinishedEvent>(OnTruckArriveAnimationFinished);
+            
+            _eventBus.Unsubscribe<UpgradeTruckPointButtonClickedEvent>(OnUpgradeTruckPointButtonClickedEvent);
+        }
+
+        private void OnTruckArriveAnimationFinished(TruckArriveAnimationFinishedEvent e)
+        {
+            e.TruckPointModel.ResetProducts();
         }
 
         private void OnSecondPassed()
@@ -63,7 +76,6 @@ namespace Systems
                     && truckPointModel.HasProducts == false)
                 {
                     truckPointModel.ResetDeliverTime();
-                    truckPointModel.ResetProductsSilently();
                 }
             }
         }
@@ -86,6 +98,19 @@ namespace Systems
             _truckPointList.Capacity = truckPoints.Length * 2;
             
             _truckPointList.AddRange(truckPoints);
+        }
+
+        private void OnUpgradeTruckPointButtonClickedEvent(UpgradeTruckPointButtonClickedEvent e)
+        {
+            var truckPointModel = e.TargetTruckPoint;
+            if (truckPointModel.CanUpgrade())
+            {
+                var upgradeCost = _upgradeCostProvider.GetTruckPointUpgradeCost(truckPointModel);
+                if (_playerModel.TrySpendMoney(upgradeCost))
+                {
+                    truckPointModel.Upgrade();
+                }
+            }
         }
     }
 }

@@ -111,6 +111,19 @@ namespace Model
 
             return shelfModel != null;
         }
+        
+        public bool TryGetTruckPointModel(Vector2Int cellCoords, out TruckPointModel truckPointModel)
+        {
+            truckPointModel = null;
+
+            if (ShopObjects.TryGetValue(cellCoords, out var shopObject)
+                && shopObject.ShopObjectType == ShopObjectType.TruckPoint)
+            {
+                truckPointModel = (TruckPointModel)shopObject;
+            }
+
+            return truckPointModel != null;
+        }
 
         public bool RemoveBuildPoint(Vector2Int cellCoords)
         {

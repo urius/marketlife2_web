@@ -1,6 +1,8 @@
+using Data;
+
 namespace Utils
 {
-    public class FormattingHelper
+    public static class FormattingHelper
     {
         public static string ToSeparatedTimeFormat(int timeSeconds)
         {
@@ -15,6 +17,11 @@ namespace Utils
         public static string ToCommaSeparatedNumber(int amount)
         {
             return $"{amount:n0}";
+        }
+
+        public static string ToMoneyWithIconTextFormat(int moneyAmount)
+        {
+            return $"{Constants.TextIconMoney}{moneyAmount}";
         }
 
         private static string GetTwoDigitsString(int value)

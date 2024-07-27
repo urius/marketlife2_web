@@ -12,11 +12,12 @@ namespace Model
         public event Action<Vector2Int> CellPositionChanged;
         public event Action ProductsBoxAdded;
         public event Action<int> ProductRemoved;
+        public event Action NearCashDeskUpdated;
+        public event Action NearTruckPointUpdated;
+        public event Action NearShelfUpdated;
 
         private readonly ProductType[] _productsInBox =
             Enumerable.Repeat(ProductType.None, Constants.ProductsAmountInBox).ToArray();
-
-        private CashDeskModel _nearCashDesk;
 
         public PlayerCharModel(Vector2Int cellPosition)
         {
@@ -26,7 +27,9 @@ namespace Model
         public Vector2Int CellPosition { get; private set; }
         public bool HasProducts => HasProductsInternal();
         public IReadOnlyList<ProductType> ProductsInBox => _productsInBox;
-        public CashDeskModel NearCashDesk => _nearCashDesk;
+        public CashDeskModel NearCashDesk { get; private set; }
+        public ShelfModel NearShelf { get; private set; }
+        public TruckPointModel NearTruckPoint { get; private set; }
 
         public void SetCellPosition(Vector2Int cellPosition)
         {
@@ -74,12 +77,26 @@ namespace Model
 
         public void SetNearCashDesk(CashDeskModel cashDeskModel)
         {
-            _nearCashDesk = cashDeskModel;
+            if (NearCashDesk == cashDeskModel) return;
+
+            NearCashDesk = cashDeskModel;
+            NearCashDeskUpdated?.Invoke();
         }
-        
-        public void ResetNearCashDesk()
+
+        public void SetNearShelf(ShelfModel shelfModel)
         {
-            _nearCashDesk = null;
+            if (NearShelf == shelfModel) return;
+
+            NearShelf = shelfModel;
+            NearShelfUpdated?.Invoke();
+        }
+
+        public void SetNearTruckPoint(TruckPointModel truckPointModel)
+        {
+            if (NearTruckPoint == truckPointModel) return;
+
+            NearTruckPoint = truckPointModel;
+            NearTruckPointUpdated?.Invoke();
         }
 
         private bool HasProductsInternal()

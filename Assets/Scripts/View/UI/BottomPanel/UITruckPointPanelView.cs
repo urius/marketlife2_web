@@ -5,13 +5,14 @@ using UnityEngine.UI;
 
 namespace View.UI.BottomPanel
 {
-    public class UIUpgradeTruckPointPanelView : MonoBehaviour
+    public class UITruckPointPanelView : MonoBehaviour
     {
         public event Action UpgradeButtonClicked;
         public event Action HireStaffButtonClicked;
         
         [SerializeField] private TMP_Text _deliverTitleText;
         [SerializeField] private Image[] _productIcons;
+        [SerializeField] private Sprite _unknownProductSprite;
         [SerializeField] private Button _upgradeButton;
         [SerializeField] private TMP_Text _upgradeButtonText;
         
@@ -22,8 +23,17 @@ namespace View.UI.BottomPanel
         [SerializeField] private Button _hireStaffButton;
         [SerializeField] private TMP_Text _hireStaffButtonText;
 
+        
+        private RectTransform _rectTransform;
+        private float _slideDownYPosition;
+
+        public int ProductIconsAmount => _productIcons.Length;
+        
         private void Awake()
         {
+            _rectTransform = GetComponent<RectTransform>();
+            _slideDownYPosition = _rectTransform.anchoredPosition.y;
+            
             _upgradeButton.onClick.AddListener(UpgradeButtonClickHandler);
             _hireStaffButton.onClick.AddListener(HireStaffButtonClickHandler);
         }
@@ -34,14 +44,17 @@ namespace View.UI.BottomPanel
             _hireStaffButton.onClick.RemoveListener(HireStaffButtonClickHandler);
         }
 
-        private void UpgradeButtonClickHandler()
+        public void SetActive(bool isActive)
         {
-            UpgradeButtonClicked?.Invoke();
+            gameObject.SetActive(isActive);
         }
 
-        private void HireStaffButtonClickHandler()
+        public float SetSlideUpPositionPercent(float positionPercent)
         {
-            HireStaffButtonClicked?.Invoke();
+            var yPos = Mathf.Lerp(_slideDownYPosition, 0, positionPercent);
+            _rectTransform.anchoredPosition = new Vector2(_rectTransform.anchoredPosition.x, yPos);
+
+            return yPos;
         }
 
         public void SetDeliverTitleText(string text)
@@ -58,7 +71,7 @@ namespace View.UI.BottomPanel
         {
             if (productIndex >= 0 && productIndex < _productIcons.Length)
             {
-                _productIcons[productIndex].sprite = iconSprite;
+                _productIcons[productIndex].sprite = iconSprite != null ? iconSprite : _unknownProductSprite;
             }
         }
         
@@ -74,6 +87,15 @@ namespace View.UI.BottomPanel
         public void SetUpgradeButtonText(string text)
         {
             _upgradeButtonText.text = text;
+        }
+        
+        public void SetUpgradeEnabledState(bool isEnabled)
+        {
+            _upgradeButton.interactable = isEnabled;
+            
+            var color = _upgradeButtonText.color;
+            color.a = isEnabled ? 1f : 0.7f;
+            _upgradeButtonText.color = color;
         }
 
         public void SetHireStaffButtonText(string text)
@@ -103,6 +125,16 @@ namespace View.UI.BottomPanel
         {
             _staffIcons[slotIndex].gameObject.SetActive(isEnabled);
             _staffWorkTimerTexts[slotIndex].gameObject.SetActive(isEnabled);
+        }
+
+        private void UpgradeButtonClickHandler()
+        {
+            UpgradeButtonClicked?.Invoke();
+        }
+
+        private void HireStaffButtonClickHandler()
+        {
+            HireStaffButtonClicked?.Invoke();
         }
     }
 }

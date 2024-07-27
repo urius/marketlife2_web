@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using Data;
 using UnityEngine;
 using View.Game.Misc;
@@ -22,7 +23,7 @@ namespace View.Game.ShopObjects.TruckPoint
         {
             return boxIndex < ProductBoxesAmount
                 ? _productsBoxViews[boxIndex].transform.position
-                : _productsBoxViews[0].transform.position;
+                : _productsBoxViews[ProductBoxesAmount - 1].transform.position;
         }
 
         public bool TryGetProductBoxView(int index, out ProductsBoxView productBoxView)
@@ -38,17 +39,24 @@ namespace View.Game.ShopObjects.TruckPoint
             return false;
         }
 
-        public void AnimateTruckArrive()
+        public UniTask AnimateTruckArrive()
         {
+            StopCurrentTweens();
+            
             _spritesContainer.position = _truckFarPositionTransform.position;
 
             SetCapOpenedState(false);
             
             gameObject.SetActive(true);
+
+            var tcs = new UniTaskCompletionSource();
             
             _spritesContainer.LeanMoveLocal(Vector3.zero, TruckArriveAnimationDuration)
                 .setEaseOutQuad()
-                .setOnComplete(OnTruckArriveAnimationFinished);
+                .setOnComplete(OnTruckArriveAnimationFinished)
+                .setOnCompleteParam(tcs);
+
+            return tcs.Task;
         }
 
         public void SetTruckArrived()
@@ -61,6 +69,8 @@ namespace View.Game.ShopObjects.TruckPoint
         
         public void AnimateTruckMovedOut()
         {
+            StopCurrentTweens();
+            
             _spritesContainer.localPosition = Vector3.zero;
 
             AnimateCapClose();
@@ -85,9 +95,9 @@ namespace View.Game.ShopObjects.TruckPoint
             gameObject.SetActive(false);
         }
 
-        private void OnTruckArriveAnimationFinished()
+        private void OnTruckArriveAnimationFinished(object tcs)
         {
-            AnimateCapOpen();
+            ((UniTaskCompletionSource)tcs).TrySetResult();
         }
 
         public void AnimateCapOpen()
@@ -105,6 +115,12 @@ namespace View.Game.ShopObjects.TruckPoint
             _truckBoxCapTransform.position = isOpened
                 ? _truckBoxCapOpenedPositionTransform.position
                 : _truckBoxCapClosedPositionTransform.position;
+        }
+
+        private void StopCurrentTweens()
+        {
+            LeanTween.cancel(_spritesContainer.gameObject);
+            LeanTween.cancel(_truckBoxCapTransform.gameObject);
         }
     }
 }

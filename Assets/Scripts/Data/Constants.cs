@@ -8,10 +8,18 @@ namespace Data
         
         public const int TruckArrivingDuration = 2;
         public const int ProductsAmountInBox = 4;
+        public const int MinDeliverTimeSeconds = 5;
         public const int YTopWalkableCoordForCustomers = -10;
         public const string GeneralTopSortingLayerName = "GeneralTop";
 
         public const string LocalizationKeyMarketLevelPrefix = "market_level_";
+        public const string LocalizationBottomPanelDeliveryTitle = "bottom_panel_delivery_title";
+        public const string LocalizationBottomPanelStaffTitle = "bottom_panel_staff_title";
+        public const string LocalizationHireButton = "hire_button";
+        public const string LocalizationUpgradeButton = "upgrade_button";
+        public const string LocalizationMaxUpgrade = "max_upgrade";
+        public const string LocalizationSecondsShortPostfix = "seconds_short_postfix";
+        public const string TextIconMoney = "<sprite name=\"money\">";
 
         public static readonly Vector2Int[] NearCells8 = new[]
         {

@@ -104,12 +104,30 @@ namespace Holders
                 result = new BuildPointDto()
                 {
                     ShopObjectType = ShopObjectType.TruckPoint,
-                    CellCoords = new Vector2Int(0, _truckGatePositionSettings.FirstGateOffset + truckGateIndex * _truckGatePositionSettings.DefaultGateOffset),
+                    CellCoords = GetTruckPointCoordsByIndex(truckGateIndex),
                     MoneyToBuildLeft = data.BuildCost,
                 };
             }
 
             return haveData;
+        }
+
+        public Vector2Int GetTruckPointCoordsByIndex(int truckPointIndex)
+        {
+            return new Vector2Int(0,
+                _truckGatePositionSettings.FirstGateOffset +
+                truckPointIndex * _truckGatePositionSettings.DefaultGateOffset);
+        }
+
+        public int GetTruckPointIndexByCoords(Vector2Int truckPointCoords)
+        {
+            var relativeYCoord = truckPointCoords.y - _truckGatePositionSettings.FirstGateOffset;
+            if (relativeYCoord % _truckGatePositionSettings.DefaultGateOffset == 0)
+            {
+                return relativeYCoord / _truckGatePositionSettings.DefaultGateOffset;
+            }
+
+            return -1;
         }
 
         private static int InterpolateBuildCostFor(int index, int lastIndex, int lastItemCost, int preLastItemCost)

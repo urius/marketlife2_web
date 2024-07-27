@@ -99,23 +99,44 @@ namespace Systems
             TriggerSpendOnBuildPointIterationAnimationIfNeeded(cellPosition);
             TakeTruckProductBoxIfNeeded(cellPosition);
             PutProductOnShelfIfNeeded(cellPosition);
-            CheckNearCashDesk(cellPosition);
+            CheckNearShopObjects(cellPosition);
         }
 
-        private void CheckNearCashDesk(Vector2Int cellPosition)
+        private void CheckNearShopObjects(Vector2Int cellPosition)
         {
-            foreach (var cellOffset in Constants.NearCells8)
-            {
-                var nearCell = cellPosition + cellOffset;
+            CashDeskModel nearCashDesk = null;
+            ShelfModel nearShelf = null;
+            TruckPointModel nearTruckPoint = null;
 
-                if (_ownedCellsDataHolder.TryGetCashDesk(nearCell, out var cashDeskModel))
+            if (cellPosition.x==0 && 
+                (_shopModel.TryGetTruckPoint(cellPosition + Vector2Int.left, out var truckPointModel)
+                || _shopModel.TryGetTruckPoint(cellPosition + Vector2Int.left + Vector2Int.up, out truckPointModel)))
+            {
+                nearTruckPoint = truckPointModel;
+            }
+            else
+            {
+                foreach (var cellOffset in Constants.NearCells8)
                 {
-                    _playerCharModel.SetNearCashDesk(cashDeskModel);
-                    return;
+                    var nearCell = cellPosition + cellOffset;
+
+                    if (_ownedCellsDataHolder.TryGetCashDesk(nearCell, out var cashDeskModel))
+                    {
+                        nearCashDesk = cashDeskModel;
+                        break;
+                    }
+
+                    if (_ownedCellsDataHolder.TryGetShelf(nearCell, out var shelfModel))
+                    {
+                        nearShelf = shelfModel;
+                        break;
+                    }
                 }
             }
 
-            _playerCharModel.ResetNearCashDesk();
+            _playerCharModel.SetNearCashDesk(nearCashDesk);
+            _playerCharModel.SetNearShelf(nearShelf);
+            _playerCharModel.SetNearTruckPoint(nearTruckPoint);
         }
 
         private void PutProductOnShelfIfNeeded(Vector2Int cellPosition)
@@ -179,7 +200,7 @@ namespace Systems
                     && truckPointModel.HasProducts
                     && _playerCharModel.HasProducts == false)
                 {
-                    var productBoxIndexToTake = truckPointModel.GetFirstNotEmptyProductBoxIndex();
+                    var productBoxIndexToTake = truckPointModel.GetLastNotEmptyProductBoxIndex();
                     var productTypeToTake = truckPointModel.GetProductTypeAtBoxIndex(productBoxIndexToTake);
                     var productsToAdd = Enumerable.Repeat(productTypeToTake, Constants.ProductsAmountInBox).ToArray();
                     

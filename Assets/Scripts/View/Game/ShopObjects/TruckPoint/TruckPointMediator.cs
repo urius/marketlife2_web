@@ -1,5 +1,8 @@
+using Cysharp.Threading.Tasks;
 using Data;
+using Events;
 using Holders;
+using Infra.EventBus;
 using Infra.Instance;
 using Model.ShopObjects;
 using Utils;
@@ -11,6 +14,7 @@ namespace View.Game.ShopObjects.TruckPoint
         private readonly IGridCalculator _gridCalculator = Instance.Get<IGridCalculator>();
         private readonly SpritesHolderSo _spritesHolderSo = Instance.Get<SpritesHolderSo>();
         private readonly ISharedViewsDataHolder _sharedViewsDataHolder = Instance.Get<ISharedViewsDataHolder>();
+        private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
         
         private TruckView _truckView;
         private bool _truckArrivingTriggeredFlag = false;
@@ -22,7 +26,7 @@ namespace View.Game.ShopObjects.TruckPoint
             
             _sharedViewsDataHolder.RegisterTruckBoxPositionProvider(TargetModel, _truckView);
             
-            SetTruckState();
+            SetTruckStateInitial();
 
             Subscribe();
         }
@@ -66,6 +70,7 @@ namespace View.Game.ShopObjects.TruckPoint
         {
             TargetModel.DeliverTimeAdvanced += OnDeliverTimeAdvanced;
             TargetModel.DeliverTimeReset += OnDeliverTimeReset;
+            TargetModel.ProductsReset += OnProductsReset;
             TargetModel.BoxRemoved += OnBoxRemoved;
         }
 
@@ -73,6 +78,7 @@ namespace View.Game.ShopObjects.TruckPoint
         {
             TargetModel.DeliverTimeAdvanced -= OnDeliverTimeAdvanced;
             TargetModel.DeliverTimeReset -= OnDeliverTimeReset;
+            TargetModel.ProductsReset -= OnProductsReset;
             TargetModel.BoxRemoved -= OnBoxRemoved;
         }
 
@@ -81,7 +87,7 @@ namespace View.Game.ShopObjects.TruckPoint
             UpdateProductView(boxIndex);
         }
 
-        private void SetTruckState()
+        private void SetTruckStateInitial()
         {
             switch (TargetModel.DeliverTimeSecondsRest)
             {
@@ -89,7 +95,7 @@ namespace View.Game.ShopObjects.TruckPoint
                     SetTruckArrived();
                     break;
                 case <= Constants.TruckArrivingDuration + 1:
-                    AnimateTruckArrive();
+                    AnimateTruckArrive().Forget();
                     break;
                 default:
                     SetTruckMovedOut();
@@ -102,7 +108,7 @@ namespace View.Game.ShopObjects.TruckPoint
             if (deliverTimeRest <= Constants.TruckArrivingDuration
                 && _truckArrivingTriggeredFlag == false)
             {
-                AnimateTruckArrive();
+                AnimateTruckArrive().Forget();
             }
         }
 
@@ -112,13 +118,20 @@ namespace View.Game.ShopObjects.TruckPoint
             AnimateTruckMovedOut();
         }
 
-        private void AnimateTruckArrive()
+        private void OnProductsReset()
+        {
+            UpdateProductViews();
+        }
+
+        private async UniTaskVoid AnimateTruckArrive()
         {
             _truckArrivingTriggeredFlag = true;
             
-            UpdateProductViews();
+            await _truckView.AnimateTruckArrive();
             
-            _truckView.AnimateTruckArrive();
+            _eventBus.Dispatch(new TruckArriveAnimationFinishedEvent(TargetModel));
+            
+            _truckView.AnimateCapOpen();
         }
 
         private void SetTruckArrived()

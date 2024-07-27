@@ -6,6 +6,7 @@ namespace Model
     {
         public event Action<int> MoneyChanged;
         public event Action<int> LevelChanged;
+        public event Action<int> InsufficientFunds;
         
         public readonly ShopModel ShopModel;
         public readonly PlayerCharModel PlayerCharModel;
@@ -27,6 +28,20 @@ namespace Model
             MoneyAmount += deltaMoney;
             
             MoneyChanged?.Invoke(MoneyAmount);
+        }
+
+        public bool TrySpendMoney(int amount)
+        {
+            if (amount <= MoneyAmount)
+            {
+                ChangeMoney(-amount);
+                
+                return true;
+            }
+
+            InsufficientFunds?.Invoke(amount - MoneyAmount);
+            
+            return false;
         }
         
         public void SetLevel(int level)

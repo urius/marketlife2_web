@@ -7,16 +7,8 @@ namespace Data
     public struct TruckPointSetting
     {
         public int DeliverTimeSecondsDefault;
+        public int InitialDeliverTimeUpgradeValue;
         [Space]
         public ProductType[] Products;
-        [Space]
-        public TruckPointUpgradesSetting UpgradesSetting;
-    }
-
-    [Serializable]
-    public struct TruckPointUpgradesSetting
-    {
-        public int InitialDeliverTimeUpgradeValue;
-        public int MinDeliverTimeSeconds;
     }
 }
