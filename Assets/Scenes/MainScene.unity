@@ -2346,6 +2346,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _text: {fileID: 1490638586}
+  _moneyIconTransform: {fileID: 1234034735}
 --- !u!1 &295059209
 GameObject:
   m_ObjectHideFlags: 0
