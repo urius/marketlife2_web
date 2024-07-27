@@ -28,6 +28,7 @@ namespace View.UI.BottomPanel
         private float _slideDownYPosition;
 
         public int ProductIconsAmount => _productIcons.Length;
+        public Transform UpgradeButtonTransform => _upgradeButton.transform;
         
         private void Awake()
         {

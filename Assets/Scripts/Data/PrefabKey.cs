@@ -25,5 +25,6 @@ namespace Data
         ProductsBasket,
         MoneyCashDesk,
         Doors,
+        UIFlyingText,
     }
 }

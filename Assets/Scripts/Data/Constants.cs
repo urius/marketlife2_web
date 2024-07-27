@@ -19,6 +19,8 @@ namespace Data
         public const string LocalizationUpgradeButton = "upgrade_button";
         public const string LocalizationMaxUpgrade = "max_upgrade";
         public const string LocalizationSecondsShortPostfix = "seconds_short_postfix";
+        public const string LocalizationUpgraded = "upgraded";
+        
         public const string TextIconMoney = "<sprite name=\"money\">";
 
         public static readonly Vector2Int[] NearCells8 = new[]

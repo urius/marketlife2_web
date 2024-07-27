@@ -168,6 +168,11 @@ namespace View.UI.BottomPanel
             DisplayTitles(_targetTruckPoint);
             DisplayProductIcons(_targetTruckPoint);
             SetupUpgradeButton(_targetTruckPoint);
+
+            _eventBus.Dispatch(
+                new UIRequestFlyingTextEvent(
+                    _localizationProvider.GetLocale(Constants.LocalizationUpgraded),
+                    _truckPointPanelView.UpgradeButtonTransform.position));
         }
 
         private void SetupUpgradeButton(TruckPointModel targetTruckPoint)

@@ -129,6 +129,11 @@
 			"key": "seconds_short_postfix",
 			"en": "с.",
 			"ru": "s."
+		},
+		{
+			"key": "upgraded",
+			"en": "upgraded",
+			"ru": "улучшено"
 		}
 	]
 }

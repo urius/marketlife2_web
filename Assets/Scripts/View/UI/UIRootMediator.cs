@@ -1,6 +1,7 @@
 using Holders;
 using Infra.Instance;
 using View.UI.BottomPanel;
+using View.UI.Common;
 using View.UI.GameOverlayPanel;
 using View.UI.TopPanel;
 
@@ -21,6 +22,7 @@ namespace View.UI
             MediateChild<UITopPanelMoneyViewMediator>(view.UITopPanelMoneyView.transform);
             MediateChild<UITopPanelLevelViewMediator>(view.UITopPanelLevelView.transform);
             MediateChild<UITruckPointPanelMediator>(view.UIBottomPanelTruckPointPanelView.transform);
+            MediateChild<UIFlyingTextsMediator>(TargetTransform);
         }
 
         protected override void UnmediateInternal()

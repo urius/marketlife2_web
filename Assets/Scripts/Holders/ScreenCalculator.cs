@@ -14,6 +14,11 @@ namespace Holders
         {
             return MainCamera.ScreenToWorldPoint(screenPoint);
         }
+
+        public Vector2 WorldToScreenPoint(Vector3 worldPoint)
+        {
+            return MainCamera.WorldToScreenPoint(worldPoint);
+        }
         
         public Vector3 GetWorldMousePoint()
         {
@@ -24,6 +29,7 @@ namespace Holders
     public interface IScreenCalculator
     {
         public Vector3 ScreenToWorldPoint(Vector2 screenPoint);
+        public Vector2 WorldToScreenPoint(Vector3 worldPoint);
         public Vector3 GetWorldMousePoint();
     }
 }
