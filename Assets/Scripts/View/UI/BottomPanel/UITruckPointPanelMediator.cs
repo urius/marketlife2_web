@@ -18,12 +18,14 @@ namespace View.UI.BottomPanel
         private readonly SpritesHolderSo _spritesHolder = Instance.Get<SpritesHolderSo>();
         private readonly IUpgradeCostProvider _upgradeCostProvider = Instance.Get<IUpgradeCostProvider>();
         private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
+        private readonly IHireStaffCostProvider _hireStaffCostProvider = Instance.Get<IHireStaffCostProvider>();
         
         private PlayerCharModel _playerCharModel;
         private UITruckPointPanelView _truckPointPanelView;
         private float _slideUpPositionPercent = 0;
         private int _slideDirection = 1;
         private TruckPointModel _targetTruckPoint;
+        private string _secondsPostfix;
 
         protected override void MediateInternal()
         {
@@ -67,6 +69,8 @@ namespace View.UI.BottomPanel
         {
             if (_playerCharModel.NearTruckPoint != null)
             {
+                _secondsPostfix = _localizationProvider.GetLocale(Constants.LocalizationSecondsShortPostfix);
+                
                 ProcessNewTargetTruckPoint(_playerCharModel.NearTruckPoint);
                 
                 _truckPointPanelView.SetActive(true);
@@ -120,8 +124,7 @@ namespace View.UI.BottomPanel
             
             _truckPointPanelView.SetSlideUpPositionPercent(_slideUpPositionPercent);
         }
-
-
+        
         private void ProcessNewTargetTruckPoint(TruckPointModel truckPointModel)
         {
             _targetTruckPoint = truckPointModel;
@@ -129,6 +132,9 @@ namespace View.UI.BottomPanel
             DisplayTitles(_targetTruckPoint);
             DisplayProductIcons(_targetTruckPoint);
             SetupUpgradeButton(_targetTruckPoint);
+
+            DisplayStaff(_targetTruckPoint);
+            SetupHireButton(_targetTruckPoint);
 
             SubscribeOnTruckPoint(_targetTruckPoint);
         }
@@ -156,10 +162,8 @@ namespace View.UI.BottomPanel
             var deliverTimeSeconds = targetTruckPoint.GetDeliverTimeSettingSeconds();
 
             var deliveryText = _localizationProvider.GetLocale(Constants.LocalizationBottomPanelDeliveryTitle);
-            var secondsPostfix = _localizationProvider.GetLocale(Constants.LocalizationSecondsShortPostfix);
-            
-            _truckPointPanelView.SetDeliverTitleText(
-                $"{deliveryText} ({deliverTimeSeconds}{secondsPostfix})");
+
+            _truckPointPanelView.SetDeliverTitleText($"{deliveryText} ({deliverTimeSeconds}{_secondsPostfix})");
             _truckPointPanelView.SetStaffTitleText(_localizationProvider.GetLocale(Constants.LocalizationBottomPanelStaffTitle));
         }
 
@@ -194,6 +198,53 @@ namespace View.UI.BottomPanel
 
             _truckPointPanelView.SetUpgradeButtonText(_localizationProvider.GetLocale(Constants.LocalizationMaxUpgrade));
             _truckPointPanelView.SetUpgradeEnabledState(false);
+        }
+
+        private void DisplayStaff(TruckPointModel truckPointModel)
+        {
+            for (var i = 0; i < truckPointModel.StaffCharModels.Count; i++)
+            {
+                var staffModel = truckPointModel.StaffCharModels[i];
+                var isStaffExists = staffModel != null;
+                _truckPointPanelView.SetStaffEnabled(i, isStaffExists);
+                if (staffModel != null)
+                {
+                    _truckPointPanelView.SetStaffWorkTimerText(i, $"{staffModel.WorkSecondsLeft}{_secondsPostfix}");
+                }
+            }
+        }
+
+        private void SetupHireButton(TruckPointModel truckPointModel)
+        {
+            var hireStaffCost = _hireStaffCostProvider.GetTruckPointHireStaffCost(truckPointModel);
+
+            _truckPointPanelView.SetHireStaffButtonInteractable(hireStaffCost >= 0);
+            
+            switch (hireStaffCost)
+            {
+                case > 0:
+                {
+                    var hireText =
+                        $"{_localizationProvider.GetLocale(Constants.LocalizationHireButton)}\n{FormattingHelper.ToMoneyWithIconTextFormat(hireStaffCost)}";
+                    _truckPointPanelView.SetHireStaffButtonText(hireText);
+                
+                    _truckPointPanelView.HireStaffButtonView.SetOrangeSkinData();
+                    break;
+                }
+                case 0:
+                {
+                    var hireText =
+                        $"{Constants.TextIconAds}\n{_localizationProvider.GetLocale(Constants.LocalizationHireButton)}";
+                    _truckPointPanelView.SetHireStaffButtonText(hireText);
+                
+                    _truckPointPanelView.HireStaffButtonView.SetCrimsonSkinData();
+                    break;
+                }
+                default:
+                    _truckPointPanelView.SetHireStaffButtonText(_localizationProvider.GetLocale(Constants.LocalizationHireButton));
+                    _truckPointPanelView.HireStaffButtonView.SetOrangeSkinData();
+                    break;
+            }
         }
     }
 }

@@ -40,7 +40,8 @@ namespace Commands
                         result = new TruckPointModel(buildCoords, truckPointsSettings,
                             truckPointsSettings.Products.Take(TruckPointModel.DefaultProductBoxesAmount).ToArray(),
                             upgradesCount: 0,
-                            Constants.TruckArrivingDuration + 1);
+                            Constants.TruckArrivingDuration + 1,
+                            Array.Empty<TruckPointStaffCharModel>());
                     }
                     else
                     {

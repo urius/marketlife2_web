@@ -2,6 +2,7 @@ using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using View.UI.Common;
 
 namespace View.UI.BottomPanel
 {
@@ -20,15 +21,17 @@ namespace View.UI.BottomPanel
         [SerializeField] private TMP_Text _staffTitleText;
         [SerializeField] private Image[] _staffIcons;
         [SerializeField] private TMP_Text[] _staffWorkTimerTexts;
-        [SerializeField] private Button _hireStaffButton;
-        [SerializeField] private TMP_Text _hireStaffButtonText;
-
+        [SerializeField] private UITextButtonView _hireStaffButtonView;
         
         private RectTransform _rectTransform;
         private float _slideDownYPosition;
 
         public int ProductIconsAmount => _productIcons.Length;
         public Transform UpgradeButtonTransform => _upgradeButton.transform;
+        public UITextButtonView HireStaffButtonView => _hireStaffButtonView;
+        
+        private Button HireStaffButton => _hireStaffButtonView.Button;
+        private TMP_Text HireStaffButtonText => _hireStaffButtonView.Text;
         
         private void Awake()
         {
@@ -36,13 +39,13 @@ namespace View.UI.BottomPanel
             _slideDownYPosition = _rectTransform.anchoredPosition.y;
             
             _upgradeButton.onClick.AddListener(UpgradeButtonClickHandler);
-            _hireStaffButton.onClick.AddListener(HireStaffButtonClickHandler);
+            HireStaffButton.onClick.AddListener(HireStaffButtonClickHandler);
         }
 
         private void OnDestroy()
         {
             _upgradeButton.onClick.RemoveListener(UpgradeButtonClickHandler);
-            _hireStaffButton.onClick.RemoveListener(HireStaffButtonClickHandler);
+            HireStaffButton.onClick.RemoveListener(HireStaffButtonClickHandler);
         }
 
         public void SetActive(bool isActive)
@@ -75,14 +78,11 @@ namespace View.UI.BottomPanel
                 _productIcons[productIndex].sprite = iconSprite != null ? iconSprite : _unknownProductSprite;
             }
         }
-        
 
-        public void SetStaffIconSprite(int slotIndex, Sprite iconSprite)
+        public void SetStaffEnabled(int slotIndex, bool isEnabled)
         {
-            if (slotIndex >= 0 && slotIndex < _productIcons.Length)
-            {
-                _staffIcons[slotIndex].sprite = iconSprite;
-            }
+            _staffIcons[slotIndex].enabled = isEnabled;
+            _staffWorkTimerTexts[slotIndex].enabled = isEnabled;
         }
 
         public void SetUpgradeButtonText(string text)
@@ -101,17 +101,12 @@ namespace View.UI.BottomPanel
 
         public void SetHireStaffButtonText(string text)
         {
-            _hireStaffButtonText.text = text;
+            HireStaffButtonText.text = text;
         }
 
-        public void SetUpgradeButtonEnabledState(bool isEnabled)
+        public void SetHireStaffButtonInteractable(bool isInteractable)
         {
-            _upgradeButton.enabled = isEnabled;
-        }
-
-        public void SetHireStaffButtonEnabledState(bool isEnabled)
-        {
-            _hireStaffButton.enabled = isEnabled;
+            _hireStaffButtonView.SetInteractable(isInteractable);
         }
         
         public void SetStaffWorkTimerText(int staffIndex, string text)

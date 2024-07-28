@@ -20,6 +20,7 @@ namespace Model.ShopObjects
         private readonly TruckPointSetting _setting;
         private readonly int[] _deliverTimesByUpgradeIndex;
         private readonly ProductType[] _currentProductBoxes;
+        private readonly TruckPointStaffCharModel[] _staffCharModels = new TruckPointStaffCharModel[2];
         
         private int _upgradesCount;
         private int _productBoxesAmount;
@@ -28,7 +29,8 @@ namespace Model.ShopObjects
             TruckPointSetting setting,
             ProductType[] currentProductBoxes,
             int upgradesCount,
-            int deliverTimeSecondsRest) : base(cellCoords)
+            int deliverTimeSecondsRest,
+            IReadOnlyList<TruckPointStaffCharModel> staffModels) : base(cellCoords)
         {
             _setting = setting;
             _upgradesCount = upgradesCount;
@@ -40,15 +42,26 @@ namespace Model.ShopObjects
             Array.Copy(currentProductBoxes, _currentProductBoxes, currentProductBoxes.Length);
             
             DeliverTimeSecondsRest = deliverTimeSecondsRest;
+
+            for (var i = 0; i < _staffCharModels.Length; i++)
+            {
+                if (i < staffModels.Count)
+                {
+                    _staffCharModels[i] = staffModels[i];
+                }
+            }
         }
 
         public override ShopObjectType ShopObjectType => ShopObjectType.TruckPoint;
-
         public int DeliverTimeSecondsRest { get; private set; }
-
         public int UpgradesCount => _upgradesCount;
-
         public bool HasProducts => _currentProductBoxes.Any(p => p != ProductType.None);
+        public IReadOnlyList<TruckPointStaffCharModel> StaffCharModels => _staffCharModels;
+
+        public int GetHiredStaffAmount()
+        {
+            return _staffCharModels.Count(m => m != null);
+        }
 
         public void RemoveBox(int boxIndex)
         {

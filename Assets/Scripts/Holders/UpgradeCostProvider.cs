@@ -5,9 +5,7 @@ namespace Holders
 {
     public class UpgradeCostProvider : IUpgradeCostProvider
     {
-        private readonly TruckPointsSettingsProviderSo _truckPointsSettingsProviderSo = Instance.Get<TruckPointsSettingsProviderSo>();
         private readonly BuildPointsDataHolderSo _buildPointsDataHolder = Instance.Get<BuildPointsDataHolderSo>();
-        
         
         public int GetTruckPointUpgradeCost(TruckPointModel truckPointModel)
         {

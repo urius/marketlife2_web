@@ -93,6 +93,7 @@ public class InitScript : MonoBehaviour
         SetupNewInstance<SharedViewsDataHolder, ISharedViewsDataHolder>();
         SetupNewInstance<MainViewModel, IMainViewModel>();
         SetupNewInstance<UpgradeCostProvider, IUpgradeCostProvider>();
+        SetupNewInstance<HireStaffCostProvider, IHireStaffCostProvider>();
         
         _playerModelHolder = SetupNewInstance<PlayerModelHolder, IPlayerModelHolder>();
         var commandExecutor = SetupNewInstance<CommandExecutor, ICommandExecutor>();

@@ -22,6 +22,7 @@ namespace Data
         public const string LocalizationUpgraded = "upgraded";
         
         public const string TextIconMoney = "<sprite name=\"money\">";
+        public const string TextIconAds = "<sprite name=\"ads\">";
 
         public static readonly Vector2Int[] NearCells8 = new[]
         {
