@@ -23,7 +23,7 @@ namespace Model.ShopObjects
         private readonly TruckPointSetting _setting;
         private readonly int[] _deliverTimesByUpgradeIndex;
         private readonly ProductType[] _currentProductBoxes;
-        private readonly TruckPointStaffCharModel[] _staffCharModels = new TruckPointStaffCharModel[2];
+        private readonly TruckPointStaffCharModelBase[] _staffCharModels = new TruckPointStaffCharModelBase[2];
         
         private int _upgradesCount;
         private int _productBoxesAmount;
@@ -33,7 +33,7 @@ namespace Model.ShopObjects
             ProductType[] currentProductBoxes,
             int upgradesCount,
             int deliverTimeSecondsRest,
-            IReadOnlyList<TruckPointStaffCharModel> staffModels) : base(cellCoords)
+            IReadOnlyList<TruckPointStaffCharModelBase> staffModels) : base(cellCoords)
         {
             _setting = setting;
             _upgradesCount = upgradesCount;
@@ -59,7 +59,7 @@ namespace Model.ShopObjects
         public int DeliverTimeSecondsRest { get; private set; }
         public int UpgradesCount => _upgradesCount;
         public bool HasProducts => _currentProductBoxes.Any(p => p != ProductType.None);
-        public IReadOnlyList<TruckPointStaffCharModel> StaffCharModels => _staffCharModels;
+        public IReadOnlyList<TruckPointStaffCharModelBase> StaffCharModels => _staffCharModels;
 
         public int GetHiredStaffAmount()
         {
@@ -105,23 +105,23 @@ namespace Model.ShopObjects
             return canUpgrade;
         }
 
-        public int AddStaffToFreeSlot(TruckPointStaffCharModel staffCharModel)
+        public int AddStaffToFreeSlot(TruckPointStaffCharModelBase staffCharModelBase)
         {
             var slotIndex = GetReadyToHireStaffSlotIndex();
             
             if (slotIndex >= 0)
             {
-                SetStaffModel(slotIndex, staffCharModel);
+                SetStaffModel(slotIndex, staffCharModelBase);
             }
 
             return slotIndex;
         }
         
-        public bool RemoveStaff(TruckPointStaffCharModel staffCharModel)
+        public bool RemoveStaff(TruckPointStaffCharModelBase staffCharModelBase)
         {
             for (var i = 0; i < _staffCharModels.Length; i++)
             {
-                if (_staffCharModels[i] == staffCharModel)
+                if (_staffCharModels[i] == staffCharModelBase)
                 {
                     SetStaffModel(i, null);
                     return true;
@@ -202,6 +202,19 @@ namespace Model.ShopObjects
             return _setting.Products.Take(_productBoxesAmount).ToArray();
         }
 
+        public int GetReadyToHireStaffSlotIndex()
+        {
+            for (var i = 0; i < _staffCharModels.Length; i++)
+            {
+                if (_staffCharModels[i] == null)
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+
         private void UpdateProductBoxesAmount()
         {
             _productBoxesAmount = Math.Min(MaxProductBoxesAmount, DefaultProductBoxesAmount + _upgradesCount);
@@ -241,24 +254,11 @@ namespace Model.ShopObjects
             return result.ToArray();
         }
 
-        private int GetReadyToHireStaffSlotIndex()
+        private void SetStaffModel(int slotIndex, TruckPointStaffCharModelBase staffCharModelBase)
         {
-            for (var i = 0; i < _staffCharModels.Length; i++)
-            {
-                if (_staffCharModels[i] == null || _staffCharModels[i].WorkSecondsLeft <= 0)
-                {
-                    return i;
-                }
-            }
+            _staffCharModels[slotIndex] = staffCharModelBase;
 
-            return -1;
-        }
-        
-        private void SetStaffModel(int slotIndex, TruckPointStaffCharModel staffCharModel)
-        {
-            _staffCharModels[slotIndex] = staffCharModel;
-
-            if (staffCharModel != null)
+            if (staffCharModelBase != null)
             {
                 StaffAdded?.Invoke(slotIndex);
             }

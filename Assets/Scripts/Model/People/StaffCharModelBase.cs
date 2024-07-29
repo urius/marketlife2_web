@@ -3,21 +3,19 @@ using UnityEngine;
 
 namespace Model.People
 {
-    public class StaffCharModel : ShopCharModelBase
+    public abstract class StaffCharModelBase : ShopCharModelBase
     {
         public event Action<int> WorkSecondsLeftChanged;
 
         public readonly int WorkSecondsSetting;
         
-        public StaffCharModel(Vector2Int cellCoords, int workSeconds) : base(cellCoords)
+        public StaffCharModelBase(Vector2Int cellCoords, int workSeconds, int workSecondsLeftSetting) : base(cellCoords)
         {
             WorkSecondsLeft = workSeconds;
-            WorkSecondsSetting = WorkSecondsLeft;
-            CellCoords = cellCoords;
+            WorkSecondsSetting = workSecondsLeftSetting;
         }
         
         public int WorkSecondsLeft { get; private set; }
-        public Vector2Int CellCoords { get; private set; }
 
         public void AdvanceWorkingTime()
         {

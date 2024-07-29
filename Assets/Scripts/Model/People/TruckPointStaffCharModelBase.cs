@@ -5,13 +5,17 @@ using UnityEngine;
 
 namespace Model.People
 {
-    public class TruckPointStaffCharModel : StaffCharModel
+    public class TruckPointStaffCharModelBase : StaffCharModelBase
     {
         private readonly ProductType[] _productsInBox =
             Enumerable.Repeat(ProductType.None, Constants.ProductsAmountInBox).ToArray();
         
-        public TruckPointStaffCharModel(Vector2Int cellCoords, int workSecondsLeft, IReadOnlyList<ProductType> products) 
-            : base(cellCoords, workSecondsLeft)
+        public TruckPointStaffCharModelBase(
+            Vector2Int cellCoords, 
+            int workSecondsLeft, 
+            int workSecondsLeftSetting, 
+            IReadOnlyList<ProductType> products) 
+            : base(cellCoords, workSecondsLeft, workSecondsLeftSetting)
         {
 
             for (var i = 0; i < _productsInBox.Length; i++)

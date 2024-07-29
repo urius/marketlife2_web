@@ -10,39 +10,33 @@ using Model.People.States.Customer;
 using UnityEngine;
 using Utils;
 using View.Game.Product;
-using View.Game.Shared;
 using View.Helpers;
 
 namespace View.Game.People
 {
-    public class CustomerCharMediator : MediatorWithModelBase<CustomerCharModel>
+    public class CustomerCharMediator : BotCharMediatorBase<CustomerCharModel>
     {
-        private const int Speed = 2;
         private const float PutProductDuration = 0.5f;
         
         private readonly IGridCalculator _gridCalculator = Instance.Get<IGridCalculator>();
-        private readonly IUpdatesProvider _updatesProvider = Instance.Get<IUpdatesProvider>();
         private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
         private readonly ISharedViewsDataHolder _sharedViewsDataHolder = Instance.Get<ISharedViewsDataHolder>();
-        private readonly IOwnedCellsDataHolder _ownedCellsDataHolder = Instance.Get<IOwnedCellsDataHolder>();
         private readonly SpritesHolderSo _spritesHolderSo = Instance.Get<SpritesHolderSo>();
         
-        private readonly WalkContext _walkContext = new ();
         private readonly TakeProductContext _takeProductContext = new ();
         
         private ManView _customerView;
-        private bool _idleStateRequestFlag = false;
         private int _flyingProductFromBasketAnimationIndex = 0;
 
         protected override void MediateInternal()
         {
-            _customerView = InstantiatePrefab<ManView>(PrefabKey.Man);
+            base.MediateInternal();
             
+            _customerView = InstantiatePrefab<ManView>(PrefabKey.Man);
             _customerView.transform.position = _gridCalculator.GetCellCenterWorld(TargetModel.CellCoords);
+            SetClothes();
 
             Subscribe();
-
-            SetClothes();
             
             _eventBus.Dispatch(new CustomerInitializedEvent(TargetModel));
         }
@@ -53,22 +47,36 @@ namespace View.Game.People
             
             Destroy(_customerView);
             _customerView = null;
+            
+            base.UnmediateInternal();
+        }
+
+        protected override ManView View => _customerView;
+        protected override void ToWalkingState()
+        {
+            _customerView.ToWalkState(TargetModel.HasProducts);
+        }
+        
+        protected override void ToIdleState()
+        {
+            _customerView.ToIdleState(TargetModel.HasProducts);
+        }
+
+        protected override void StepFinishedHandler()
+        {
+            _eventBus.Dispatch(new CustomerStepFinishedEvent(TargetModel));
         }
 
         private void Subscribe()
         {
-            TargetModel.CellPositionChanged += OnCellPositionChanged;
             TargetModel.StateChanged += OnStateChanged;
             TargetModel.ProductAdded += OnProductAdded;
         }
 
         private void Unsubscribe()
         {
-            TargetModel.CellPositionChanged -= OnCellPositionChanged;
             TargetModel.StateChanged -= OnStateChanged;
             TargetModel.ProductAdded -= OnProductAdded;
-            
-            _updatesProvider.GameplayFixedUpdate -= GameplayFixedUpdateWalkHandler;
         }
 
         private void OnStateChanged(ShopSharStateBase state)
@@ -202,12 +210,6 @@ namespace View.Game.People
                 .setOnComplete(OnAnimateTakeProductComplete);
         }
 
-        private void DisableSwitchToIdleOnNextFrame()
-        {
-            _updatesProvider.GameplayFixedUpdate -= GameplayFixedUpdateWalkHandler;
-            _idleStateRequestFlag = false;
-        }
-
         private ProductView CreteProductViewForTakeAnimation(ProductType productType,
             Vector3 slotPosition)
         {
@@ -243,86 +245,6 @@ namespace View.Game.People
             var sprite = productType != ProductType.None ? _spritesHolderSo.GetProductSpriteByKey(productType) : null;
 
             _customerView.SetProductInBasketSprite(slotIndex, sprite);
-        }
-
-        private void OnCellPositionChanged(Vector2Int cellCoords)
-        {
-            _idleStateRequestFlag = false;
-            
-            _customerView.ToWalkState(TargetModel.HasProducts);
-
-            var deltaX = cellCoords.x - TargetModel.PreviousCellPosition.x;
-            var deltaY = cellCoords.y - TargetModel.PreviousCellPosition.y;
-            
-            if (deltaX > 0 || deltaY < 0)
-            {
-                _customerView.ToRightSide();
-            }
-            else if (deltaX < 0 || deltaY > 0)
-            {
-                _customerView.ToLeftSide();
-            }
-
-            _walkContext.StartWalkPosition = _customerView.transform.position;
-            _walkContext.EndWalkPosition = _gridCalculator.GetCellCenterWorld(cellCoords);
-            _walkContext.Progress = 0;
-            _walkContext.SteppedToNewCellFlag = false;
-
-            _updatesProvider.GameplayFixedUpdate -= GameplayFixedUpdateWalkHandler;
-            _updatesProvider.GameplayFixedUpdate += GameplayFixedUpdateWalkHandler;
-        }
-
-        private void GameplayFixedUpdateWalkHandler()
-        {
-            if (_idleStateRequestFlag)
-            {
-                _idleStateRequestFlag = false;
-                
-                _updatesProvider.GameplayFixedUpdate -= GameplayFixedUpdateWalkHandler;
-                
-                _customerView.ToIdleState(TargetModel.HasProducts);
-                
-                return;
-            }
-            
-            _walkContext.Progress += Time.fixedDeltaTime * Speed;
-
-            _customerView.transform.position = Vector3.Lerp(
-                _walkContext.StartWalkPosition, _walkContext.EndWalkPosition, _walkContext.Progress);
-
-            if (_walkContext.SteppedToNewCellFlag == false 
-                && _walkContext.Progress > 0.5f
-                && _gridCalculator.WorldToCell(_customerView.transform.position) == TargetModel.CellCoords)
-            {
-                _walkContext.SteppedToNewCellFlag = true;
-
-                OnSteppedToNewCell();
-            }
-
-            if (_walkContext.Progress >= 1)
-            {
-                _idleStateRequestFlag = true;
-                
-                _eventBus.Dispatch(new CustomerStepFinishedEvent(TargetModel));
-            }
-        }
-
-        private void OnSteppedToNewCell()
-        {
-            UpdateSorting(TargetModel.CellCoords);
-        }
-
-        private void UpdateSorting(Vector2Int cellCoords)
-        {
-            DynamicViewSortingLogic.UpdateSorting(_customerView, _ownedCellsDataHolder, cellCoords);
-        }
-
-        private class WalkContext
-        {
-            public Vector3 StartWalkPosition;
-            public Vector3 EndWalkPosition;
-            public float Progress;
-            public bool SteppedToNewCellFlag;
         }
         
         private class TakeProductContext

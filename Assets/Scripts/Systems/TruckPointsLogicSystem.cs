@@ -16,16 +16,21 @@ namespace Systems
     public class TruckPointsLogicSystem : ISystem
     {
         private const int StaffWorkTimeForHiringByMoney = 60;
-        private const int StaffWorkTimeForHiringByAds = 5 * StaffWorkTimeForHiringByMoney; 
-            
+        private const int StaffWorkTimeForHiringByAds = 5 * StaffWorkTimeForHiringByMoney;
+
         private readonly IPlayerModelHolder _playerModelHolder = Instance.Get<IPlayerModelHolder>();
         private readonly IUpdatesProvider _updatesProvider = Instance.Get<IUpdatesProvider>();
         private readonly IUpgradeCostProvider _upgradeCostProvider = Instance.Get<IUpgradeCostProvider>();
         private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
         private readonly IHireStaffCostProvider _hireStaffCostProvider = Instance.Get<IHireStaffCostProvider>();
-        
+
         private readonly List<TruckPointModel> _truckPointList = new();
-        private readonly Vector2Int _staffInitialPointOffset = Vector2Int.right + 2 * Vector2Int.down;
+
+        private readonly Vector2Int[] _staffInitialPointOffsets =
+        {
+            Vector2Int.right + 2 * Vector2Int.down,
+            Vector2Int.right + Vector2Int.up,
+        };
 
         private ShopModel _shopModel;
         private PlayerModel _playerModel;
@@ -34,7 +39,7 @@ namespace Systems
         {
             _playerModel = _playerModelHolder.PlayerModel;
             _shopModel = _playerModelHolder.PlayerModel.ShopModel;
-                
+            
             PopulateTruckPointModels();
 
             Subscribe();
@@ -49,8 +54,8 @@ namespace Systems
         {
             _shopModel.ShopObjectAdded += OnShopObjectAdded;
             _updatesProvider.SecondPassed += OnSecondPassed;
-            _eventBus.Subscribe<TruckArriveAnimationFinishedEvent>(OnTruckArriveAnimationFinished);
             
+            _eventBus.Subscribe<TruckArriveAnimationFinishedEvent>(OnTruckArriveAnimationFinished);
             _eventBus.Subscribe<UpgradeTruckPointButtonClickedEvent>(OnUpgradeTruckPointButtonClickedEvent);
             _eventBus.Subscribe<TruckPointHireStaffButtonClickedEvent>(OnTruckPointHireStaffButtonClickedEvent);
         }
@@ -59,8 +64,8 @@ namespace Systems
         {
             _shopModel.ShopObjectAdded -= OnShopObjectAdded;
             _updatesProvider.SecondPassed -= OnSecondPassed;
-            _eventBus.Unsubscribe<TruckArriveAnimationFinishedEvent>(OnTruckArriveAnimationFinished);
             
+            _eventBus.Unsubscribe<TruckArriveAnimationFinishedEvent>(OnTruckArriveAnimationFinished);
             _eventBus.Unsubscribe<UpgradeTruckPointButtonClickedEvent>(OnUpgradeTruckPointButtonClickedEvent);
             _eventBus.Unsubscribe<TruckPointHireStaffButtonClickedEvent>(OnTruckPointHireStaffButtonClickedEvent);
         }
@@ -174,8 +179,18 @@ namespace Systems
 
         private void HireNewStaffTo(TruckPointModel truckPointModel, int workTime)
         {
-            var staffInitialPosition = truckPointModel.CellCoords + _staffInitialPointOffset;
-            var staffModel = new TruckPointStaffCharModel(staffInitialPosition, workTime, Array.Empty<ProductType>());
+            var slotIndex = truckPointModel.GetReadyToHireStaffSlotIndex();
+            var offset = slotIndex < _staffInitialPointOffsets.Length
+                ? _staffInitialPointOffsets[slotIndex]
+                : _staffInitialPointOffsets[0];
+            
+            var staffInitialPosition = truckPointModel.CellCoords + offset;
+            
+            var staffModel = new TruckPointStaffCharModelBase(
+                staffInitialPosition,
+                workSecondsLeft: workTime,
+                workSecondsLeftSetting: workTime,
+                Array.Empty<ProductType>());
 
             truckPointModel.AddStaffToFreeSlot(staffModel);
         }
