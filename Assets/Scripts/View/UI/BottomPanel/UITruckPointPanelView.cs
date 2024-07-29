@@ -20,6 +20,7 @@ namespace View.UI.BottomPanel
         [Space]
         [SerializeField] private TMP_Text _staffTitleText;
         [SerializeField] private Image[] _staffIcons;
+        [SerializeField] private Image[] _staffProgressIcons;
         [SerializeField] private TMP_Text[] _staffWorkTimerTexts;
         [SerializeField] private UITextButtonView _hireStaffButtonView;
         
@@ -82,6 +83,7 @@ namespace View.UI.BottomPanel
         public void SetStaffEnabled(int slotIndex, bool isEnabled)
         {
             _staffIcons[slotIndex].enabled = isEnabled;
+            _staffProgressIcons[slotIndex].gameObject.SetActive(isEnabled);
             _staffWorkTimerTexts[slotIndex].enabled = isEnabled;
         }
 
@@ -117,12 +119,6 @@ namespace View.UI.BottomPanel
             }
         }
 
-        public void SetStaffSlotEnabled(int slotIndex, bool isEnabled)
-        {
-            _staffIcons[slotIndex].gameObject.SetActive(isEnabled);
-            _staffWorkTimerTexts[slotIndex].gameObject.SetActive(isEnabled);
-        }
-
         private void UpgradeButtonClickHandler()
         {
             UpgradeButtonClicked?.Invoke();
@@ -131,6 +127,11 @@ namespace View.UI.BottomPanel
         private void HireStaffButtonClickHandler()
         {
             HireStaffButtonClicked?.Invoke();
+        }
+
+        public void SetStaffWorkTimeProgress(int i, float progress)
+        {
+            _staffProgressIcons[i].fillAmount = progress;
         }
     }
 }

@@ -38,7 +38,7 @@ namespace View.Game.People
         {
             _customerView = InstantiatePrefab<ManView>(PrefabKey.Man);
             
-            _customerView.transform.position = _gridCalculator.GetCellCenterWorld(TargetModel.CellPosition);
+            _customerView.transform.position = _gridCalculator.GetCellCenterWorld(TargetModel.CellCoords);
 
             Subscribe();
 
@@ -292,7 +292,7 @@ namespace View.Game.People
 
             if (_walkContext.SteppedToNewCellFlag == false 
                 && _walkContext.Progress > 0.5f
-                && _gridCalculator.WorldToCell(_customerView.transform.position) == TargetModel.CellPosition)
+                && _gridCalculator.WorldToCell(_customerView.transform.position) == TargetModel.CellCoords)
             {
                 _walkContext.SteppedToNewCellFlag = true;
 
@@ -309,7 +309,7 @@ namespace View.Game.People
 
         private void OnSteppedToNewCell()
         {
-            UpdateSorting(TargetModel.CellPosition);
+            UpdateSorting(TargetModel.CellCoords);
         }
 
         private void UpdateSorting(Vector2Int cellCoords)

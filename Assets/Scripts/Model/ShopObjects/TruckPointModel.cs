@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Data;
+using Model.People;
 using UnityEngine;
 
 namespace Model.ShopObjects
@@ -16,6 +17,8 @@ namespace Model.ShopObjects
         public event Action ProductsReset;
         public event Action<int> BoxRemoved;
         public event Action Upgraded;
+        public event Action<int> StaffAdded;
+        public event Action<int> StaffRemoved;
         
         private readonly TruckPointSetting _setting;
         private readonly int[] _deliverTimesByUpgradeIndex;
@@ -102,6 +105,37 @@ namespace Model.ShopObjects
             return canUpgrade;
         }
 
+        public int AddStaffToFreeSlot(TruckPointStaffCharModel staffCharModel)
+        {
+            var slotIndex = GetReadyToHireStaffSlotIndex();
+            
+            if (slotIndex >= 0)
+            {
+                SetStaffModel(slotIndex, staffCharModel);
+            }
+
+            return slotIndex;
+        }
+        
+        public bool RemoveStaff(TruckPointStaffCharModel staffCharModel)
+        {
+            for (var i = 0; i < _staffCharModels.Length; i++)
+            {
+                if (_staffCharModels[i] == staffCharModel)
+                {
+                    SetStaffModel(i, null);
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public bool CanAddStaff()
+        {
+            return GetReadyToHireStaffSlotIndex() >= 0;
+        }
+
         public ProductType GetProductTypeAtBoxIndex(int boxIndex)
         {
             return boxIndex < _currentProductBoxes.Length ? _currentProductBoxes[boxIndex] : ProductType.None;
@@ -121,7 +155,7 @@ namespace Model.ShopObjects
 
             return -1;
         }
-        
+
         public int GetLastNotEmptyProductBoxIndex()
         {
             for (var i = _currentProductBoxes.Length - 1; i >= 0; i--)
@@ -205,6 +239,33 @@ namespace Model.ShopObjects
             }
 
             return result.ToArray();
+        }
+
+        private int GetReadyToHireStaffSlotIndex()
+        {
+            for (var i = 0; i < _staffCharModels.Length; i++)
+            {
+                if (_staffCharModels[i] == null || _staffCharModels[i].WorkSecondsLeft <= 0)
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
+        
+        private void SetStaffModel(int slotIndex, TruckPointStaffCharModel staffCharModel)
+        {
+            _staffCharModels[slotIndex] = staffCharModel;
+
+            if (staffCharModel != null)
+            {
+                StaffAdded?.Invoke(slotIndex);
+            }
+            else
+            {
+                StaffRemoved?.Invoke(slotIndex);
+            }
         }
     }
 }

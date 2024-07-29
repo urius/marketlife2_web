@@ -11,31 +11,31 @@ namespace Model.People
 
         public bool IsStepInProgress = false;
         
-        private Vector2Int _cellPosition;
+        private Vector2Int _cellCoords;
 
-        protected ShopCharModelBase(Vector2Int cellPosition)
+        protected ShopCharModelBase(Vector2Int cellCoords)
         {
-            CellPosition = cellPosition;
+            CellCoords = cellCoords;
         }
         
         
         public ShopSharStateBase State { get; private set; }
         public Vector2Int PreviousCellPosition { get; private set; }
 
-        public Vector2Int CellPosition
+        public Vector2Int CellCoords
         {
-            get => _cellPosition;
+            get => _cellCoords;
             private set
             {
-                PreviousCellPosition = _cellPosition;
-                _cellPosition = value;
+                PreviousCellPosition = _cellCoords;
+                _cellCoords = value;
                 CellPositionChanged?.Invoke(value);
             }
         }
 
         public void SetCellPosition(Vector2Int stepCell)
         {
-            CellPosition = stepCell;
+            CellCoords = stepCell;
         }
         
         protected void SetState(ShopSharStateBase state)

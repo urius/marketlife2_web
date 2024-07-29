@@ -47,12 +47,16 @@ namespace View.UI.BottomPanel
         {
             _playerCharModel.NearTruckPointUpdated += OnNearTruckPointUpdated;
             _truckPointPanelView.UpgradeButtonClicked += OnUpgradeButtonClicked;
+            _truckPointPanelView.HireStaffButtonClicked += OnHireStaffButtonClicked;
+            _updatesProvider.SecondPassed += OnSecondPassed;
         }
 
         private void Unsubscribe()
         {
             _playerCharModel.NearTruckPointUpdated -= OnNearTruckPointUpdated;
             _truckPointPanelView.UpgradeButtonClicked -= OnUpgradeButtonClicked;
+            _truckPointPanelView.HireStaffButtonClicked -= OnHireStaffButtonClicked;
+            _updatesProvider.SecondPassed -= OnSecondPassed;
             
             UnsubscribeFromTruckPoint(_targetTruckPoint);
         }
@@ -62,6 +66,14 @@ namespace View.UI.BottomPanel
             if (_targetTruckPoint != null)
             {
                 _eventBus.Dispatch(new UpgradeTruckPointButtonClickedEvent(_targetTruckPoint));
+            }
+        }
+
+        private void OnHireStaffButtonClicked()
+        {
+            if (_targetTruckPoint != null)
+            {
+                _eventBus.Dispatch(new TruckPointHireStaffButtonClickedEvent(_targetTruckPoint));
             }
         }
 
@@ -99,18 +111,18 @@ namespace View.UI.BottomPanel
         
         private void ResubscribeOnUpdate()
         {
-            _updatesProvider.GameplayFixedUpdate -= OnGameplayFixedUpdate;
-            _updatesProvider.GameplayFixedUpdate += OnGameplayFixedUpdate;
+            _updatesProvider.GameplayFixedUpdate -= OnSlideGameplayFixedUpdate;
+            _updatesProvider.GameplayFixedUpdate += OnSlideGameplayFixedUpdate;
         }
 
-        private void OnGameplayFixedUpdate()
+        private void OnSlideGameplayFixedUpdate()
         {
             _slideUpPositionPercent += 5 * Time.fixedDeltaTime * _slideDirection;
 
             if (_slideUpPositionPercent >= 1)
             {
                 _slideUpPositionPercent = 1;
-                _updatesProvider.GameplayFixedUpdate -= OnGameplayFixedUpdate;
+                _updatesProvider.GameplayFixedUpdate -= OnSlideGameplayFixedUpdate;
             }
 
             if (_slideUpPositionPercent <= 0)
@@ -119,7 +131,7 @@ namespace View.UI.BottomPanel
                 
                 _slideUpPositionPercent = 0;
                 _truckPointPanelView.SetActive(false);
-                _updatesProvider.GameplayFixedUpdate -= OnGameplayFixedUpdate;
+                _updatesProvider.GameplayFixedUpdate -= OnSlideGameplayFixedUpdate;
             }
             
             _truckPointPanelView.SetSlideUpPositionPercent(_slideUpPositionPercent);
@@ -129,14 +141,17 @@ namespace View.UI.BottomPanel
         {
             _targetTruckPoint = truckPointModel;
             
+            UpdateUpgradeBlockView();
+            UpdateHireBlockView();
+
+            SubscribeOnTruckPoint(_targetTruckPoint);
+        }
+
+        private void UpdateUpgradeBlockView()
+        {
             DisplayTitles(_targetTruckPoint);
             DisplayProductIcons(_targetTruckPoint);
             SetupUpgradeButton(_targetTruckPoint);
-
-            DisplayStaff(_targetTruckPoint);
-            SetupHireButton(_targetTruckPoint);
-
-            SubscribeOnTruckPoint(_targetTruckPoint);
         }
 
         private void ResetTargetTruckPoint()
@@ -148,6 +163,8 @@ namespace View.UI.BottomPanel
         private void SubscribeOnTruckPoint(TruckPointModel targetTruckPoint)
         {
             targetTruckPoint.Upgraded += OnTruckPointUpgraded;
+            targetTruckPoint.StaffAdded += OnStaffAdded;
+            targetTruckPoint.StaffRemoved += OnStaffRemoved;
         }
 
         private void UnsubscribeFromTruckPoint(TruckPointModel targetTruckPoint)
@@ -155,6 +172,8 @@ namespace View.UI.BottomPanel
             if (targetTruckPoint == null) return;
             
             targetTruckPoint.Upgraded -= OnTruckPointUpgraded;
+            targetTruckPoint.StaffAdded -= OnStaffAdded;
+            targetTruckPoint.StaffRemoved -= OnStaffRemoved;
         }
 
         private void DisplayTitles(TruckPointModel targetTruckPoint)
@@ -169,14 +188,41 @@ namespace View.UI.BottomPanel
 
         private void OnTruckPointUpgraded()
         {
-            DisplayTitles(_targetTruckPoint);
-            DisplayProductIcons(_targetTruckPoint);
-            SetupUpgradeButton(_targetTruckPoint);
+            UpdateUpgradeBlockView();
 
             _eventBus.Dispatch(
                 new UIRequestFlyingTextEvent(
                     _localizationProvider.GetLocale(Constants.LocalizationUpgraded),
                     _truckPointPanelView.UpgradeButtonTransform.position));
+        }
+
+        private void OnStaffAdded(int slotIndex)
+        {
+            UpdateHireBlockView();
+            
+            _eventBus.Dispatch(
+                new UIRequestFlyingTextEvent(
+                    _localizationProvider.GetLocale(Constants.LocalizationHired),
+                    _truckPointPanelView.HireStaffButtonView.transform.position));
+        }
+
+        private void OnStaffRemoved(int slotIndex)
+        {
+            UpdateHireBlockView();
+        }
+
+        private void UpdateHireBlockView()
+        {
+            DisplayStaff(_targetTruckPoint);
+            SetupHireButton(_targetTruckPoint);
+        }
+
+        private void OnSecondPassed()
+        {
+            if (_targetTruckPoint != null)
+            {
+                UpdateHireBlockView();
+            }
         }
 
         private void SetupUpgradeButton(TruckPointModel targetTruckPoint)
@@ -210,6 +256,7 @@ namespace View.UI.BottomPanel
                 if (staffModel != null)
                 {
                     _truckPointPanelView.SetStaffWorkTimerText(i, $"{staffModel.WorkSecondsLeft}{_secondsPostfix}");
+                    _truckPointPanelView.SetStaffWorkTimeProgress(i, (float)staffModel.WorkSecondsLeft / staffModel.WorkSecondsSetting);
                 }
             }
         }

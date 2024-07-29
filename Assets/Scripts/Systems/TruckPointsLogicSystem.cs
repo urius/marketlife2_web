@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Data;
@@ -6,18 +7,25 @@ using Holders;
 using Infra.EventBus;
 using Infra.Instance;
 using Model;
+using Model.People;
 using Model.ShopObjects;
+using UnityEngine;
 
 namespace Systems
 {
     public class TruckPointsLogicSystem : ISystem
     {
+        private const int StaffWorkTimeForHiringByMoney = 60;
+        private const int StaffWorkTimeForHiringByAds = 5 * StaffWorkTimeForHiringByMoney; 
+            
         private readonly IPlayerModelHolder _playerModelHolder = Instance.Get<IPlayerModelHolder>();
         private readonly IUpdatesProvider _updatesProvider = Instance.Get<IUpdatesProvider>();
         private readonly IUpgradeCostProvider _upgradeCostProvider = Instance.Get<IUpgradeCostProvider>();
         private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
+        private readonly IHireStaffCostProvider _hireStaffCostProvider = Instance.Get<IHireStaffCostProvider>();
         
         private readonly List<TruckPointModel> _truckPointList = new();
+        private readonly Vector2Int _staffInitialPointOffset = Vector2Int.right + 2 * Vector2Int.down;
 
         private ShopModel _shopModel;
         private PlayerModel _playerModel;
@@ -44,6 +52,7 @@ namespace Systems
             _eventBus.Subscribe<TruckArriveAnimationFinishedEvent>(OnTruckArriveAnimationFinished);
             
             _eventBus.Subscribe<UpgradeTruckPointButtonClickedEvent>(OnUpgradeTruckPointButtonClickedEvent);
+            _eventBus.Subscribe<TruckPointHireStaffButtonClickedEvent>(OnTruckPointHireStaffButtonClickedEvent);
         }
 
         private void Unsubscribe()
@@ -53,6 +62,7 @@ namespace Systems
             _eventBus.Unsubscribe<TruckArriveAnimationFinishedEvent>(OnTruckArriveAnimationFinished);
             
             _eventBus.Unsubscribe<UpgradeTruckPointButtonClickedEvent>(OnUpgradeTruckPointButtonClickedEvent);
+            _eventBus.Unsubscribe<TruckPointHireStaffButtonClickedEvent>(OnTruckPointHireStaffButtonClickedEvent);
         }
 
         private void OnTruckArriveAnimationFinished(TruckArriveAnimationFinishedEvent e)
@@ -64,18 +74,46 @@ namespace Systems
         {
             foreach (var truckPointModel in _truckPointList)
             {
-                var isAdvanced = truckPointModel.AdvanceDeliverTime();
-                
-                if (isAdvanced && truckPointModel.DeliverTimeSecondsRest <= 0)
-                {
-                    _eventBus.Dispatch(new TruckArrivedEvent(truckPointModel));
-                    return;
-                }
+                ProcessDeliverLogic(truckPointModel);
+                ProcessStaffLogic(truckPointModel);
+            }
+        }
 
-                if (truckPointModel.DeliverTimeSecondsRest <= 0 
-                    && truckPointModel.HasProducts == false)
+        private void ProcessDeliverLogic(TruckPointModel truckPointModel)
+        {
+            var isTimeAdvanced = truckPointModel.AdvanceDeliverTime();
+
+            if (isTimeAdvanced && truckPointModel.DeliverTimeSecondsRest <= 0)
+            {
+                _eventBus.Dispatch(new TruckArrivedEvent(truckPointModel));
+                return;
+            }
+
+            if (truckPointModel.DeliverTimeSecondsRest <= 0
+                && truckPointModel.HasProducts == false)
+            {
+                truckPointModel.ResetDeliverTime();
+            }
+        }
+
+        private void ProcessStaffLogic(TruckPointModel truckPointModel)
+        {
+            for (var i = 0; i < truckPointModel.StaffCharModels.Count; i++)
+            {
+                var staffCharModel = truckPointModel.StaffCharModels[i];
+                if (staffCharModel != null)
                 {
-                    truckPointModel.ResetDeliverTime();
+                    if (staffCharModel.WorkSecondsLeft <= 0)
+                    {
+                        if (staffCharModel.HasProducts == false)
+                        {
+                            truckPointModel.RemoveStaff(staffCharModel);
+                        }
+                    }
+                    else
+                    {
+                        staffCharModel.AdvanceWorkingTime();
+                    }
                 }
             }
         }
@@ -111,6 +149,35 @@ namespace Systems
                     truckPointModel.Upgrade();
                 }
             }
+        }
+
+        private void OnTruckPointHireStaffButtonClickedEvent(TruckPointHireStaffButtonClickedEvent e)
+        {
+            var truckPointModel = e.TruckPointModel;
+            var hireCost = _hireStaffCostProvider.GetTruckPointHireStaffCost(truckPointModel);
+            
+            if (truckPointModel.CanAddStaff() == false) return;
+            
+            if (hireCost > 0)
+            {
+                if (_playerModel.TrySpendMoney(hireCost))
+                {
+                    HireNewStaffTo(truckPointModel, StaffWorkTimeForHiringByMoney);
+                }
+            }
+            else if (hireCost == HireStaffCostProvider.HireStaffWatchAdsCost)
+            {
+                //process watch ads and hire
+                //HireNewStaffTo(truckPointModel, StaffWorkTimeForHiringByAds);
+            }
+        }
+
+        private void HireNewStaffTo(TruckPointModel truckPointModel, int workTime)
+        {
+            var staffInitialPosition = truckPointModel.CellCoords + _staffInitialPointOffset;
+            var staffModel = new TruckPointStaffCharModel(staffInitialPosition, workTime, Array.Empty<ProductType>());
+
+            truckPointModel.AddStaffToFreeSlot(staffModel);
         }
     }
 }

@@ -52,7 +52,7 @@ namespace View.Game.People
             }
             else
             {
-                Debug.LogWarning($"Failed to unmediate customer: pos = {customerCharModel.CellPosition}");
+                Debug.LogWarning($"Failed to unmediate customer: pos = {customerCharModel.CellCoords}");
             }
         }
     }

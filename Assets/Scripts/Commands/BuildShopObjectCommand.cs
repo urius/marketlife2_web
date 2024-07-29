@@ -5,6 +5,7 @@ using Holders;
 using Infra.CommandExecutor;
 using Infra.Instance;
 using Model.BuildPoint;
+using Model.People;
 using Model.ShopObjects;
 using UnityEngine;
 

@@ -134,6 +134,11 @@
 			"key": "upgraded",
 			"en": "upgraded",
 			"ru": "улучшено"
+		},
+		{
+			"key": "hired",
+			"en": "hired",
+			"ru": "нанято"
 		}
 	]
 }

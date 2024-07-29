@@ -86,7 +86,7 @@ namespace Systems
             
             customerModel.IsStepInProgress = false;
 
-            if (movingState.TargetCell == customerModel.CellPosition)
+            if (movingState.TargetCell == customerModel.CellCoords)
             {
                 ProcessNextState(customerModel);
             }
@@ -98,7 +98,7 @@ namespace Systems
                     var queueIndex = GetCustomerCashDeskQueueIndex(cashDesk, customerModel);
                     var queueTargetCell = GetCashDeskQueueCell(cashDesk, queueIndex);
                     
-                    if (customerModel.CellPosition != queueTargetCell)
+                    if (customerModel.CellCoords != queueTargetCell)
                     {
                         MakeNextStep(customerModel, queueTargetCell);
                     }
@@ -115,7 +115,7 @@ namespace Systems
         {
             var queueTargetCell = GetCashDeskQueueCell(cashDeskModel, currentQueueIndex);
             
-            return customer.CellPosition == queueTargetCell;
+            return customer.CellCoords == queueTargetCell;
         }
         
         private bool TryMoveToQueueCell(CashDeskModel cashDeskModel, CustomerCharModel customerModel, int currentQueueIndex)
@@ -165,7 +165,7 @@ namespace Systems
             
             foreach (var nearCellOffset in Constants.NearCells4)
             {
-                var nearCell = customerCharModel.CellPosition + nearCellOffset;
+                var nearCell = customerCharModel.CellCoords + nearCellOffset;
                 
                 if (nearCell == customerCharModel.PreviousCellPosition
                     || CanMakeStepTo(nearCell) == false)
@@ -281,7 +281,7 @@ namespace Systems
 
         private void SetMoveToEnterState(CustomerCharModel model)
         {
-            var closestDoor = GetClosestDoor(model.CellPosition);
+            var closestDoor = GetClosestDoor(model.CellCoords);
             var targetPoint = new Vector2Int(closestDoor.Left, 0);
 
             model.SetMovingToEnterState(targetPoint);
@@ -300,7 +300,7 @@ namespace Systems
 
         private void SetMoveToExitState(CustomerCharModel model)
         {
-            var closestDoor = GetClosestDoor(model.CellPosition);
+            var closestDoor = GetClosestDoor(model.CellCoords);
             var targetPoint = new Vector2Int(closestDoor.Right, -2);
 
             model.SetMovingToExitState(targetPoint);
@@ -465,7 +465,7 @@ namespace Systems
                     var cashDesk = moveToCashDeskState.TargetCashDesk;
                     var currentQueueIndex = GetCustomerCashDeskQueueIndex(cashDesk, customer);
                     
-                    if (currentQueueIndex == 0 && customer.CellPosition == GetCashDeskPayPoint(cashDesk))
+                    if (currentQueueIndex == 0 && customer.CellCoords == GetCashDeskPayPoint(cashDesk))
                     {
                         TrySetPayingState(cashDesk, customer);
                     }

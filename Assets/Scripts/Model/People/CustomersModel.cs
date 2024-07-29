@@ -27,7 +27,7 @@ namespace Model.People
         {
             _customerModels.Add(customer);
 
-            SetOwnedCell(customer, customer.CellPosition);
+            SetOwnedCell(customer, customer.CellCoords);
 
             CustomerAdded?.Invoke(customer);
         }
@@ -69,7 +69,7 @@ namespace Model.People
         public bool TryRemoveOwnedCell(CustomerCharModel customer)
         {
             return TryRemoveOwnedCell(customer, customer.PreviousCellPosition)
-                   || TryRemoveOwnedCell(customer, customer.CellPosition);
+                   || TryRemoveOwnedCell(customer, customer.CellCoords);
         }
         
         public void AdvanceSpawnCooldown()
