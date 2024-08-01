@@ -33,6 +33,11 @@ namespace View.Helpers
                 (ManSpriteType)(result + HandBodyClothesDelta),
                 (ManSpriteType)footClothes);
         }
+        public static (ManSpriteType BodyClothes, ManSpriteType HandClothes, ManSpriteType FootClothes)
+            GetTruckPointStaffClothes()
+        {
+            return (ManSpriteType.Clothes7, ManSpriteType.HandClothes7, ManSpriteType.FootClothes7);
+        }
 
         public static (ManSpriteType BodyClothes, ManSpriteType HandClothes, ManSpriteType FootClothes)
             GetClothesByIntType(int clothesIntType)

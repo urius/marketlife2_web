@@ -5,6 +5,7 @@ using Events;
 using Holders;
 using Infra.EventBus;
 using Infra.Instance;
+using Model.People;
 using Model.ShopObjects;
 using Utils;
 using View.Game.Extensions;
@@ -89,26 +90,30 @@ namespace View.Game.ShopObjects.Shelf
             var putProductAnimationContext = new PutProductAnimationContext()
             {
                 ProductView = productView,
-                ShelfSlotIndex = shelfSlotIndex
+                ShelfSlotIndex = shelfSlotIndex,
+                TargetProductsBoxModel = e.ProductBoxModel,
             };
             _putProductAnimationContexts.Enqueue(putProductAnimationContext);
 
-            var charBoxPositionProvider = _sharedViewsDataHolder.GetPlayerCharPositionProvider();
-            productView.transform.position = charBoxPositionProvider.GetProductInBoxPosition(e.BoxSlotIndex);
+            var productsInBoxPositionsProvider = _sharedViewsDataHolder.GetCharProductsInBoxPositionsProvider(e.ProductBoxModel);
+            productView.transform.position = productsInBoxPositionsProvider.GetProductInBoxPosition(e.BoxSlotIndex);
 
             var targetPosition = _view.GetSlotPosition(shelfSlotIndex);
             _view.SetProductSprite(shelfSlotIndex, null);
 
-            LeanTween.delayedCall(_view.gameObject, PutProductHalfDuration, OnPutProductHalfAnimation);
+            LeanTween
+                .delayedCall(_view.gameObject, PutProductHalfDuration, OnPutProductHalfAnimation)
+                .setOnCompleteParam(putProductAnimationContext);
             
             productView.transform.LeanMove(targetPosition, PutProductDuration)
                 .setEase(LeanTweenType.easeInOutQuad)
                 .setOnComplete(OnAnimatePutProductComplete);
         }
 
-        private void OnPutProductHalfAnimation()
+        private void OnPutProductHalfAnimation(object putProductAnimationContext)
         {
-            _eventBus.Dispatch(new PutProductOnShelfHalfAnimationEvent());
+            var context = (PutProductAnimationContext)putProductAnimationContext;
+            _eventBus.Dispatch(new PutProductOnShelfHalfAnimationEvent(context.TargetProductsBoxModel));
         }
 
         private void OnAnimatePutProductComplete()
@@ -161,6 +166,7 @@ namespace View.Game.ShopObjects.Shelf
         private class PutProductAnimationContext
         {
             public ProductView ProductView;
+            public ProductBoxModel TargetProductsBoxModel;
             public int ShelfSlotIndex;
         }
     }

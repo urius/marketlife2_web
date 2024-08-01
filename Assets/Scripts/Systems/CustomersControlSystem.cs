@@ -7,6 +7,7 @@ using Infra.EventBus;
 using Infra.Instance;
 using Model;
 using Model.People;
+using Model.People.States;
 using Model.People.States.Customer;
 using Model.ShopObjects;
 using UnityEngine;
@@ -14,7 +15,7 @@ using Random = UnityEngine.Random;
 
 namespace Systems
 {
-    public class CustomersControlSystem : ISystem
+    public class CustomersControlSystem : BotCharsControlSystemBase
     {
         private const int SpawnY = -5;
         private const int DespawnY = -6;
@@ -22,10 +23,8 @@ namespace Systems
         private readonly IShopModelHolder _shopModelHolder = Instance.Get<IShopModelHolder>();
         private readonly IPlayerModelHolder _playerModelHolder = Instance.Get<IPlayerModelHolder>();
         private readonly IUpdatesProvider _updatesProvider = Instance.Get<IUpdatesProvider>();
-        private readonly IOwnedCellsDataHolder _ownedCellsDataHolder = Instance.Get<IOwnedCellsDataHolder>();
         private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
         
-        private readonly List<ShelfModel> _allShelfs = new ();
         private readonly List<CashDeskModel> _allCashDesks = new ();
         private readonly Dictionary<CashDeskModel, List<CustomerCharModel>> _cashDeskCustomerQueues = new ();
 
@@ -34,22 +33,25 @@ namespace Systems
         private CustomersModel _customersModel;
         private int _processNextIdleCustomerIndex = -1;
         
-        public void Start()
+        public override void Start()
         {
+            base.Start();
+            
             _shopModel = _shopModelHolder.ShopModel;
             _customersModel = _shopModel.CustomersModel;
             _playerCharModel = _playerModelHolder.PlayerCharModel;
 
-            PopulateShelfs();
             PopulateCashDesks();
             UpdateMaxCustomersAmount();
 
             Subscribe();
         }
 
-        public void Stop()
+        public override void Stop()
         {
             Unsubscribe();
+            
+            base.Stop();
         }
 
         private void Subscribe()
@@ -82,7 +84,7 @@ namespace Systems
         private void OnCustomerStepFinishedEvent(CustomerStepFinishedEvent e)
         {
             var customerModel = e.CustomerModel;
-            var movingState = (CustomerMovingStateBase)customerModel.State;
+            var movingState = (BotCharMovingStateBase)customerModel.State;
             
             customerModel.IsStepInProgress = false;
 
@@ -92,7 +94,7 @@ namespace Systems
             }
             else
             {
-                if (movingState.StateName == ShopCharStateName.MovingToCashDesk)
+                if (movingState.StateName == ShopCharStateName.CustomerMovingToCashDesk)
                 {
                     var cashDesk = ((CustomerMovingToCashDeskState)movingState).TargetCashDesk;
                     var queueIndex = GetCustomerCashDeskQueueIndex(cashDesk, customerModel);
@@ -158,62 +160,19 @@ namespace Systems
             return _customersModel.HaveCustomerOnCell(cellPosition) == false;
         }
 
-        private void MakeNextStep(CustomerCharModel customerCharModel, Vector2Int targetPoint)
+        protected override void BeforeChangeCell(BotCharModelBase customerCharModel, Vector2Int cell)
         {
-            var stepCell = Vector2Int.zero;
-            var minDistanceToTarget = -1f;
-            
-            foreach (var nearCellOffset in Constants.NearCells4)
-            {
-                var nearCell = customerCharModel.CellCoords + nearCellOffset;
-                
-                if (nearCell == customerCharModel.PreviousCellPosition
-                    || CanMakeStepTo(nearCell) == false)
-                {
-                    continue;
-                }
-
-                var distanceToTarget = (targetPoint - nearCell).magnitude;
-                
-                if (minDistanceToTarget < 0 || distanceToTarget < minDistanceToTarget)
-                {
-                    minDistanceToTarget = distanceToTarget;
-                    stepCell = nearCell;
-                }
-            }
-
-            if (minDistanceToTarget < 0 && CanMakeStepTo(customerCharModel.PreviousCellPosition))
-            {
-                stepCell = customerCharModel.PreviousCellPosition;
-                minDistanceToTarget = (targetPoint - stepCell).magnitude;
-            }
-
-            if (minDistanceToTarget >= 0)
-            {
-                SetCustomerCellPosition(customerCharModel, stepCell);
-            }
-            else
-            {
-                Debug.LogWarning("No cell to move for customer");
-            }
-        }
-
-        private void SetCustomerCellPosition(CustomerCharModel customerCharModel, Vector2Int cell)
-        {
-            _customersModel.SetOwnedCell(customerCharModel, cell);
-            
-            customerCharModel.SetCellPosition(cell);
-            customerCharModel.IsStepInProgress = true;
+            _customersModel.SetOwnedCell((CustomerCharModel)customerCharModel, cell);
         }
 
         private void ProcessNextState(CustomerCharModel model)
         {
             switch (model.State.StateName)
             {
-                case ShopCharStateName.MovingToEnter:
+                case ShopCharStateName.CustomerMovingToEnter:
                     SetMoveToRandomShelfState(model);
                     break;
-                case ShopCharStateName.MovingToShelf:
+                case ShopCharStateName.CustomerMovingToShelf:
                     var targetProduct = ((CustomerMovingToShelfState)model.State).TargetProduct;
                     if (targetProduct != ProductType.None)
                     {
@@ -232,22 +191,22 @@ namespace Systems
                         SetMoveToExitState(model);
                     }
                     break;
-                case ShopCharStateName.TakingProduct:
+                case ShopCharStateName.CustomerTakingProduct:
                     SetMoveToCashDeskState(model);
                     break;
-                case ShopCharStateName.MovingToCashDesk:
+                case ShopCharStateName.CustomerMovingToCashDesk:
                     TrySetPayingState(((CustomerMovingToCashDeskState)model.State).TargetCashDesk, model);
                     break;
-                case ShopCharStateName.Paying:
+                case ShopCharStateName.CustomerPaying:
                     var targetCashDesk = ((CustomerPayingState)model.State).TargetCashDesk;
                     AddMoneyToCashDesk(targetCashDesk, model);
                     SetMoveToExitState(model);
                     RemoveFromCashDeskQueue(targetCashDesk);
                     break;
-                case ShopCharStateName.MovingToExit:
+                case ShopCharStateName.CustomerMovingToExit:
                     SetMoveOutOfShopState(model);
                     break;
-                case ShopCharStateName.MovingToDespawn:
+                case ShopCharStateName.CustomerMovingToDespawn:
                     _customersModel.RemoveCustomer(model);
                     break;
             }
@@ -310,8 +269,10 @@ namespace Systems
 
         private void SetMoveToRandomShelfState(CustomerCharModel model)
         {
-            var targetShelf = _allShelfs.FirstOrDefault(s => s.HasProducts())
-                              ?? _allShelfs[Random.Range(0, _allShelfs.Count)];
+            var allShelfs = _shopModel.Shelfs;
+            var targetShelf = allShelfs.FirstOrDefault(s => s.HasProducts())
+                              ?? allShelfs[Random.Range(0, allShelfs.Count)];
+            
             var targetProduct = targetShelf.GetRandomNotEmptyProductOrDefault();
 
             SetMoveToShelfState(model, targetProduct, targetShelf);
@@ -319,7 +280,7 @@ namespace Systems
 
         private bool TrySetMoveToShelfWithExactProductState(CustomerCharModel model, ProductType targetProduct)
         {
-            var targetShelf = _allShelfs.FirstOrDefault(s => s.HasProduct(targetProduct));
+            var targetShelf = _shopModel.Shelfs.FirstOrDefault(s => s.HasProduct(targetProduct));
 
             if (targetShelf != null)
             {
@@ -399,18 +360,10 @@ namespace Systems
             return targetShelf.CellCoords + new Vector2Int(0, 1);
         }
 
-        private bool CanMakeStepTo(Vector2Int cell)
+        protected override bool CanMakeStepTo(Vector2Int cell)
         {
-            return IsWalkable(cell) && !_customersModel.HaveCustomerOnCell(cell);
-        }
-
-        private bool IsWalkable(Vector2Int cell)
-        {
-            if (cell.x < 0 || cell.x >= _shopModel.Size.x) return false;
-            if (cell.y < Constants.YTopWalkableCoordForCustomers || cell.y >= _shopModel.Size.y) return false;
-            if (cell.y == -1) return _shopModel.HaveDoorOn(cell.x);
-            
-            return _ownedCellsDataHolder.IsWalkableForCustomerChar(cell);
+            return base.CanMakeStepTo(cell)
+                   && !_customersModel.HaveCustomerOnCell(cell);
         }
 
         private void UpdateMaxCustomersAmount()
@@ -457,9 +410,9 @@ namespace Systems
         private void ProcessIdleCustomer(CustomerCharModel customer)
         {
             if (customer.IsStepInProgress == false
-                && customer.State is CustomerMovingStateBase movingStateBase)
+                && customer.State is BotCharMovingStateBase movingStateBase)
             {
-                if (movingStateBase.StateName == ShopCharStateName.MovingToCashDesk)
+                if (movingStateBase.StateName == ShopCharStateName.CustomerMovingToCashDesk)
                 {
                     var moveToCashDeskState = (CustomerMovingToCashDeskState)movingStateBase;
                     var cashDesk = moveToCashDeskState.TargetCashDesk;
@@ -508,10 +461,12 @@ namespace Systems
         {
             _customersModel.AdvanceSpawnCooldown();
 
+            var allShelfs = _shopModel.Shelfs;
+
             if (_customersModel.SpawnCooldownSecondsLeft <= 0
                 && _customersModel.CustomersAmount < _customersModel.MaxCustomersAmount
-                && _allShelfs.Count > 0
-                && (_allShelfs.Count > 10 || HaveShelfsWithProducts()))
+                && allShelfs.Count > 0
+                && (allShelfs.Count > 10 || HaveShelfsWithProducts()))
             {
                 var spawnPoint = new Vector2Int(Random.Range(0, _shopModel.Size.x), SpawnY);
 
@@ -527,7 +482,7 @@ namespace Systems
 
         private bool HaveShelfsWithProducts()
         {
-            foreach (var shelf in _allShelfs)
+            foreach (var shelf in _shopModel.Shelfs)
             {
                 if (shelf.HasProducts())
                 {
@@ -599,29 +554,15 @@ namespace Systems
 
         private void OnShopObjectAdded(ShopObjectModelBase shopObjectModel)
         {
-            if (shopObjectModel.ShopObjectType.IsShelf())
-            {
-                _allShelfs.Add((ShelfModel)shopObjectModel);
-            }
-            else if(shopObjectModel.ShopObjectType == ShopObjectType.CashDesk)
+            if (shopObjectModel.ShopObjectType == ShopObjectType.CashDesk)
             {
                 var cashDeskModel = (CashDeskModel)shopObjectModel;
-                
+
                 _allCashDesks.Add(cashDeskModel);
                 _cashDeskCustomerQueues.Add(cashDeskModel, new List<CustomerCharModel>());
             }
 
             UpdateMaxCustomersAmount();
-        }
-
-        private void PopulateShelfs()
-        {
-            var allShelfs = _shopModel.ShopObjects.Values
-                .Where(o => o.ShopObjectType.IsShelf())
-                .Cast<ShelfModel>()
-                .ToArray();
-            
-            _allShelfs.AddRange(allShelfs);
         }
         
         private void PopulateCashDesks()

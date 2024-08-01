@@ -11,6 +11,7 @@ using Model;
 using Model.BuildPoint;
 using Model.ShopObjects;
 using UnityEngine;
+using View.Helpers;
 
 namespace Systems
 {
@@ -159,15 +160,18 @@ namespace Systems
                 nearEmptyShelf.AddProductToSlot(shelfSlotIndex, productToMove);
                 
                 _eventBus.Dispatch(
-                    new AnimatePutProductOnShelfEvent(nearEmptyShelf, productToMove, boxSlotIndex, shelfSlotIndex));
+                    new AnimatePutProductOnShelfEvent(nearEmptyShelf, _playerCharModel.ProductsBox, productToMove, boxSlotIndex, shelfSlotIndex));
             }
         }
 
         private void OnPutProductOnShelfHalfAnimationEvent(PutProductOnShelfHalfAnimationEvent e)
         {
-            _putProductsIsBlocked = false;
-            
-            PutProductOnShelfIfNeeded(_playerCharModel.CellPosition);
+            if (e.ProductBoxModel == _playerCharModel.ProductsBox)
+            {
+                _putProductsIsBlocked = false;
+                PutProductOnShelfIfNeeded(_playerCharModel.CellPosition);
+                
+            }
         }
 
         private ShelfModel GetNearEmptyShelf(Vector2Int cellPosition)
@@ -193,8 +197,8 @@ namespace Systems
         private void TakeTruckProductBoxIfNeeded(Vector2Int cellPos)
         {
             if (cellPos.x == 0
-                && (_shopModel.TryGetTruckPoint(new Vector2Int(-1, cellPos.y), out var truckPointModel)
-                    || _shopModel.TryGetTruckPoint(new Vector2Int(-1, cellPos.y + 1), out truckPointModel)))
+                && (_shopModel.TryGetTruckPoint(cellPos - TruckPointHelper.PrimaryInteractionCellOffset, out var truckPointModel)
+                    || _shopModel.TryGetTruckPoint(cellPos - TruckPointHelper.SecondaryInteractionCellOffset, out truckPointModel)))
             {
                 if (truckPointModel.DeliverTimeSecondsRest <= 0
                     && truckPointModel.HasProducts
@@ -202,10 +206,9 @@ namespace Systems
                 {
                     var productBoxIndexToTake = truckPointModel.GetLastNotEmptyProductBoxIndex();
                     var productTypeToTake = truckPointModel.GetProductTypeAtBoxIndex(productBoxIndexToTake);
-                    var productsToAdd = Enumerable.Repeat(productTypeToTake, Constants.ProductsAmountInBox).ToArray();
                     
                     truckPointModel.RemoveBox(productBoxIndexToTake);
-                    _playerCharModel.SetProductsInBox(productsToAdd);
+                    _playerCharModel.FillBoxWithProduct(productTypeToTake);
                     
                     _eventBus.Dispatch(new AnimateTakeBoxFromTruckEvent(truckPointModel, productBoxIndexToTake));
                 }

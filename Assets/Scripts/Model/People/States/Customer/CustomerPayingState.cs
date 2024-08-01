@@ -3,7 +3,7 @@ using Model.ShopObjects;
 
 namespace Model.People.States.Customer
 {
-    public class CustomerPayingState : ShopSharStateBase
+    public class CustomerPayingState : BotCharStateBase
     {
         public readonly CashDeskModel TargetCashDesk;
 
@@ -12,6 +12,6 @@ namespace Model.People.States.Customer
             TargetCashDesk = targetCashDesk;
         }
 
-        public override ShopCharStateName StateName => ShopCharStateName.Paying;
+        public override ShopCharStateName StateName => ShopCharStateName.CustomerPaying;
     }
 }

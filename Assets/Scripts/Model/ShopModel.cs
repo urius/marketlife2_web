@@ -17,9 +17,12 @@ namespace Model
         public event Action DoorsAdded;
 
         public readonly CustomersModel CustomersModel = new();
+        public readonly BotCharsOwnedCellModel TruckPointStaffOwnedCellModel = new();
         
         private readonly Dictionary<Vector2Int, ShopObjectModelBase> _shopObjects = new();
         private readonly Dictionary<Vector2Int, BuildPointModel> _buildPoints = new();
+        private readonly List<TruckPointModel> _truckPoints;
+        private readonly List<ShelfModel> _shelfs;
         
         public WallType WallsType;
         public FloorType FloorsType;
@@ -36,6 +39,9 @@ namespace Model
             SetSize(size);
             SetShopObjects(shopObjects);
             SetBuildPoints(buildPoints);
+            
+            _truckPoints = GetTruckPointModels().ToList();
+            _shelfs = GetShelfModels().ToList();
         }
 
         public Vector2Int Size => _size;
@@ -44,6 +50,8 @@ namespace Model
         public IReadOnlyDictionary<Vector2Int, ShopObjectModelBase> ShopObjects => _shopObjects;
 
         public IReadOnlyDictionary<Vector2Int, BuildPointModel> BuildPoints => _buildPoints;
+        public IReadOnlyList<TruckPointModel> TruckPoints => _truckPoints;
+        public IReadOnlyList<ShelfModel> Shelfs => _shelfs;
 
         public bool HaveBuildPoint(Vector2Int cellCoords)
         {
@@ -82,6 +90,17 @@ namespace Model
                 if (kvp.Value.ShopObjectType == ShopObjectType.TruckPoint)
                 {
                     yield return kvp.Value as TruckPointModel;
+                }
+            }
+        }
+        
+        public IEnumerable<ShelfModel> GetShelfModels()
+        {
+            foreach (var kvp in _shopObjects)
+            {
+                if (kvp.Value.ShopObjectType.IsShelf())
+                {
+                    yield return kvp.Value as ShelfModel;
                 }
             }
         }
@@ -143,6 +162,15 @@ namespace Model
         {
             if (_shopObjects.TryAdd(shopObject.CellCoords, shopObject))
             {
+                if (shopObject.ShopObjectType == ShopObjectType.TruckPoint)
+                {
+                    _truckPoints.Add((TruckPointModel)shopObject);
+                }
+                else if (shopObject.ShopObjectType.IsShelf())
+                {
+                    _shelfs.Add((ShelfModel)shopObject);
+                }
+                
                 ShopObjectAdded?.Invoke(shopObject);
                 
                 return true;

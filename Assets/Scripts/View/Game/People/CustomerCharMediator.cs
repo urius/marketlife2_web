@@ -8,7 +8,6 @@ using Model.People;
 using Model.People.States;
 using Model.People.States.Customer;
 using UnityEngine;
-using Utils;
 using View.Game.Product;
 using View.Helpers;
 
@@ -18,22 +17,18 @@ namespace View.Game.People
     {
         private const float PutProductDuration = 0.5f;
         
-        private readonly IGridCalculator _gridCalculator = Instance.Get<IGridCalculator>();
         private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
         private readonly ISharedViewsDataHolder _sharedViewsDataHolder = Instance.Get<ISharedViewsDataHolder>();
         private readonly SpritesHolderSo _spritesHolderSo = Instance.Get<SpritesHolderSo>();
         
         private readonly TakeProductContext _takeProductContext = new ();
         
-        private ManView _customerView;
         private int _flyingProductFromBasketAnimationIndex = 0;
 
         protected override void MediateInternal()
         {
             base.MediateInternal();
             
-            _customerView = InstantiatePrefab<ManView>(PrefabKey.Man);
-            _customerView.transform.position = _gridCalculator.GetCellCenterWorld(TargetModel.CellCoords);
             SetClothes();
 
             Subscribe();
@@ -45,21 +40,17 @@ namespace View.Game.People
         {
             Unsubscribe();
             
-            Destroy(_customerView);
-            _customerView = null;
-            
             base.UnmediateInternal();
         }
-
-        protected override ManView View => _customerView;
+        
         protected override void ToWalkingState()
         {
-            _customerView.ToWalkState(TargetModel.HasProducts);
+            ManView.ToWalkState(TargetModel.HasProducts);
         }
         
         protected override void ToIdleState()
         {
-            _customerView.ToIdleState(TargetModel.HasProducts);
+            ManView.ToIdleState(TargetModel.HasProducts);
         }
 
         protected override void StepFinishedHandler()
@@ -79,14 +70,14 @@ namespace View.Game.People
             TargetModel.ProductAdded -= OnProductAdded;
         }
 
-        private void OnStateChanged(ShopSharStateBase state)
+        private void OnStateChanged(BotCharStateBase state)
         {
-            if (state.StateName == ShopCharStateName.TakingProduct)
+            if (state.StateName == ShopCharStateName.CustomerTakingProduct)
             {
                 var takeProductState = (CustomerTakeProductFromShelfState)state;
                 AnimateTakingProductFromShelf(takeProductState);
             }
-            else if (state.StateName == ShopCharStateName.Paying)
+            else if (state.StateName == ShopCharStateName.CustomerPaying)
             {
                 AnimatePaying();
             }
@@ -96,42 +87,20 @@ namespace View.Game.People
         {
             var clothes = ManSpriteTypesHelper.GetCustomerRandomClothes();
             var hairType = ManSpriteTypesHelper.GetRandomHair();
-            var bodySprite = _spritesHolderSo.GetManSpriteByKey(clothes.BodyClothes);
-            var handSprite = _spritesHolderSo.GetManSpriteByKey(clothes.HandClothes);
-            var footSprite = _spritesHolderSo.GetManSpriteByKey(clothes.FootClothes);
-            var hairSprite = _spritesHolderSo.GetManSpriteByKey(hairType);
+            
+            SetBaseClothes(clothes.BodyClothes, clothes.HandClothes, clothes.FootClothes, hairType);
 
-            _customerView.SetClothesSprites(bodySprite, handSprite, footSprite);
-            _customerView.SetHairSprite(hairSprite);
+            SetRandomGlasses();
 
-            if (Random.value < 0.8)
-            {
-                _customerView.SetGlassesSprite(null);
-            }
-            else
-            {
-                var glassesType = ManSpriteTypesHelper.GetRandomGlasses();
-                var glassesSprite = _spritesHolderSo.GetManSpriteByKey(glassesType);
-                _customerView.SetGlassesSprite(glassesSprite);
-            }
-
-            if (DateTimeHelper.IsNewYearsEve())
-            {
-                var hatSprite = _spritesHolderSo.GetManSpriteByKey(ManSpriteType.SantaHat);
-                _customerView.SetHatSprite(hatSprite);
-            }
-            else
-            {
-                _customerView.SetHatSprite(null);
-            }
+            SetHat(DateTimeHelper.IsNewYearsEve() ? ManSpriteType.SantaHat : ManSpriteType.None);
         }
 
         private void AnimatePaying()
         {
             DisableSwitchToIdleOnNextFrame();
 
-            _customerView.ToLeftSide();
-            _customerView.ToTakingProductState();
+            ManView.ToLeftSide();
+            ManView.ToTakingProductState();
 
             _flyingProductFromBasketAnimationIndex = 0;
             AnimateProductFlyingFromBasket(_flyingProductFromBasketAnimationIndex);
@@ -143,11 +112,11 @@ namespace View.Game.People
             var productType = TargetModel.GetProductTypeAtSlot(slotIndex);
             var productSprite = _spritesHolderSo.GetProductSpriteByKey(productType);
             productView.SetSprite(productSprite);
-            var startPosition = _customerView.GetProductInBasketPosition(slotIndex);
+            var startPosition = ManView.GetProductInBasketPosition(slotIndex);
             var productTransform = productView.transform;
             productTransform.position = startPosition;
             
-            _customerView.SetProductInBasketSprite(slotIndex, null);
+            ManView.SetProductInBasketSprite(slotIndex, null);
             
             productTransform
                 .LeanMove(startPosition + new Vector3(0, 0, 1), 0.5f)
@@ -175,7 +144,7 @@ namespace View.Game.People
             }
             else
             {
-                _customerView.SetProductsBasketVisibility(false);
+                ManView.SetProductsBasketVisibility(false);
 
                 DispatchAnimationFinishedWithDelay();
             }
@@ -192,18 +161,18 @@ namespace View.Game.People
         {
             DisableSwitchToIdleOnNextFrame();
             
-            _customerView.ToRightSide();
+            ManView.ToRightSide();
             
             var slotPositionProvider = _sharedViewsDataHolder.GetShelfSlotPositionProvider(takeProductState.TargetShelfModel);
             var slotPosition = slotPositionProvider.GetSlotWorldPosition(takeProductState.SlotIndex);
             var basketSlotIndex = takeProductState.BasketSlotIndex;
-            var targetPosition = _customerView.GetProductInBasketPosition(basketSlotIndex);
+            var targetPosition = ManView.GetProductInBasketPosition(basketSlotIndex);
             var productView = CreteProductViewForTakeAnimation(takeProductState.ProductType, slotPosition);
 
             _takeProductContext.Set(basketSlotIndex, productView);
 
-            _customerView.SetProductInBasketSprite(basketSlotIndex, null);
-            _customerView.ToTakingProductState();
+            ManView.SetProductInBasketSprite(basketSlotIndex, null);
+            ManView.ToTakingProductState();
 
             productView.transform.LeanMove(targetPosition, PutProductDuration)
                 .setEase(LeanTweenType.easeInOutQuad)
@@ -235,7 +204,7 @@ namespace View.Game.People
         private void OnProductAdded(int slotIndex)
         {
             DisplayBasketSlot(slotIndex);
-            _customerView.SetProductsBasketVisibility(TargetModel.HasProducts);
+            ManView.SetProductsBasketVisibility(TargetModel.HasProducts);
         }
 
         private void DisplayBasketSlot(int slotIndex)
@@ -244,7 +213,7 @@ namespace View.Game.People
 
             var sprite = productType != ProductType.None ? _spritesHolderSo.GetProductSpriteByKey(productType) : null;
 
-            _customerView.SetProductInBasketSprite(slotIndex, sprite);
+            ManView.SetProductInBasketSprite(slotIndex, sprite);
         }
         
         private class TakeProductContext

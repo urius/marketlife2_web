@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Model.People.States.Customer
 {
-    public class CustomerMovingToCashDeskState : CustomerMovingStateBase
+    public class CustomerMovingToCashDeskState : BotCharMovingStateBase
     {
         public readonly CashDeskModel TargetCashDesk;
 
@@ -14,6 +14,6 @@ namespace Model.People.States.Customer
             TargetCashDesk = targetCashDesk;
         }
 
-        public override ShopCharStateName StateName => ShopCharStateName.MovingToCashDesk;
+        public override ShopCharStateName StateName => ShopCharStateName.CustomerMovingToCashDesk;
     }
 }

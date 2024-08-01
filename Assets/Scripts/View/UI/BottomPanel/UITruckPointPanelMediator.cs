@@ -4,6 +4,7 @@ using Holders;
 using Infra.EventBus;
 using Infra.Instance;
 using Model;
+using Model.People;
 using Model.ShopObjects;
 using UnityEngine;
 using Utils;
@@ -196,7 +197,7 @@ namespace View.UI.BottomPanel
                     _truckPointPanelView.UpgradeButtonTransform.position));
         }
 
-        private void OnStaffAdded(int slotIndex)
+        private void OnStaffAdded(TruckPointStaffCharModel __)
         {
             UpdateHireBlockView();
             
@@ -206,7 +207,7 @@ namespace View.UI.BottomPanel
                     _truckPointPanelView.HireStaffButtonView.transform.position));
         }
 
-        private void OnStaffRemoved(int slotIndex)
+        private void OnStaffRemoved(TruckPointStaffCharModel __)
         {
             UpdateHireBlockView();
         }

@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Model.People
 {
-    public abstract class StaffCharModelBase : ShopCharModelBase
+    public abstract class StaffCharModelBase : BotCharModelBase
     {
         public event Action<int> WorkSecondsLeftChanged;
 

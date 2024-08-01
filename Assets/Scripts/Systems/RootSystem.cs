@@ -19,6 +19,7 @@ namespace Systems
             StartSystem<BuildPointsAppearanceSystem>();
             StartSystem<TruckPointsLogicSystem>();
             StartSystem<CustomersControlSystem>();
+            StartSystem<StaffControlSystem>();
         }
 
         public void Stop()

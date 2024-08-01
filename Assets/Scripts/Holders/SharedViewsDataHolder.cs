@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using Model.People;
 using Model.ShopObjects;
+using UnityEngine;
 using View.Game.People;
 using View.Game.ShopObjects.CashDesk;
 using View.Game.ShopObjects.Shelf;
@@ -12,6 +14,7 @@ namespace Holders
         private readonly Dictionary<TruckPointModel, ITruckBoxPositionsProvider> _truckPointsDictionary = new();
         private readonly Dictionary<ShelfModel, IShelfProductSlotPositionProvider> _shelfSlotsDictionary = new();
         private readonly Dictionary<CashDeskModel, ICashDeskMoneyPositionProvider> _cashDeskProvidersDictionary = new();
+        private readonly Dictionary<ProductBoxModel, ICharProductsInBoxPositionsProvider> _productsInBoxPositionsProviders = new();
 
         private IPlayerCharPositionsProvider _playerCharPositionsProvider;
 
@@ -30,6 +33,12 @@ namespace Holders
             return _truckPointsDictionary.TryGetValue(model, out var provider) ? provider : null;
         }
 
+        public Vector3 GetTruckPointBoxPositions(TruckPointModel truckPointModel, int boxIndex)
+        {
+            return GetTruckBoxPositionsProvider(truckPointModel)
+                .GetBoxWorldPosition(boxIndex);
+        }
+
         public void RegisterPlayerCharPositionProvider(IPlayerCharPositionsProvider provider)
         {
             _playerCharPositionsProvider = provider;
@@ -43,6 +52,21 @@ namespace Holders
         public void UnregisterPlayerCharPositionProvider()
         {
             _playerCharPositionsProvider = null;
+        }
+
+        public void RegisterCharProductsInBoxPositionsProvider(ProductBoxModel productBoxModel, ICharProductsInBoxPositionsProvider provider)
+        {
+            _productsInBoxPositionsProviders[productBoxModel] = provider;
+        }
+
+        public ICharProductsInBoxPositionsProvider GetCharProductsInBoxPositionsProvider(ProductBoxModel productBoxModel)
+        {
+            return _productsInBoxPositionsProviders.TryGetValue(productBoxModel, out var provider) ? provider : null;
+        }
+
+        public void UnregisterCharProductsInBoxPositionsProvider(ProductBoxModel productBoxModel)
+        {
+            _productsInBoxPositionsProviders.Remove(productBoxModel);
         }
 
         public void RegisterShelfSlotPositionProvider(ShelfModel model, IShelfProductSlotPositionProvider provider)
@@ -81,11 +105,16 @@ namespace Holders
     {
         public void RegisterTruckBoxPositionProvider(TruckPointModel model, ITruckBoxPositionsProvider provider);
         public ITruckBoxPositionsProvider GetTruckBoxPositionsProvider(TruckPointModel model);
+        public Vector3 GetTruckPointBoxPositions(TruckPointModel truckPointModel, int boxIndex);
         public void UnregisterTruckBoxPositionProvider(TruckPointModel model);
         
         public void RegisterPlayerCharPositionProvider(IPlayerCharPositionsProvider provider);
         public IPlayerCharPositionsProvider GetPlayerCharPositionProvider();
         public void UnregisterPlayerCharPositionProvider();
+        
+        public void RegisterCharProductsInBoxPositionsProvider(ProductBoxModel productBoxModel, ICharProductsInBoxPositionsProvider provider);
+        public ICharProductsInBoxPositionsProvider GetCharProductsInBoxPositionsProvider(ProductBoxModel productBoxModel);
+        public void UnregisterCharProductsInBoxPositionsProvider(ProductBoxModel productBoxModel);
         
         public void RegisterShelfSlotPositionProvider(ShelfModel model, IShelfProductSlotPositionProvider provider);
         public IShelfProductSlotPositionProvider GetShelfSlotPositionProvider(ShelfModel model);

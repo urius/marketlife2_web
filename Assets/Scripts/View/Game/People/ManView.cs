@@ -8,7 +8,7 @@ using View.Game.Shared;
 
 namespace View.Game.People
 {
-    public class ManView : MonoBehaviour, ISortableView, IPlayerCharPositionsProvider
+    public class ManView : MonoBehaviour, ISortableView, IPlayerCharPositionsProvider, ICharProductsInBoxPositionsProvider
     {
         [SerializeField] private SortingGroup _sortingGroup;
         [SerializeField] private Animation _animation;

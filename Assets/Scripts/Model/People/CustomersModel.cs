@@ -12,7 +12,7 @@ namespace Model.People
         public event Action<CustomerCharModel> CustomerRemoved;
         
         private readonly List<CustomerCharModel> _customerModels = new(5);
-        private readonly Dictionary<Vector2Int, CustomerCharModel> _customerModelByCell = new();
+        private readonly BotCharsOwnedCellModel _customersOwnedCellModel = new();
         
         public int MaxCustomersAmount
         {
@@ -41,35 +41,19 @@ namespace Model.People
             CustomerRemoved?.Invoke(customer);
         }
 
-        public bool IsCellOwnedByCustomer(Vector2Int cellCoords)
+        public bool HaveCustomerOnCell(Vector2Int cell)
         {
-            return _customerModelByCell.ContainsKey(cellCoords);
+            return _customersOwnedCellModel.HaveCustomerOnCell(cell);
         }
         
         public void SetOwnedCell(CustomerCharModel customer, Vector2Int cellCoords)
         {
-            TryRemoveOwnedCell(customer);
-
-            _customerModelByCell[cellCoords] = customer;
-        }
-        
-        public bool TryRemoveOwnedCell(CustomerCharModel customer, Vector2Int cellPosition)
-        {
-            if (_customerModelByCell.TryGetValue(cellPosition, out var currentOwner)
-                && currentOwner == customer)
-            {
-                _customerModelByCell.Remove(cellPosition);
-
-                return true;
-            }
-
-            return false;
+            _customersOwnedCellModel.SetOwnedCell(customer, cellCoords);
         }
         
         public bool TryRemoveOwnedCell(CustomerCharModel customer)
         {
-            return TryRemoveOwnedCell(customer, customer.PreviousCellPosition)
-                   || TryRemoveOwnedCell(customer, customer.CellCoords);
+            return _customersOwnedCellModel.TryRemoveOwnedCell(customer);
         }
         
         public void AdvanceSpawnCooldown()
@@ -82,11 +66,6 @@ namespace Model.People
         public void ResetSpawnCooldown()
         {
             SpawnCooldownSecondsLeft = SpawnCooldownSeconds;
-        }
-
-        public bool HaveCustomerOnCell(Vector2Int cell)
-        {
-            return _customerModelByCell.ContainsKey(cell);
         }
     }
 }

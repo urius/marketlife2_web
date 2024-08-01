@@ -3,7 +3,7 @@ using Model.ShopObjects;
 
 namespace Model.People.States.Customer
 {
-    public class CustomerTakeProductFromShelfState : ShopSharStateBase
+    public class CustomerTakeProductFromShelfState : BotCharStateBase
     {
         public readonly ShelfModel TargetShelfModel;
         public readonly int SlotIndex;
@@ -19,6 +19,6 @@ namespace Model.People.States.Customer
             BasketSlotIndex = basketSlotIndex;
         }
 
-        public override ShopCharStateName StateName => ShopCharStateName.TakingProduct;
+        public override ShopCharStateName StateName => ShopCharStateName.CustomerTakingProduct;
     }
 }

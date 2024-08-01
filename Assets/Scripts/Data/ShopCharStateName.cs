@@ -3,12 +3,18 @@ namespace Data
     public enum ShopCharStateName
     {
         Undefined,
-        MovingToEnter,
-        MovingToShelf,
-        TakingProduct,
-        MovingToCashDesk,
-        Paying,
-        MovingToExit,
-        MovingToDespawn,
+        CustomerMovingToEnter,
+        CustomerMovingToShelf,
+        CustomerTakingProduct,
+        CustomerMovingToCashDesk,
+        CustomerPaying,
+        CustomerMovingToExit,
+        CustomerMovingToDespawn,
+        TpStaffMovingToTruckPoint,
+        TpStaffMovingToTruckPointWaitingCell,
+        TpStaffTakingProductsFromTruckPoint,
+        TpStaffMovingToShelf,
+        TpStaffPutProductsToShelf,
+        TpStaffIdle,
     }
 }

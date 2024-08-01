@@ -4,8 +4,9 @@ using Holders;
 using Infra.EventBus;
 using Infra.Instance;
 using Model;
-using UnityEngine;
 using View.Game.Misc;
+using View.Game.Shared;
+using View.Helpers;
 
 namespace View.Game.People
 {
@@ -32,6 +33,7 @@ namespace View.Game.People
         protected override void MediateInternal()
         {
             _viewsDataHolder.RegisterPlayerCharPositionProvider(_playerCharView);
+            _viewsDataHolder.RegisterCharProductsInBoxPositionsProvider(_playerCharModel.ProductsBox, _playerCharView);
             
             Subscribe();
         }
@@ -39,6 +41,7 @@ namespace View.Game.People
         protected override void UnmediateInternal()
         {
             _viewsDataHolder.UnregisterPlayerCharPositionProvider();
+            _viewsDataHolder.UnregisterCharProductsInBoxPositionsProvider(_playerCharModel.ProductsBox);
             
             Unsubscribe();
         }
@@ -93,27 +96,12 @@ namespace View.Game.People
         private void AnimateTakeBoxFromTruckEventHandler(AnimateTakeBoxFromTruckEvent e)
         {
             var startPosition = _sharedViewsDataHolder
-                .GetTruckBoxPositionsProvider(e.TruckPointModel)
-                .GetBoxWorldPosition(e.ProductBoxIndexToTake);
+                .GetTruckPointBoxPositions(e.TruckPointModel, e.ProductBoxIndexToTake);
 
             var animatedBoxView = InstantiatePrefab<ProductsBoxView>(PrefabKey.ProductsBox);
-            var productSprite = _spritesHolderSo.GetProductSpriteByKey(_playerCharModel.ProductsInBox[0]);
-            animatedBoxView.SetProductsSprite(productSprite);
+            var productType = _playerCharModel.ProductsInBox[0];
             
-            var transform = animatedBoxView.transform;
-            transform.localEulerAngles = new Vector3(145, 45, 60);
-            transform.position = startPosition;
-            animatedBoxView.SetTopSortingLayer();
-
-            _takeBoxAnimationContext = new TakeBoxAnimationContext
-            {
-                StartPosition = startPosition,
-                TargetTransform = _playerCharView.ProductsBoxPlaceholderTransform,
-                BoxView = animatedBoxView,
-                Speed = 5,
-            };
-            
-            _playerCharView.SetProductsBoxVisibility(false);
+            _takeBoxAnimationContext = AnimationHelper.InitTakeBoxFromTruckPointAnimation(_playerCharView, animatedBoxView, productType, startPosition);
 
             _updatesProvider.GameplayFixedUpdate -= OnTakeBoxAnimationGameplayFixedUpdate;
             _updatesProvider.GameplayFixedUpdate += OnTakeBoxAnimationGameplayFixedUpdate;
@@ -127,29 +115,13 @@ namespace View.Game.People
                 return;
             }
 
-            _takeBoxAnimationContext.Progress += Time.deltaTime * _takeBoxAnimationContext.Speed;
+            var progress = AnimationHelper.TakeBoxAnimationUpdate(_takeBoxAnimationContext);
 
-            _takeBoxAnimationContext.BoxView.transform.position = Vector3.Slerp(
-                _takeBoxAnimationContext.StartPosition,
-                _takeBoxAnimationContext.TargetTransform.position,
-                _takeBoxAnimationContext.Progress);
-
-            if (_takeBoxAnimationContext.Progress >= 1)
+            if (progress >= 1)
             {
                 Destroy(_takeBoxAnimationContext.BoxView);
                 _takeBoxAnimationContext = null;
-                
-                _playerCharView.SetProductsBoxVisibility(true);
             }
-        }
-
-        private class TakeBoxAnimationContext
-        {
-            public Vector3 StartPosition;
-            public ProductsBoxView BoxView;
-            public Transform TargetTransform;
-            public float Progress = 0;
-            public float Speed = 1;
         }
     }
 }

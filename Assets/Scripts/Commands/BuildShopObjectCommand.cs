@@ -42,7 +42,7 @@ namespace Commands
                             truckPointsSettings.Products.Take(TruckPointModel.DefaultProductBoxesAmount).ToArray(),
                             upgradesCount: 0,
                             Constants.TruckArrivingDuration + 1,
-                            Array.Empty<TruckPointStaffCharModelBase>());
+                            Array.Empty<TruckPointStaffCharModel>());
                     }
                     else
                     {

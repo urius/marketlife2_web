@@ -4,22 +4,20 @@ using UnityEngine;
 
 namespace Model.People
 {
-    public abstract class ShopCharModelBase
+    public abstract class BotCharModelBase
     {
-        public event Action<ShopSharStateBase> StateChanged;
+        public event Action<BotCharStateBase> StateChanged;
         public event Action<Vector2Int> CellPositionChanged;
 
         public bool IsStepInProgress = false;
-        
         private Vector2Int _cellCoords;
 
-        protected ShopCharModelBase(Vector2Int cellCoords)
+        protected BotCharModelBase(Vector2Int cellCoords)
         {
             CellCoords = cellCoords;
         }
         
-        
-        public ShopSharStateBase State { get; private set; }
+        public BotCharStateBase State { get; private set; }
         public Vector2Int PreviousCellPosition { get; private set; }
 
         public Vector2Int CellCoords
@@ -38,7 +36,7 @@ namespace Model.People
             CellCoords = stepCell;
         }
         
-        protected void SetState(ShopSharStateBase state)
+        protected void SetState(BotCharStateBase state)
         {
             State = state;
 

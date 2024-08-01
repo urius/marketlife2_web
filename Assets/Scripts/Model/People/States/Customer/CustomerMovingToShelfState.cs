@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Model.People.States.Customer
 {
-    public class CustomerMovingToShelfState : CustomerMovingStateBase
+    public class CustomerMovingToShelfState : BotCharMovingStateBase
     {
         public readonly ShelfModel TargetShelf;
         public readonly ProductType TargetProduct;
@@ -16,6 +16,6 @@ namespace Model.People.States.Customer
             TargetProduct = targetProduct;
         }
 
-        public override ShopCharStateName StateName => ShopCharStateName.MovingToShelf;
+        public override ShopCharStateName StateName => ShopCharStateName.CustomerMovingToShelf;
     }
 }

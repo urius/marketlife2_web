@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Utils
@@ -31,6 +32,14 @@ namespace Utils
         {
             return _grid.GetCellCenterWorld((Vector3Int)cellPosition);
         }
+
+        public bool AreCellsNear(Vector2Int cellA, Vector2Int cellB)
+        {
+            var distanceX = Math.Abs(cellA.x - cellB.x);
+            var distanceY = Math.Abs(cellA.y - cellB.y);
+
+            return distanceX <= 1 && distanceY <= 1;
+        }
     }
 
     public interface IGridCalculator
@@ -42,5 +51,6 @@ namespace Utils
         public Vector3 CellToWorld(Vector2Int cellPosition);
         public Vector2Int WorldToCell(Vector3 worldPosition);
         public Vector3 GetCellCenterWorld(Vector2Int cellPosition);
+        public bool AreCellsNear(Vector2Int cellA, Vector2Int cellB);
     }
 }

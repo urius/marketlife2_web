@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace Model.People
 {
-    public class CustomerCharModel : ShopCharModelBase
+    public class CustomerCharModel : BotCharModelBase
     {
         private const int MaxProductsAmount = 4;
         
@@ -27,7 +27,7 @@ namespace Model.People
         public void SetTakingProductState(ShelfModel targetShelfModel, int slotIndex, ProductType productType,
             int addedProductSlotIndex)
         {
-            SetState(new CustomerTakeProductFromShelfState(targetShelfModel, slotIndex, productType, addedProductSlotIndex));
+             SetState(new CustomerTakeProductFromShelfState(targetShelfModel, slotIndex, productType, addedProductSlotIndex));
         }
         
         public void SetMovingToEnterState(Vector2Int targetCell)

@@ -107,7 +107,7 @@ namespace Holders
             return IsOwnedByShopObject(cellCoords) == false;
         }
 
-        public bool IsWalkableForCustomerChar(Vector2Int cellCoords)
+        public bool IsWalkableForBotChar(Vector2Int cellCoords)
         {
             return IsOwnedByShopObject(cellCoords) == false;
         }
@@ -136,7 +136,7 @@ namespace Holders
         public bool TryGetShelf(Vector2Int shopObjectCellCoords, out ShelfModel shelfModel);
         public Vector2Int[] GetShopObjectOwnedCells(ShopObjectModelBase shopObjectModel);
         public bool IsWalkableForPlayerChar(Vector2Int cellCoords);
-        public bool IsWalkableForCustomerChar(Vector2Int cellCoords);
+        public bool IsWalkableForBotChar(Vector2Int cellCoords);
         public void UnregisterShopObject(ShopObjectModelBase shopObjectModel);
     }
 

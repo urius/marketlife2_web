@@ -5,12 +5,12 @@ using UnityEngine;
 
 namespace Events
 {
-    public class CustomerMovingToExitState : CustomerMovingStateBase
+    public class CustomerMovingToExitState : BotCharMovingStateBase
     {
         public CustomerMovingToExitState(Vector2Int targetCell) : base(targetCell)
         {
         }
 
-        public override ShopCharStateName StateName => ShopCharStateName.MovingToExit;
+        public override ShopCharStateName StateName => ShopCharStateName.CustomerMovingToExit;
     }
 }

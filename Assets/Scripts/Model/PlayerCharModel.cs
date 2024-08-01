@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Data;
+using Model.People;
 using Model.ShopObjects;
 using UnityEngine;
 
@@ -10,14 +10,20 @@ namespace Model
     public class PlayerCharModel
     {
         public event Action<Vector2Int> CellPositionChanged;
-        public event Action ProductsBoxAdded;
-        public event Action<int> ProductRemoved;
+        public event Action ProductsBoxAdded
+        {
+            add => ProductsBox.ProductsBoxAdded += value;
+            remove => ProductsBox.ProductsBoxAdded -= value;
+        }
+        public event Action<int> ProductRemoved
+        {
+            add => ProductsBox.ProductRemoved += value;
+            remove => ProductsBox.ProductRemoved -= value;
+        }
+
         public event Action NearCashDeskUpdated;
         public event Action NearTruckPointUpdated;
         public event Action NearShelfUpdated;
-
-        private readonly ProductType[] _productsInBox =
-            Enumerable.Repeat(ProductType.None, Constants.ProductsAmountInBox).ToArray();
 
         public PlayerCharModel(Vector2Int cellPosition)
         {
@@ -25,8 +31,10 @@ namespace Model
         }
 
         public Vector2Int CellPosition { get; private set; }
-        public bool HasProducts => HasProductsInternal();
-        public IReadOnlyList<ProductType> ProductsInBox => _productsInBox;
+        public bool HasProducts => ProductsBox.HasProducts();
+        public IReadOnlyList<ProductType> ProductsInBox => ProductsBox.ProductsInBox;
+        public ProductBoxModel ProductsBox { get; } = new();
+
         public CashDeskModel NearCashDesk { get; private set; }
         public ShelfModel NearShelf { get; private set; }
         public TruckPointModel NearTruckPoint { get; private set; }
@@ -37,42 +45,6 @@ namespace Model
 
             CellPosition = cellPosition;
             CellPositionChanged?.Invoke(CellPosition);
-        }
-
-        public void SetProductsInBox(ProductType[] products)
-        {
-            for (var i = 0; i < _productsInBox.Length; i++)
-            {
-                if (i < products.Length)
-                {
-                    _productsInBox[i] = products[i];
-                }
-            }
-
-            ProductsBoxAdded?.Invoke();
-        }
-
-        public void RemoveProductFromSlot(int slotIndex)
-        {
-            if (slotIndex < _productsInBox.Length)
-            {
-                _productsInBox[slotIndex] = ProductType.None;
-
-                ProductRemoved?.Invoke(slotIndex);
-            }
-        }
-
-        public int GetNextNotEmptySlotIndex()
-        {
-            for (var i = 0; i < _productsInBox.Length; i++)
-            {
-                if (_productsInBox[i] != ProductType.None)
-                {
-                    return i;
-                }
-            }
-
-            return -1;
         }
 
         public void SetNearCashDesk(CashDeskModel cashDeskModel)
@@ -99,17 +71,19 @@ namespace Model
             NearTruckPointUpdated?.Invoke();
         }
 
-        private bool HasProductsInternal()
+        public void FillBoxWithProduct(ProductType product)
         {
-            foreach (var product in _productsInBox)
-            {
-                if (product != ProductType.None)
-                {
-                    return true;
-                }
-            }
+            ProductsBox.FillBoxWithProduct(product);
+        }
 
-            return false;
+        public int GetNextNotEmptySlotIndex()
+        {
+            return ProductsBox.GetNextNotEmptySlotIndex();
+        }
+
+        public void RemoveProductFromSlot(int boxSlotIndex)
+        {
+            ProductsBox.RemoveProductFromSlot(boxSlotIndex);
         }
     }
 }
