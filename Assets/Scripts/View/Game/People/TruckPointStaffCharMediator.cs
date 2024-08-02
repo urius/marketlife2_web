@@ -31,8 +31,6 @@ namespace View.Game.People
             Subscribe();
             
             _sharedViewsDataHolder.RegisterCharProductsInBoxPositionsProvider(TargetModel.ProductsBox, ManView);
-            
-            _eventBus.Dispatch(new TruckPointStaffCharInitializedEvent(TargetModel));
         }
 
         protected override void UnmediateInternal()

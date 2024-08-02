@@ -26,5 +26,7 @@ namespace Data
         MoneyCashDesk,
         Doors,
         UIFlyingText,
+        VFXSmoke,
+        VFXBigSmoke,
     }
 }

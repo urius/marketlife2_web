@@ -1,7 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using Data;
+using Events;
 using Holders;
+using Infra.EventBus;
 using Infra.Instance;
 using Model;
 using Model.People;
@@ -13,6 +15,7 @@ namespace View.Game.People
     public class BotCharsMediator : MediatorBase
     {
         private readonly IShopModelHolder _shopModelHolder = Instance.Get<IShopModelHolder>();
+        private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
         
         private readonly Dictionary<CustomerCharModel, CustomerCharMediator> _childCostumerMediators = new();
         private readonly Dictionary<TruckPointStaffCharModel, TruckPointStaffCharMediator> _childTruckPointStaffMediators = new();
@@ -75,12 +78,16 @@ namespace View.Game.People
 
         private void OnStaffAdded(TruckPointStaffCharModel charModel)
         {
+            _eventBus.Dispatch(new VFXRequestSmokeEvent(charModel.CellCoords));
+            
             MediateTruckPointStaff(charModel);
         }
 
         private void OnStaffRemoved(TruckPointStaffCharModel charModel)
         {
             UnmediateTruckPointStaff(charModel);
+            
+            _eventBus.Dispatch(new VFXRequestSmokeEvent(charModel.CellCoords));
         }
 
         private void HandleTruckPointStaffMediators(TruckPointModel truckPointModel)

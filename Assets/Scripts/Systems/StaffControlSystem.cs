@@ -67,7 +67,6 @@ namespace Systems
         private void Subscribe()
         {
             _eventBus.Subscribe<TruckPointHireStaffButtonClickedEvent>(OnTruckPointHireStaffButtonClickedEvent);
-            _eventBus.Subscribe<TruckPointStaffCharInitializedEvent>(OnTruckPointStaffCharInitializedEvent);
             _eventBus.Subscribe<TrucPointStaffStepFinishedEvent>(OnStaffStepFinishedEvent);
             _eventBus.Subscribe<StaffTakeBoxFromTruckAnimationFinishedEvent>(OnStaffTakeBoxFromTruckAnimationFinishedEvent);
             _eventBus.Subscribe<PutProductOnShelfHalfAnimationEvent>(OnPutProductOnShelfHalfAnimationEvent);
@@ -78,7 +77,6 @@ namespace Systems
         private void Unsubscribe()
         {            
             _eventBus.Unsubscribe<TruckPointHireStaffButtonClickedEvent>(OnTruckPointHireStaffButtonClickedEvent);
-            _eventBus.Unsubscribe<TruckPointStaffCharInitializedEvent>(OnTruckPointStaffCharInitializedEvent);
             _eventBus.Unsubscribe<TrucPointStaffStepFinishedEvent>(OnStaffStepFinishedEvent);
             _eventBus.Unsubscribe<StaffTakeBoxFromTruckAnimationFinishedEvent>(OnStaffTakeBoxFromTruckAnimationFinishedEvent);
             _eventBus.Unsubscribe<PutProductOnShelfHalfAnimationEvent>(OnPutProductOnShelfHalfAnimationEvent);
@@ -183,11 +181,6 @@ namespace Systems
         {
             _truckPointStaffOwnedCellModel.TryRemoveOwnedCell(charModel);
             _truckPointByStaffModel.Remove(charModel);
-        }
-
-        private void OnTruckPointStaffCharInitializedEvent(TruckPointStaffCharInitializedEvent e)
-        {
-            ProcessNextState(e.CharModel);
         }
 
         private void ProcessNextState(TruckPointStaffCharModel charModel)

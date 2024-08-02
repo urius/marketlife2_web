@@ -1,6 +1,8 @@
 using System;
 using Data;
+using Events;
 using Holders;
+using Infra.EventBus;
 using Infra.Instance;
 using Model;
 using Model.ShopObjects;
@@ -13,6 +15,7 @@ namespace View.Game.ShopObjects
     public class ShopObjectsMediator : MediatorBase
     {
         private readonly IShopModelHolder _shopModelHolder = Instance.Get<IShopModelHolder>();
+        private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
         
         private ShopModel _shopModel;
 
@@ -45,6 +48,9 @@ namespace View.Game.ShopObjects
 
         private void OnShopObjectAdded(ShopObjectModelBase model)
         {
+            var useBigSmoke = model.ShopObjectType is ShopObjectType.CashDesk or ShopObjectType.TruckPoint;
+            _eventBus.Dispatch(new VFXRequestSmokeEvent(model.CellCoords, useBigSmoke));
+            
             MediateShopObject(model);
         }
 

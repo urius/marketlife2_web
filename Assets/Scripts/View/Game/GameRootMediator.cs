@@ -3,6 +3,7 @@ using Infra.Instance;
 using View.Game.BuildPoint;
 using View.Game.Doors;
 using View.Game.Floors;
+using View.Game.Misc;
 using View.Game.People;
 using View.Game.ShopObjects;
 using View.Game.Walls;
@@ -28,6 +29,7 @@ namespace View.Game
             MediateChild<BuildPointsMediator>(_gameRootView.ShopObjectsContainerTransform);
             MediateChild<PlayerCharMediator>(_gameRootView.PeopleContainerTransform);
             MediateChild<BotCharsMediator>(_gameRootView.PeopleContainerTransform);
+            MediateChild<VFXMediator>(_gameRootView.transform);
         }
 
         protected override void UnmediateInternal()
