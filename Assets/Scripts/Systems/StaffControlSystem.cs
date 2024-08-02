@@ -143,7 +143,7 @@ namespace Systems
                     ConsiderStaffRemoved(staffCharModel);
                 }
             }
-            else
+            else if (staffCharModel.WorkSecondsLeft > 1 || staffCharModel.HasProducts == false)
             {
                 staffCharModel.AdvanceWorkingTime();
             }
