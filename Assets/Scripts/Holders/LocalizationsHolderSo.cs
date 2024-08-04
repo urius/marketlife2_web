@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using Data.Internal;
 using UnityEngine;
 
@@ -9,25 +11,19 @@ namespace Holders
         [SerializeField] private TextAsset _localizationsJson;
 
         private string _localeLang = "en";
-        private LocalizationsData _localizationItems;
+        private Dictionary<string, LocalizationItemData> _localizationByKey;
 
         private void OnEnable()
         {
-            
-            _localizationItems = JsonUtility.FromJson<LocalizationsData>(_localizationsJson.text);
+            var localizationItems = JsonUtility.FromJson<LocalizationsData>(_localizationsJson.text);
+            _localizationByKey = localizationItems.localizations.ToDictionary(d => d.key);
         }
 
         public string GetLocale(string key)
         {
-            foreach (var localizationItem in _localizationItems.localizations)
-            {
-                if (localizationItem.key == key)
-                {
-                    return GetLocalizationFromItem(localizationItem);
-                }
-            }
-
-            return key;
+            return _localizationByKey.TryGetValue(key, out var localizationItemData)
+                ? GetLocalizationFromItem(localizationItemData)
+                : key;
         }
 
         public void SetLocaleLang(string lang)

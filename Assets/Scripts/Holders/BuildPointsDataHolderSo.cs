@@ -90,6 +90,27 @@ namespace Holders
 
             return firstRowYCoord + rowIndex * (secondRowYCoords - firstRowYCoord);
         }
+        
+        public int YCoordToRowIndex(int yCoord)
+        {
+            var firstRowYCoord = _shelfsByRow[0].YCellCoord;
+            var secondRowYCoords = _shelfsByRow[1].YCellCoord;
+            var deltaY = secondRowYCoords - firstRowYCoord;
+
+            var rowIndex = 0;
+            
+            while (rowIndex < 100)
+            {
+                if (firstRowYCoord + rowIndex * deltaY == yCoord)
+                {
+                    return rowIndex;
+                }
+
+                rowIndex++;
+            }
+
+            return -1;
+        }
 
         public bool TryGetTruckGateBuildPointData(int truckGateIndex, out BuildPointDto result)
         {

@@ -25,6 +25,11 @@ namespace View.UI.Common
         {
             ApplySkinData(_crimsonSkinData);
         }
+
+        public void SetText(string text)
+        {
+            _text.text = text;
+        }
         
         private void ApplySkinData(SkinData skinData)
         {
@@ -32,6 +37,7 @@ namespace View.UI.Common
             _text.color = skinData.TextColor;
             UpdateTextAlpha();
         }
+        
 
         [Serializable]
         private struct SkinData

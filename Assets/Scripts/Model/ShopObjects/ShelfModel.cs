@@ -10,8 +10,7 @@ namespace Model.ShopObjects
     {
         public event Action<int> ProductAdded;
         public event Action<int> ProductRemoved;
-        
-        public readonly ProductType[] ProductSlots;
+        public event Action<int> UpgradeIndexChanged;
 
         public ShelfModel(Vector2Int cellCoords, ShopObjectType shopObjectType, int slotsAmount)
             : base(cellCoords)
@@ -24,6 +23,15 @@ namespace Model.ShopObjects
 
         public override ShopObjectType ShopObjectType { get; }
         public int UpgradeIndex { get; private set; }
+        
+        public ProductType[] ProductSlots { get; private set; }
+
+        public void IncrementUpgradeIndex()
+        {
+            UpgradeIndex++;
+            
+            UpgradeIndexChanged?.Invoke(UpgradeIndex);
+        }
 
         public bool HasEmptySlots()
         {
@@ -100,6 +108,15 @@ namespace Model.ShopObjects
                 
                 ProductRemoved?.Invoke(slotIndex);
             }
+        }
+
+        public void SetSlotsAmount(int slotsAmount)
+        {
+            var prevProducts = ProductSlots;
+            
+            ProductSlots = Enumerable.Repeat(ProductType.None, slotsAmount).ToArray();
+            
+            Array.Copy(prevProducts, ProductSlots, prevProducts.Length);
         }
     }
 }

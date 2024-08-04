@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Data;
 using Model.ShopObjects;
 using UnityEngine;
 
@@ -7,14 +8,14 @@ namespace Holders
 {
     public class OwnedCellsDataHolder : IOwnedCellsDataHolder
     {
-        private readonly Dictionary<Vector2Int, OwnedCellData> _ownedCellDataByCoords = new();
-        private readonly LinkedList<OwnedCellData> _ownedCellDataList = new();
+        private readonly Dictionary<Vector2Int, OwnedCellsByShopObjectData> _ownedCellDataByCoords = new();
+        private readonly LinkedList<OwnedCellsByShopObjectData> _ownedCellDataList = new();
         
         public bool RegisterShopObject(ShopObjectModelBase shopObjectModel, Vector2Int[] ownedCells)
         {
             if (CheckShopObjectExist(shopObjectModel) == false)
             {
-                var ownedCellData = new OwnedCellByShopObjectData(shopObjectModel, ownedCells);
+                var ownedCellData = new OwnedCellsByShopObjectData(shopObjectModel, ownedCells);
                 _ownedCellDataList.AddLast(ownedCellData);
                 
                 foreach (var ownedCell in ownedCells)
@@ -44,6 +45,10 @@ namespace Holders
 
                 _ownedCellDataList.Remove(ownerData);
             }
+            else
+            {
+                Debug.LogWarning($"Can't Unregister Shop Object {shopObjectModel.ShopObjectType} on cell {shopObjectModel.CellCoords}");
+            }
         }
 
         public bool IsOwnedByShopObject(Vector2Int cellCoords)
@@ -51,17 +56,17 @@ namespace Holders
             return _ownedCellDataByCoords.ContainsKey(cellCoords);
         }
 
-        public bool TryGetShopObjectOwner(Vector2Int shopObjectCellCoords, out OwnedCellByShopObjectData ownerData)
+        public bool TryGetShopObjectOwner(Vector2Int shopObjectCellCoords, out OwnedCellsByShopObjectData ownerData)
         {
-            ownerData = null;
+            ownerData = default;
             
-            if (_ownedCellDataByCoords.TryGetValue(shopObjectCellCoords, out var ownedCellData)
-                && ownedCellData.OwnedCellDataObjectType == OwnedCellDataObjectType.ShopObject)
+            if (_ownedCellDataByCoords.TryGetValue(shopObjectCellCoords, out var ownedCellData))
             {
-                ownerData = ((OwnedCellByShopObjectData)ownedCellData);
+                ownerData = ownedCellData;
+                return true;
             }
 
-            return ownerData != null;
+            return false;
         }
 
         public bool TryGetCashDesk(Vector2Int shopObjectCellCoords, out CashDeskModel cashDeskModel)
@@ -69,10 +74,9 @@ namespace Holders
             cashDeskModel = null;
 
             if (_ownedCellDataByCoords.TryGetValue(shopObjectCellCoords, out var ownedCellData)
-                && ownedCellData.OwnedCellDataObjectType == OwnedCellDataObjectType.ShopObject
-                && ((OwnedCellByShopObjectData)ownedCellData).ShopObjectModel is CashDeskModel cashDesk)
+                && ownedCellData.ShopObjectModel.ShopObjectType == ShopObjectType.CashDesk)
             {
-                cashDeskModel = cashDesk;
+                cashDeskModel = (CashDeskModel)ownedCellData.ShopObjectModel;
             }
             
             return cashDeskModel != null;
@@ -83,10 +87,9 @@ namespace Holders
             shelfModel = null;
 
             if (_ownedCellDataByCoords.TryGetValue(shopObjectCellCoords, out var ownedCellData)
-                && ownedCellData.OwnedCellDataObjectType == OwnedCellDataObjectType.ShopObject
-                && ((OwnedCellByShopObjectData)ownedCellData).ShopObjectModel is ShelfModel shelf)
+                && ownedCellData.ShopObjectModel.ShopObjectType.IsShelf())
             {
-                shelfModel = shelf;
+                shelfModel = (ShelfModel)ownedCellData.ShopObjectModel;
             }
     
             return shelfModel != null;
@@ -116,8 +119,7 @@ namespace Holders
         {
             foreach (var ownedCellData in _ownedCellDataList)
             {
-                if (ownedCellData.OwnedCellDataObjectType == OwnedCellDataObjectType.ShopObject
-                    && ((OwnedCellByShopObjectData)ownedCellData).ShopObjectModel == shopObjectModel)
+                if (ownedCellData.ShopObjectModel == shopObjectModel)
                 {
                     return true;
                 }
@@ -131,7 +133,7 @@ namespace Holders
     {
         public bool RegisterShopObject(ShopObjectModelBase shopObjectModel, Vector2Int[] ownedCells);
         public bool IsOwnedByShopObject(Vector2Int cellCoords);
-        public bool TryGetShopObjectOwner(Vector2Int shopObjectCellCoords, out OwnedCellByShopObjectData ownedData);
+        public bool TryGetShopObjectOwner(Vector2Int shopObjectCellCoords, out OwnedCellsByShopObjectData ownedData);
         public bool TryGetCashDesk(Vector2Int shopObjectCellCoords, out CashDeskModel cashDeskModel);
         public bool TryGetShelf(Vector2Int shopObjectCellCoords, out ShelfModel shelfModel);
         public Vector2Int[] GetShopObjectOwnedCells(ShopObjectModelBase shopObjectModel);
@@ -140,29 +142,16 @@ namespace Holders
         public void UnregisterShopObject(ShopObjectModelBase shopObjectModel);
     }
 
-    public abstract class OwnedCellData
-    {
-        public abstract OwnedCellDataObjectType OwnedCellDataObjectType { get; }
-    }
-
-    public class OwnedCellByShopObjectData : OwnedCellData
+    public struct OwnedCellsByShopObjectData
     {
         public readonly ShopObjectModelBase ShopObjectModel;
 
-        public OwnedCellByShopObjectData(ShopObjectModelBase shopObjectModel, Vector2Int[] ownedCells) 
+        public OwnedCellsByShopObjectData(ShopObjectModelBase shopObjectModel, Vector2Int[] ownedCells) 
         {
             ShopObjectModel = shopObjectModel;
             OwnedCells = ownedCells;
         }
 
         public Vector2Int[] OwnedCells { get; }
-
-        public override OwnedCellDataObjectType OwnedCellDataObjectType => OwnedCellDataObjectType.ShopObject;
-    }
-
-    public enum OwnedCellDataObjectType
-    {
-        ShopObject,
-        Man,
     }
 }

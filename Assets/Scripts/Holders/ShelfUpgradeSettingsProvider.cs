@@ -6,24 +6,29 @@ using View.Game.ShopObjects.Shelf;
 
 namespace Holders
 {
-    public class ShelfSettingsProvider : IShelfSettingsProvider
+    public class ShelfUpgradeSettingsProvider : IShelfUpgradeSettingsProvider
     {
         private readonly PrefabsHolderSo _prefabsHolder = Instance.Get<PrefabsHolderSo>();
-        private readonly Dictionary<ShopObjectType, ShelfSettingsData[]> _shelfSettings = new();
+        private readonly Dictionary<ShopObjectType, ShelfUpgradeSettingsProviderData[]> _shelfSettings = new();
 
-        public ShelfSettingsProvider()
+        public ShelfUpgradeSettingsProvider()
         {
             FillShelfSettingsDictionary();
         }
 
-        public bool TryGetShelfSetting(ShopObjectType shopObjectType, int upgradeIndex, out ShelfSettingsData settingsData)
+        public bool CanUpgradeTo(ShopObjectType shelfType, int upgradeIndex)
         {
-            settingsData = default;
+            return TryGetShelfUpgradeSetting(shelfType, upgradeIndex, out _);
+        }
+        
+        public bool TryGetShelfUpgradeSetting(ShopObjectType shopObjectType, int upgradeIndex, out ShelfUpgradeSettingsProviderData upgradeSettingsProviderData)
+        {
+            upgradeSettingsProviderData = default;
             
             if (_shelfSettings.TryGetValue(shopObjectType, out var settingsList) 
                 && upgradeIndex < settingsList.Length)
             {
-                settingsData = settingsList[upgradeIndex];
+                upgradeSettingsProviderData = settingsList[upgradeIndex];
                 return true;
             }
 
@@ -32,7 +37,7 @@ namespace Holders
 
         private void FillShelfSettingsDictionary()
         {
-            var shelfSettingsTemp = new Dictionary<ShopObjectType, LinkedList<ShelfSettingsData>>();
+            var shelfSettingsTemp = new Dictionary<ShopObjectType, LinkedList<ShelfUpgradeSettingsProviderData>>();
 
             foreach (var prefabsHolderItem in _prefabsHolder.Items)
             {
@@ -44,10 +49,10 @@ namespace Holders
                     var shelfType = shelfView.ShelfType;
                     var upgradeIndex = shelfView.ShelfUpgradeIndex;
 
-                    shelfSettingsTemp.TryAdd(shelfType, new LinkedList<ShelfSettingsData>());
+                    shelfSettingsTemp.TryAdd(shelfType, new LinkedList<ShelfUpgradeSettingsProviderData>());
 
                     shelfSettingsTemp[shelfType].AddLast(
-                        new ShelfSettingsData()
+                        new ShelfUpgradeSettingsProviderData()
                         {
                             PrefabKey = prefabKey,
                             UpgradeIndex = upgradeIndex,
@@ -64,7 +69,7 @@ namespace Holders
             }
         }
 
-        public struct ShelfSettingsData
+        public struct ShelfUpgradeSettingsProviderData
         {
             public PrefabKey PrefabKey;
             public int UpgradeIndex;
@@ -72,9 +77,11 @@ namespace Holders
         }
     }
 
-    public interface IShelfSettingsProvider
+    public interface IShelfUpgradeSettingsProvider
     {
-        public bool TryGetShelfSetting(ShopObjectType shopObjectType, int upgradeIndex,
-            out ShelfSettingsProvider.ShelfSettingsData settingsData);
+        public bool TryGetShelfUpgradeSetting(ShopObjectType shopObjectType, int upgradeIndex,
+            out ShelfUpgradeSettingsProvider.ShelfUpgradeSettingsProviderData upgradeSettingsProviderData);
+
+        public bool CanUpgradeTo(ShopObjectType shelfType, int upgradeIndex);
     }
 }

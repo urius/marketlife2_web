@@ -88,7 +88,7 @@ public class InitScript : MonoBehaviour
         SetupNewInstance<ScreenCalculator, IScreenCalculator>();
         SetupNewInstance<ShopModelHolder, IShopModelHolder>();
         SetupNewInstance<OwnedCellsDataHolder, IOwnedCellsDataHolder>();
-        SetupNewInstance<ShelfSettingsProvider, IShelfSettingsProvider>();
+        SetupNewInstance<ShelfUpgradeSettingsProvider, IShelfUpgradeSettingsProvider>();
         SetupNewInstance<PlayerCharViewSharedDataHolder, IPlayerCharViewSharedDataHolder>();
         SetupNewInstance<SharedViewsDataHolder, ISharedViewsDataHolder>();
         SetupNewInstance<MainViewModel, IMainViewModel>();

@@ -102,33 +102,33 @@
 		},
 		{
 			"key": "bottom_panel_delivery_title",
-			"en": "доставка",
-			"ru": "delivery"
+			"en": "delivery",
+			"ru": "доставка"
 		},
 		{
 			"key": "bottom_panel_staff_title",
-			"en": "персонал",
-			"ru": "staff"
+			"en": "staff",
+			"ru": "персонал"
 		},
 		{
 			"key": "hire_button",
-			"en": "нанять",
-			"ru": "hire"
+			"en": "hire",
+			"ru": "нанять"
 		},
 		{
 			"key": "upgrade_button",
-			"en": "улучшить",
-			"ru": "upgrade"
+			"en": "upgrade",
+			"ru": "улучшить"
 		},
 		{
 			"key": "max_upgrade",
-			"en": "макс.\nуровень",
-			"ru": "max\nlevel"
+			"en": "max\nlevel",
+			"ru": "макс.\nуровень"
 		},
 		{
 			"key": "seconds_short_postfix",
-			"en": "с.",
-			"ru": "s."
+			"en": "s.",
+			"ru": "с."
 		},
 		{
 			"key": "upgraded",
@@ -139,6 +139,11 @@
 			"key": "hired",
 			"en": "hired",
 			"ru": "нанято"
+		},
+		{
+			"key": "upgrade_shelf",
+			"en": "upgrade shelf",
+			"ru": "улучшенить полку"
 		}
 	]
 }

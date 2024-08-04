@@ -6,12 +6,11 @@ using Infra.Instance;
 using Model;
 using Model.People;
 using Model.ShopObjects;
-using UnityEngine;
 using Utils;
 
 namespace View.UI.BottomPanel
 {
-    public class UITruckPointPanelMediator : MediatorBase
+    public class UITruckPointPanelMediator : UIBottomPanelMediatorBase<UITruckPointPanelView>
     {
         private readonly IPlayerModelHolder _playerModelHolder = Instance.Get<IPlayerModelHolder>();
         private readonly IUpdatesProvider _updatesProvider = Instance.Get<IUpdatesProvider>();
@@ -22,19 +21,14 @@ namespace View.UI.BottomPanel
         private readonly IHireStaffCostProvider _hireStaffCostProvider = Instance.Get<IHireStaffCostProvider>();
         
         private PlayerCharModel _playerCharModel;
-        private UITruckPointPanelView _truckPointPanelView;
-        private float _slideUpPositionPercent = 0;
-        private int _slideDirection = 1;
         private TruckPointModel _targetTruckPoint;
         private string _secondsPostfix;
 
         protected override void MediateInternal()
         {
+            base.MediateInternal();
+            
             _playerCharModel = _playerModelHolder.PlayerCharModel;
-            _truckPointPanelView = TargetTransform.GetComponent<UITruckPointPanelView>();
-
-            _truckPointPanelView.SetSlideUpPositionPercent(_slideUpPositionPercent);
-            _truckPointPanelView.SetActive(false);
 
             Subscribe();
         }
@@ -47,16 +41,16 @@ namespace View.UI.BottomPanel
         private void Subscribe()
         {
             _playerCharModel.NearTruckPointUpdated += OnNearTruckPointUpdated;
-            _truckPointPanelView.UpgradeButtonClicked += OnUpgradeButtonClicked;
-            _truckPointPanelView.HireStaffButtonClicked += OnHireStaffButtonClicked;
+            PanelView.UpgradeButtonClicked += OnUpgradeButtonClicked;
+            PanelView.HireStaffButtonClicked += OnHireStaffButtonClicked;
             _updatesProvider.SecondPassed += OnSecondPassed;
         }
 
         private void Unsubscribe()
         {
             _playerCharModel.NearTruckPointUpdated -= OnNearTruckPointUpdated;
-            _truckPointPanelView.UpgradeButtonClicked -= OnUpgradeButtonClicked;
-            _truckPointPanelView.HireStaffButtonClicked -= OnHireStaffButtonClicked;
+            PanelView.UpgradeButtonClicked -= OnUpgradeButtonClicked;
+            PanelView.HireStaffButtonClicked -= OnHireStaffButtonClicked;
             _updatesProvider.SecondPassed -= OnSecondPassed;
             
             UnsubscribeFromTruckPoint(_targetTruckPoint);
@@ -86,57 +80,30 @@ namespace View.UI.BottomPanel
                 
                 ProcessNewTargetTruckPoint(_playerCharModel.NearTruckPoint);
                 
-                _truckPointPanelView.SetActive(true);
-                _slideDirection = 1;
+                SlideUp();
             }
             else
             {
-                _slideDirection = -1;
+                ResetTargetTruckPoint();
+                    
+                SlideDown();
             }
-            
-            ResubscribeOnUpdate();
         }
 
         private void DisplayProductIcons(TruckPointModel targetTruckPoint)
         {
             var availableProducts = targetTruckPoint.GetAvailableProducts();
             
-            for (var i = 0; i < _truckPointPanelView.ProductIconsAmount; i++)
+            for (var i = 0; i < PanelView.ProductIconsAmount; i++)
             {
                 var productType = i < availableProducts.Length ? availableProducts[i] : ProductType.None;
                 var productSprite = _spritesHolder.GetProductSpriteByKey(productType);
                 
-                _truckPointPanelView.SetProductIconSprite(i, productSprite);
+                PanelView.SetProductIconSprite(i, productSprite);
             }
         }
         
-        private void ResubscribeOnUpdate()
-        {
-            _updatesProvider.GameplayFixedUpdate -= OnSlideGameplayFixedUpdate;
-            _updatesProvider.GameplayFixedUpdate += OnSlideGameplayFixedUpdate;
-        }
-
-        private void OnSlideGameplayFixedUpdate()
-        {
-            _slideUpPositionPercent += 5 * Time.fixedDeltaTime * _slideDirection;
-
-            if (_slideUpPositionPercent >= 1)
-            {
-                _slideUpPositionPercent = 1;
-                _updatesProvider.GameplayFixedUpdate -= OnSlideGameplayFixedUpdate;
-            }
-
-            if (_slideUpPositionPercent <= 0)
-            {
-                ResetTargetTruckPoint();
-                
-                _slideUpPositionPercent = 0;
-                _truckPointPanelView.SetActive(false);
-                _updatesProvider.GameplayFixedUpdate -= OnSlideGameplayFixedUpdate;
-            }
-            
-            _truckPointPanelView.SetSlideUpPositionPercent(_slideUpPositionPercent);
-        }
+        
         
         private void ProcessNewTargetTruckPoint(TruckPointModel truckPointModel)
         {
@@ -183,8 +150,8 @@ namespace View.UI.BottomPanel
 
             var deliveryText = _localizationProvider.GetLocale(Constants.LocalizationBottomPanelDeliveryTitle);
 
-            _truckPointPanelView.SetDeliverTitleText($"{deliveryText} ({deliverTimeSeconds}{_secondsPostfix})");
-            _truckPointPanelView.SetStaffTitleText(_localizationProvider.GetLocale(Constants.LocalizationBottomPanelStaffTitle));
+            PanelView.SetDeliverTitleText($"{deliveryText} ({deliverTimeSeconds}{_secondsPostfix})");
+            PanelView.SetStaffTitleText(_localizationProvider.GetLocale(Constants.LocalizationBottomPanelStaffTitle));
         }
 
         private void OnTruckPointUpgraded()
@@ -194,7 +161,7 @@ namespace View.UI.BottomPanel
             _eventBus.Dispatch(
                 new UIRequestFlyingTextEvent(
                     _localizationProvider.GetLocale(Constants.LocalizationUpgraded),
-                    _truckPointPanelView.UpgradeButtonTransform.position));
+                    PanelView.UpgradeButtonTransform.position));
         }
 
         private void OnStaffAdded(TruckPointStaffCharModel __)
@@ -204,7 +171,7 @@ namespace View.UI.BottomPanel
             _eventBus.Dispatch(
                 new UIRequestFlyingTextEvent(
                     _localizationProvider.GetLocale(Constants.LocalizationHired),
-                    _truckPointPanelView.HireStaffButtonView.transform.position));
+                    PanelView.HireStaffButtonView.transform.position));
         }
 
         private void OnStaffRemoved(TruckPointStaffCharModel __)
@@ -236,15 +203,15 @@ namespace View.UI.BottomPanel
                     var upgradeText =
                         $"{_localizationProvider.GetLocale(Constants.LocalizationUpgradeButton)}\n{FormattingHelper.ToMoneyWithIconTextFormat(upgradeCost)}";
 
-                    _truckPointPanelView.SetUpgradeButtonText(upgradeText);
-                    _truckPointPanelView.SetUpgradeEnabledState(true);
+                    PanelView.SetUpgradeButtonText(upgradeText);
+                    PanelView.SetUpgradeEnabledState(true);
 
                     return;
                 }
             }
 
-            _truckPointPanelView.SetUpgradeButtonText(_localizationProvider.GetLocale(Constants.LocalizationMaxUpgrade));
-            _truckPointPanelView.SetUpgradeEnabledState(false);
+            PanelView.SetUpgradeButtonText(_localizationProvider.GetLocale(Constants.LocalizationMaxUpgrade));
+            PanelView.SetUpgradeEnabledState(false);
         }
 
         private void DisplayStaff(TruckPointModel truckPointModel)
@@ -253,11 +220,11 @@ namespace View.UI.BottomPanel
             {
                 var staffModel = truckPointModel.StaffCharModels[i];
                 var isStaffExists = staffModel != null;
-                _truckPointPanelView.SetStaffEnabled(i, isStaffExists);
+                PanelView.SetStaffEnabled(i, isStaffExists);
                 if (staffModel != null)
                 {
-                    _truckPointPanelView.SetStaffWorkTimerText(i, $"{staffModel.WorkSecondsLeft}{_secondsPostfix}");
-                    _truckPointPanelView.SetStaffWorkTimeProgress(i, (float)staffModel.WorkSecondsLeft / staffModel.WorkSecondsSetting);
+                    PanelView.SetStaffWorkTimerText(i, $"{staffModel.WorkSecondsLeft}{_secondsPostfix}");
+                    PanelView.SetStaffWorkTimeProgress(i, (float)staffModel.WorkSecondsLeft / staffModel.WorkSecondsSetting);
                 }
             }
         }
@@ -266,7 +233,7 @@ namespace View.UI.BottomPanel
         {
             var hireStaffCost = _hireStaffCostProvider.GetTruckPointHireStaffCost(truckPointModel);
 
-            _truckPointPanelView.SetHireStaffButtonInteractable(hireStaffCost >= 0);
+            PanelView.SetHireStaffButtonInteractable(hireStaffCost >= 0);
             
             switch (hireStaffCost)
             {
@@ -274,23 +241,23 @@ namespace View.UI.BottomPanel
                 {
                     var hireText =
                         $"{_localizationProvider.GetLocale(Constants.LocalizationHireButton)}\n{FormattingHelper.ToMoneyWithIconTextFormat(hireStaffCost)}";
-                    _truckPointPanelView.SetHireStaffButtonText(hireText);
+                    PanelView.SetHireStaffButtonText(hireText);
                 
-                    _truckPointPanelView.HireStaffButtonView.SetOrangeSkinData();
+                    PanelView.HireStaffButtonView.SetOrangeSkinData();
                     break;
                 }
                 case 0:
                 {
                     var hireText =
                         $"{Constants.TextIconAds}\n{_localizationProvider.GetLocale(Constants.LocalizationHireButton)}";
-                    _truckPointPanelView.SetHireStaffButtonText(hireText);
+                    PanelView.SetHireStaffButtonText(hireText);
                 
-                    _truckPointPanelView.HireStaffButtonView.SetCrimsonSkinData();
+                    PanelView.HireStaffButtonView.SetCrimsonSkinData();
                     break;
                 }
                 default:
-                    _truckPointPanelView.SetHireStaffButtonText(_localizationProvider.GetLocale(Constants.LocalizationHireButton));
-                    _truckPointPanelView.HireStaffButtonView.SetOrangeSkinData();
+                    PanelView.SetHireStaffButtonText(_localizationProvider.GetLocale(Constants.LocalizationHireButton));
+                    PanelView.HireStaffButtonView.SetOrangeSkinData();
                     break;
             }
         }

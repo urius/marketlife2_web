@@ -21,6 +21,7 @@ namespace Data
         public const string LocalizationSecondsShortPostfix = "seconds_short_postfix";
         public const string LocalizationUpgraded = "upgraded";
         public const string LocalizationHired = "hired";
+        public const string LocalizationUpgradeShelf = "upgrade_shelf";
         
         public const string TextIconMoney = "<sprite name=\"money\">";
         public const string TextIconAds = "<sprite name=\"ads\">";

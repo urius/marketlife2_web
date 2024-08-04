@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using Commands;
 using Data;
 using Events;
@@ -11,7 +10,6 @@ using Model;
 using Model.BuildPoint;
 using Model.ShopObjects;
 using UnityEngine;
-using View.Helpers;
 
 namespace Systems
 {
@@ -52,6 +50,7 @@ namespace Systems
             _updatesProvider.SecondPassed += OnSecondPassed;
             _updatesProvider.QuarterSecondPassed += OnQuarterSecondPassed;
             _playerCharModel.CellPositionChanged += OnCellPositionChanged;
+            _shopModel.ShopObjectAdded += OnShopObjectAdded;
         }
 
         private void Unsubscribe()
@@ -64,11 +63,12 @@ namespace Systems
             _updatesProvider.SecondPassed -= OnSecondPassed;
             _updatesProvider.QuarterSecondPassed -= OnQuarterSecondPassed;
             _playerCharModel.CellPositionChanged -= OnCellPositionChanged;
+            _shopModel.ShopObjectAdded -= OnShopObjectAdded;
         }
 
         private void OnSecondPassed()
         {
-            PutProductOnShelfIfNeeded(_playerCharModel.CellPosition);
+            PutProductOnShelfIfNeeded();
         }
 
         private void OnRequestPlayerCellChanged(RequestPlayerCellChangeEvent e)
@@ -97,10 +97,16 @@ namespace Systems
 
         private void OnCellPositionChanged(Vector2Int cellPosition)
         {
-            TriggerSpendOnBuildPointIterationAnimationIfNeeded(cellPosition);
-            TakeTruckProductBoxIfNeeded(cellPosition);
-            PutProductOnShelfIfNeeded(cellPosition);
             CheckNearShopObjects(cellPosition);
+            
+            TriggerSpendOnBuildPointIterationAnimationIfNeeded(cellPosition);
+            TakeTruckProductBoxIfNeeded();
+            PutProductOnShelfIfNeeded();
+        }
+
+        private void OnShopObjectAdded(ShopObjectModelBase shopObjectModel)
+        {
+            CheckNearShopObjects(_playerCharModel.CellPosition);
         }
 
         private void CheckNearShopObjects(Vector2Int cellPosition)
@@ -140,28 +146,28 @@ namespace Systems
             _playerCharModel.SetNearTruckPoint(nearTruckPoint);
         }
 
-        private void PutProductOnShelfIfNeeded(Vector2Int cellPosition)
+        private void PutProductOnShelfIfNeeded()
         {
-            if (!_playerCharModel.HasProducts || _putProductsIsBlocked) return;
+            if (!_playerCharModel.HasProducts
+                || _putProductsIsBlocked
+                || _playerCharModel.NearShelf == null
+                || _playerCharModel.NearShelf.HasEmptySlots() == false) return;
 
-            var nearEmptyShelf = GetNearEmptyShelf(cellPosition);
+            _putProductsIsBlocked = true;
+            var nearEmptyShelf = _playerCharModel.NearShelf;
 
-            if (nearEmptyShelf != null)
-            {
-                _putProductsIsBlocked = true;
-                
-                var shelfSlotIndex = nearEmptyShelf.GetEmptySlotIndex();
+            var shelfSlotIndex = nearEmptyShelf.GetEmptySlotIndex();
 
-                var boxSlotIndex = _playerCharModel.GetNextNotEmptySlotIndex();
-                var productToMove = _playerCharModel.ProductsInBox[boxSlotIndex];
-                
-                _playerCharModel.RemoveProductFromSlot(boxSlotIndex);
+            var boxSlotIndex = _playerCharModel.GetNextNotEmptySlotIndex();
+            var productToMove = _playerCharModel.ProductsInBox[boxSlotIndex];
 
-                nearEmptyShelf.AddProductToSlot(shelfSlotIndex, productToMove);
-                
-                _eventBus.Dispatch(
-                    new AnimatePutProductOnShelfEvent(nearEmptyShelf, _playerCharModel.ProductsBox, productToMove, boxSlotIndex, shelfSlotIndex));
-            }
+            _playerCharModel.RemoveProductFromSlot(boxSlotIndex);
+
+            nearEmptyShelf.AddProductToSlot(shelfSlotIndex, productToMove);
+
+            _eventBus.Dispatch(
+                new AnimatePutProductOnShelfEvent(nearEmptyShelf, _playerCharModel.ProductsBox, productToMove,
+                    boxSlotIndex, shelfSlotIndex));
         }
 
         private void OnPutProductOnShelfHalfAnimationEvent(PutProductOnShelfHalfAnimationEvent e)
@@ -169,37 +175,21 @@ namespace Systems
             if (e.ProductBoxModel == _playerCharModel.ProductsBox)
             {
                 _putProductsIsBlocked = false;
-                PutProductOnShelfIfNeeded(_playerCharModel.CellPosition);
-                
+                PutProductOnShelfIfNeeded();
             }
-        }
-
-        private ShelfModel GetNearEmptyShelf(Vector2Int cellPosition)
-        {
-            foreach (var cellOffset in Constants.NearCells8)
-            {
-                var cellToCheck = cellPosition + cellOffset;
-                if (_shopModel.TryGetShelfModel(cellToCheck, out var shelfModel)
-                    && shelfModel.HasEmptySlots())
-                {
-                    return shelfModel;
-                }
-            }
-
-            return null;
         }
 
         private void OnTruckArrivedEvent(TruckArrivedEvent e)
         {
-            TakeTruckProductBoxIfNeeded(_playerCharModel.CellPosition);
+            TakeTruckProductBoxIfNeeded();
         }
 
-        private void TakeTruckProductBoxIfNeeded(Vector2Int cellPos)
+        private void TakeTruckProductBoxIfNeeded()
         {
-            if (cellPos.x == 0
-                && (_shopModel.TryGetTruckPoint(cellPos - TruckPointHelper.PrimaryInteractionCellOffset, out var truckPointModel)
-                    || _shopModel.TryGetTruckPoint(cellPos - TruckPointHelper.SecondaryInteractionCellOffset, out truckPointModel)))
+            if (_playerCharModel.NearTruckPoint != null)
             {
+                var truckPointModel = _playerCharModel.NearTruckPoint;
+                
                 if (truckPointModel.DeliverTimeSecondsRest <= 0
                     && truckPointModel.HasProducts
                     && _playerCharModel.HasProducts == false)

@@ -6,11 +6,11 @@ using View.UI.Common;
 
 namespace View.UI.BottomPanel
 {
-    public class UITruckPointPanelView : MonoBehaviour
+    public class UITruckPointPanelView : UIBottomPanelViewBase
     {
         public event Action UpgradeButtonClicked;
         public event Action HireStaffButtonClicked;
-        
+
         [SerializeField] private TMP_Text _deliverTitleText;
         [SerializeField] private Image[] _productIcons;
         [SerializeField] private Sprite _unknownProductSprite;
@@ -23,9 +23,6 @@ namespace View.UI.BottomPanel
         [SerializeField] private Image[] _staffProgressIcons;
         [SerializeField] private TMP_Text[] _staffWorkTimerTexts;
         [SerializeField] private UITextButtonView _hireStaffButtonView;
-        
-        private RectTransform _rectTransform;
-        private float _slideDownYPosition;
 
         public int ProductIconsAmount => _productIcons.Length;
         public Transform UpgradeButtonTransform => _upgradeButton.transform;
@@ -33,11 +30,10 @@ namespace View.UI.BottomPanel
         
         private Button HireStaffButton => _hireStaffButtonView.Button;
         private TMP_Text HireStaffButtonText => _hireStaffButtonView.Text;
-        
-        private void Awake()
+
+        protected override void Awake()
         {
-            _rectTransform = GetComponent<RectTransform>();
-            _slideDownYPosition = _rectTransform.anchoredPosition.y;
+            base.Awake();
             
             _upgradeButton.onClick.AddListener(UpgradeButtonClickHandler);
             HireStaffButton.onClick.AddListener(HireStaffButtonClickHandler);
@@ -47,19 +43,6 @@ namespace View.UI.BottomPanel
         {
             _upgradeButton.onClick.RemoveListener(UpgradeButtonClickHandler);
             HireStaffButton.onClick.RemoveListener(HireStaffButtonClickHandler);
-        }
-
-        public void SetActive(bool isActive)
-        {
-            gameObject.SetActive(isActive);
-        }
-
-        public float SetSlideUpPositionPercent(float positionPercent)
-        {
-            var yPos = Mathf.Lerp(_slideDownYPosition, 0, positionPercent);
-            _rectTransform.anchoredPosition = new Vector2(_rectTransform.anchoredPosition.x, yPos);
-
-            return yPos;
         }
 
         public void SetDeliverTitleText(string text)

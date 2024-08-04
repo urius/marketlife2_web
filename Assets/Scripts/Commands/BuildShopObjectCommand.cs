@@ -7,7 +7,6 @@ using Infra.Instance;
 using Model.BuildPoint;
 using Model.People;
 using Model.ShopObjects;
-using UnityEngine;
 
 namespace Commands
 {
@@ -53,9 +52,9 @@ namespace Commands
                 default:
                     if (shopObjectType.IsShelf())
                     {
-                        var shelfSettingsProvider = Instance.Get<IShelfSettingsProvider>();
+                        var shelfSettingsProvider = Instance.Get<IShelfUpgradeSettingsProvider>();
                         
-                        shelfSettingsProvider.TryGetShelfSetting(shopObjectType, 0, out var shelfSettings);
+                        shelfSettingsProvider.TryGetShelfUpgradeSetting(shopObjectType, 0, out var shelfSettings);
                         
                         result = new ShelfModel(buildCoords, shopObjectType, shelfSettings.SlotsAmount);
                     }

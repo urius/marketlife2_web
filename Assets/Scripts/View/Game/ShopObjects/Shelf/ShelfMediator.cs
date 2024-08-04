@@ -7,6 +7,7 @@ using Infra.EventBus;
 using Infra.Instance;
 using Model.People;
 using Model.ShopObjects;
+using UnityEngine;
 using Utils;
 using View.Game.Extensions;
 using View.Game.Product;
@@ -19,7 +20,7 @@ namespace View.Game.ShopObjects.Shelf
         private const float PutProductDuration = 0.4f;
         private const float PutProductHalfDuration = PutProductDuration * 0.5f;
         
-        private readonly IShelfSettingsProvider _shelfSettingsProvider = Instance.Get<IShelfSettingsProvider>();
+        private readonly IShelfUpgradeSettingsProvider _shelfUpgradeSettingsProvider = Instance.Get<IShelfUpgradeSettingsProvider>();
         private readonly IGridCalculator _gridCalculator = Instance.Get<IGridCalculator>();
         private readonly IOwnedCellsDataHolder _ownedCellsDataHolder = Instance.Get<IOwnedCellsDataHolder>();
         private readonly SpritesHolderSo _spritesHolderSo = Instance.Get<SpritesHolderSo>();
@@ -31,14 +32,9 @@ namespace View.Game.ShopObjects.Shelf
 
         protected override void MediateInternal()
         {
-            if (_shelfSettingsProvider.TryGetShelfSetting(TargetModel.ShopObjectType, TargetModel.UpgradeIndex, out var shelfSettings))
+            if (_shelfUpgradeSettingsProvider.TryGetShelfUpgradeSetting(TargetModel.ShopObjectType, TargetModel.UpgradeIndex, out var shelfSettings))
             {
-                _view = InstantiatePrefab<ShelfView>(shelfSettings.PrefabKey);
-                _sharedViewsDataHolder.RegisterShelfSlotPositionProvider(TargetModel, _view);
-                
-                _view.transform.position = _gridCalculator.GetCellCenterWorld(TargetModel.CellCoords);
-
-                OwnCells();
+                CreateView(shelfSettings);
 
                 DisplayProducts();
 
@@ -55,6 +51,23 @@ namespace View.Game.ShopObjects.Shelf
         {
             Unsubscribe();
             
+            DestroyView();
+        }
+
+        private void CreateView(ShelfUpgradeSettingsProvider.ShelfUpgradeSettingsProviderData shelfSettings)
+        {
+            _view = InstantiatePrefab<ShelfView>(shelfSettings.PrefabKey);
+            _sharedViewsDataHolder.RegisterShelfSlotPositionProvider(TargetModel, _view);
+            
+            _view.transform.position = _gridCalculator.GetCellCenterWorld(TargetModel.CellCoords);
+            
+            UpdateSorting();
+            
+            OwnCells();
+        }
+
+        private void DestroyView()
+        {
             _sharedViewsDataHolder.UnregisterShelfSlotPositionProvider(TargetModel);
             _ownedCellsDataHolder.UnregisterShopObject(TargetModel);
             
@@ -67,6 +80,7 @@ namespace View.Game.ShopObjects.Shelf
             _eventBus.Subscribe<AnimatePutProductOnShelfEvent>(AnimatePutProductOnShelfEventHandler);
             TargetModel.ProductAdded += OnProductAdded;
             TargetModel.ProductRemoved += OnProductRemoved;
+            TargetModel.UpgradeIndexChanged += OnUpgradeIndexChanged;
         }
 
         private void Unsubscribe()
@@ -74,6 +88,22 @@ namespace View.Game.ShopObjects.Shelf
             _eventBus.Unsubscribe<AnimatePutProductOnShelfEvent>(AnimatePutProductOnShelfEventHandler);
             TargetModel.ProductAdded -= OnProductAdded;
             TargetModel.ProductRemoved -= OnProductRemoved;
+            TargetModel.UpgradeIndexChanged -= OnUpgradeIndexChanged;
+        }
+
+        private void OnUpgradeIndexChanged(int index)
+        {
+            if (_shelfUpgradeSettingsProvider.TryGetShelfUpgradeSetting(TargetModel.ShopObjectType,
+                    TargetModel.UpgradeIndex, out var shelfSettings))
+            {
+                DestroyView();
+
+                CreateView(shelfSettings);
+
+                DisplayProducts();
+
+                _eventBus.Dispatch(new VFXRequestSmokeEvent(TargetModel.CellCoords + Vector2Int.left));
+            }
         }
 
         private void AnimatePutProductOnShelfEventHandler(AnimatePutProductOnShelfEvent e)
