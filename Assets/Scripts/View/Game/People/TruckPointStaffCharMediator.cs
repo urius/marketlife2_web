@@ -7,6 +7,7 @@ using Model.People;
 using Model.People.States;
 using Model.People.States.Staff;
 using Model.ShopObjects;
+using UnityEngine;
 using View.Game.Misc;
 using View.Game.Shared;
 using View.Helpers;
@@ -15,19 +16,26 @@ namespace View.Game.People
 {
     public class TruckPointStaffCharMediator : BotCharMediatorBase<TruckPointStaffCharModel>
     {
+        private static readonly Color[] TimeProgressColors = { Color.red, Color.yellow, Color.yellow, Color.yellow, Color.green,Color.green, Color.green };
+
         private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
         private readonly SpritesHolderSo _spritesHolderSo = Instance.Get<SpritesHolderSo>();
         private readonly IUpdatesProvider _updatesProvider = Instance.Get<IUpdatesProvider>();
         private readonly ISharedViewsDataHolder _sharedViewsDataHolder = Instance.Get<ISharedViewsDataHolder>();
         
         private TakeBoxAnimationContext _takeBoxAnimationContext;
+        private ManClockView _clockView;
 
         protected override void MediateInternal()
         {
             base.MediateInternal();
+
+            _clockView = InstantiatePrefab<ManClockView>(PrefabKey.ManClockIcon);
             
             SetClothes();
-
+            UpdateClockIconColor();
+            UpdateClockPosition();
+            
             Subscribe();
             
             _sharedViewsDataHolder.RegisterCharProductsInBoxPositionsProvider(TargetModel.ProductsBox, ManView);
@@ -38,6 +46,9 @@ namespace View.Game.People
             _sharedViewsDataHolder.UnregisterCharProductsInBoxPositionsProvider(TargetModel.ProductsBox);
             
             Unsubscribe();
+            
+            Destroy(_clockView);
+            _clockView = null;
             
             base.UnmediateInternal();
         }
@@ -57,6 +68,18 @@ namespace View.Game.People
             _eventBus.Dispatch(new TrucPointStaffStepFinishedEvent(TargetModel));
         }
 
+        protected override void ProcessWalk()
+        {
+            base.ProcessWalk();
+
+            UpdateClockPosition();
+        }
+
+        private void UpdateClockPosition()
+        {
+            _clockView.transform.position = ManView.transform.position;
+        }
+
         private void SetClothes()
         {
             var clothes = ManSpriteTypesHelper.GetTruckPointStaffClothes();
@@ -73,6 +96,7 @@ namespace View.Game.People
             TargetModel.ProductsBoxAdded += OnProductsBoxAdded;
             TargetModel.ProductRemoved += OnProductRemoved;
             TargetModel.StateChanged += OnStateChanged;
+            TargetModel.WorkSecondsLeftChanged += OnWorkSecondsLeftChanged;
         }
 
         private void Unsubscribe()
@@ -80,6 +104,26 @@ namespace View.Game.People
             TargetModel.ProductsBoxAdded -= OnProductsBoxAdded;
             TargetModel.ProductRemoved -= OnProductRemoved;
             TargetModel.StateChanged -= OnStateChanged;
+            TargetModel.WorkSecondsLeftChanged -= OnWorkSecondsLeftChanged;
+        }
+
+        private void OnWorkSecondsLeftChanged(int workSecondsLeft)
+        {
+            UpdateClockIconColor();
+        }
+
+        private void UpdateClockIconColor()
+        {
+            var color = GetColorByPercent((float)TargetModel.WorkSecondsLeft / TargetModel.WorkSecondsSetting);
+            _clockView.SetIconColor(color);
+        }
+
+        private Color GetColorByPercent(float percent)
+        {
+            var colorIndex = percent * (TimeProgressColors.Length - 1);
+            var index = (int)(colorIndex);
+        
+            return TimeProgressColors[index];
         }
 
         private void OnProductsBoxAdded()

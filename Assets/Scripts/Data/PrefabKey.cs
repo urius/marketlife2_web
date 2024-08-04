@@ -28,5 +28,6 @@ namespace Data
         UIFlyingText,
         VFXSmoke,
         VFXBigSmoke,
+        ManClockIcon,
     }
 }

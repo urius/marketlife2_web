@@ -97,6 +97,12 @@ namespace View.Game.People
             SetGlasses(Random.value < 0.8 ? ManSpriteType.None : ManSpriteTypesHelper.GetRandomGlasses());
         }
 
+        protected virtual void ProcessWalk()
+        {
+            ManView.transform.position = Vector3.Lerp(
+                _walkContext.StartWalkPosition, _walkContext.EndWalkPosition, _walkContext.Progress);
+        }
+
         private void Subscribe()
         {
             TargetModel.CellPositionChanged += OnCellPositionChanged;
@@ -151,8 +157,7 @@ namespace View.Game.People
             
             _walkContext.Progress += Time.fixedDeltaTime * Speed;
 
-            ManView.transform.position = Vector3.Lerp(
-                _walkContext.StartWalkPosition, _walkContext.EndWalkPosition, _walkContext.Progress);
+            ProcessWalk();
 
             if (_walkContext.SteppedToNewCellFlag == false 
                 && _walkContext.Progress > 0.5f
