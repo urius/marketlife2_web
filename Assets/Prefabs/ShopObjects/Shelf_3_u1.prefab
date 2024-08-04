@@ -463,16 +463,15 @@ MonoBehaviour:
   _sortingGroup: {fileID: 7034854367203579822}
   _shelfType: 103
   _shelfUpgradeIndex: 1
-  _productPlaceholders: []
   _productViews:
-  - {fileID: 4583447255588373763}
-  - {fileID: 6792108362383740832}
-  - {fileID: 2695997312702429313}
-  - {fileID: 7249289672727969881}
   - {fileID: 6037943992493127679}
   - {fileID: 3458114428764746649}
   - {fileID: 5512241383870317981}
   - {fileID: 729990848927541580}
+  - {fileID: 4583447255588373763}
+  - {fileID: 6792108362383740832}
+  - {fileID: 2695997312702429313}
+  - {fileID: 7249289672727969881}
 --- !u!210 &7034854367203579822
 SortingGroup:
   m_ObjectHideFlags: 0
@@ -482,7 +481,7 @@ SortingGroup:
   m_GameObject: {fileID: 6082861507106362753}
   m_Enabled: 1
   m_SortingLayerID: 1419607231
-  m_SortingLayer: 5
+  m_SortingLayer: 6
   m_SortingOrder: 10
   m_SortAtRoot: 0
 --- !u!1 &6820561453780491271

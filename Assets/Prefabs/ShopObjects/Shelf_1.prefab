@@ -544,7 +544,6 @@ MonoBehaviour:
   _sortingGroup: {fileID: 1914285698625715536}
   _shelfType: 101
   _shelfUpgradeIndex: 0
-  _productPlaceholders: []
   _productViews:
   - {fileID: 3513683722079329005}
   - {fileID: 6098565898370899829}
@@ -561,7 +560,7 @@ SortingGroup:
   m_GameObject: {fileID: 9093042244983523206}
   m_Enabled: 1
   m_SortingLayerID: 1419607231
-  m_SortingLayer: 5
+  m_SortingLayer: 6
   m_SortingOrder: 10
   m_SortAtRoot: 0
 --- !u!1001 &751072761015700123
@@ -578,7 +577,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7471763020918069141, guid: 283c49983f01e4d429dc7d9e7007824e, type: 3}
       propertyPath: m_Name
-      value: ShelfProductView
+      value: ShelfProductView_6
       objectReference: {fileID: 0}
     - target: {fileID: 8850799357773652013, guid: 283c49983f01e4d429dc7d9e7007824e, type: 3}
       propertyPath: m_LocalPosition.x
@@ -655,7 +654,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7471763020918069141, guid: 283c49983f01e4d429dc7d9e7007824e, type: 3}
       propertyPath: m_Name
-      value: ShelfProductView
+      value: ShelfProductView_1
       objectReference: {fileID: 0}
     - target: {fileID: 8850799357773652013, guid: 283c49983f01e4d429dc7d9e7007824e, type: 3}
       propertyPath: m_LocalPosition.x
@@ -732,7 +731,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7471763020918069141, guid: 283c49983f01e4d429dc7d9e7007824e, type: 3}
       propertyPath: m_Name
-      value: ShelfProductView
+      value: ShelfProductView_5
       objectReference: {fileID: 0}
     - target: {fileID: 8850799357773652013, guid: 283c49983f01e4d429dc7d9e7007824e, type: 3}
       propertyPath: m_LocalPosition.x
@@ -809,7 +808,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7471763020918069141, guid: 283c49983f01e4d429dc7d9e7007824e, type: 3}
       propertyPath: m_Name
-      value: ShelfProductView
+      value: ShelfProductView_2
       objectReference: {fileID: 0}
     - target: {fileID: 8850799357773652013, guid: 283c49983f01e4d429dc7d9e7007824e, type: 3}
       propertyPath: m_LocalPosition.x
@@ -886,7 +885,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7471763020918069141, guid: 283c49983f01e4d429dc7d9e7007824e, type: 3}
       propertyPath: m_Name
-      value: ShelfProductView
+      value: ShelfProductView_4
       objectReference: {fileID: 0}
     - target: {fileID: 8850799357773652013, guid: 283c49983f01e4d429dc7d9e7007824e, type: 3}
       propertyPath: m_LocalPosition.x
@@ -963,7 +962,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7471763020918069141, guid: 283c49983f01e4d429dc7d9e7007824e, type: 3}
       propertyPath: m_Name
-      value: ShelfProductView
+      value: ShelfProductView_3
       objectReference: {fileID: 0}
     - target: {fileID: 8850799357773652013, guid: 283c49983f01e4d429dc7d9e7007824e, type: 3}
       propertyPath: m_LocalPosition.x
