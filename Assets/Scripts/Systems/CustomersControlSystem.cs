@@ -11,7 +11,6 @@ using Model.People.States;
 using Model.People.States.Customer;
 using Model.ShopObjects;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace Systems
 {
@@ -24,6 +23,7 @@ namespace Systems
         private readonly IPlayerModelHolder _playerModelHolder = Instance.Get<IPlayerModelHolder>();
         private readonly IUpdatesProvider _updatesProvider = Instance.Get<IUpdatesProvider>();
         private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
+        private readonly IOwnedCellsDataHolder _ownedCellsDataHolder = Instance.Get<IOwnedCellsDataHolder>();
         
         private readonly List<CashDeskModel> _allCashDesks = new ();
         private readonly Dictionary<CashDeskModel, List<CustomerCharModel>> _cashDeskCustomerQueues = new ();
@@ -355,9 +355,12 @@ namespace Systems
             return _cashDeskCustomerQueues[cashDeskModel].IndexOf(customerCharModel);
         }
 
-        private static Vector2Int GetShelfBuyPoint(ShelfModel targetShelf)
+        private Vector2Int GetShelfBuyPoint(ShelfModel targetShelf)
         {
-            return targetShelf.CellCoords + new Vector2Int(0, 1);
+            var ownedCells = _ownedCellsDataHolder.GetShopObjectOwnedCells(targetShelf);
+            var shelfCellIndex = Random.Range(0, ownedCells.Length);
+            
+            return ownedCells[shelfCellIndex] + new Vector2Int(0, 1);
         }
 
         protected override bool CanMakeStepTo(Vector2Int cell)
