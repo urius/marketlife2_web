@@ -201,7 +201,7 @@ namespace Systems
                     var targetCashDesk = ((CustomerPayingState)model.State).TargetCashDesk;
                     AddMoneyToCashDesk(targetCashDesk, model);
                     SetMoveToExitState(model);
-                    RemoveFromCashDeskQueue(targetCashDesk);
+                    RemoveFromCashDeskQueue(targetCashDesk, model);
                     break;
                 case ShopCharStateName.CustomerMovingToExit:
                     SetMoveOutOfShopState(model);
@@ -217,14 +217,24 @@ namespace Systems
             targetCashDesk.AddMoney(customerCharModel.ProductsCount);
         }
 
-        private void RemoveFromCashDeskQueue(CashDeskModel cashDeskModel)
+        private void RemoveFromCashDeskQueue(CashDeskModel cashDeskModel, CustomerCharModel customerCharModel)
         {
             var queue = _cashDeskCustomerQueues[cashDeskModel];
-            queue.RemoveAt(0);
-
-            foreach (var customer in queue)
+            var customerIndex = queue.IndexOf(customerCharModel);
+            if (customerIndex > -1)
             {
-                ProcessIdleCustomer(customer);
+                if (customerIndex != 0)
+                {
+                    Debug.LogWarning($"{nameof(RemoveFromCashDeskQueue)}: Requested remove not first customer in queue");
+                    Debug.Break();
+                }
+                
+                queue.RemoveAt(customerIndex);
+            }
+            else
+            {
+                Debug.LogWarning($"{nameof(RemoveFromCashDeskQueue)}: Requested customer not found in queue");
+                Debug.Break();
             }
         }
 
