@@ -22,6 +22,7 @@ namespace View.UI
             MediateChild<UITopPanelMoneyViewMediator>(view.UITopPanelMoneyView.transform);
             MediateChild<UITopPanelLevelViewMediator>(view.UITopPanelLevelView.transform);
             MediateChild<UITruckPointPanelMediator>(view.UIBottomPanelTruckPointPanelView.transform);
+            MediateChild<UICashDeskPanelMediator>(view.UICashDeskPanelView.transform);
             MediateChild<UIShelfPanelMediator>(view.UIShelfPanelView.transform);
             MediateChild<UIFlyingTextsMediator>(TargetTransform);
         }

@@ -68,7 +68,7 @@ namespace Utils
             switch (shopObjectDto.ShopObjectType)
             {
                 case ShopObjectType.CashDesk:
-                    result = new CashDeskModel(shopObjectDto.CellCoords);
+                    result = new CashDeskModel(shopObjectDto.CellCoords); //convert staff model
                     break;
                 default:
                     throw new NotSupportedException(

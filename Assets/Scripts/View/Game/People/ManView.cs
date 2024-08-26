@@ -138,6 +138,16 @@ namespace View.Game.People
         {
             PlayAnimationByKey(AnimationKey.TakingProduct);
         }
+        
+        public void ToPayingState()
+        {
+            PlayAnimationByKey(AnimationKey.TakingProduct);
+        }
+
+        public void ToAcceptingPayState()
+        {
+            PlayAnimationByKey(AnimationKey.TakingProduct);
+        }
 
         public void SetClothesSprites(Sprite bodySprite, Sprite handSprite, Sprite footSprite)
         {

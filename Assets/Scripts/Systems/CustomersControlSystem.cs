@@ -202,6 +202,13 @@ namespace Systems
                     AddMoneyToCashDesk(targetCashDesk, model);
                     SetMoveToExitState(model);
                     RemoveFromCashDeskQueue(targetCashDesk, model);
+                    if (targetCashDesk.CashDeskStaffModel != null)
+                    {
+                        _eventBus.Dispatch(
+                            new RequestCashDeskStaffAcceptingPayAnimationEvent(targetCashDesk.CashDeskStaffModel,
+                                requestFinishAnimation: true));
+                    }
+
                     break;
                 case ShopCharStateName.CustomerMovingToExit:
                     SetMoveOutOfShopState(model);
@@ -458,6 +465,11 @@ namespace Systems
             {
                 var movingToCashDeskState = (CustomerMovingToCashDeskState)customer.State;
                 customer.SetPayingState(movingToCashDeskState.TargetCashDesk);
+
+                if (cashDesk.CashDeskStaffModel != null)
+                {
+                    _eventBus.Dispatch(new RequestCashDeskStaffAcceptingPayAnimationEvent(cashDesk.CashDeskStaffModel));
+                }
 
                 return true;
             }

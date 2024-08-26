@@ -23,6 +23,7 @@ namespace Model
         private readonly Dictionary<Vector2Int, BuildPointModel> _buildPoints = new();
         private readonly List<TruckPointModel> _truckPoints;
         private readonly List<ShelfModel> _shelfs;
+        private readonly List<CashDeskModel> _cashDesks;
         
         public WallType WallsType;
         public FloorType FloorsType;
@@ -42,6 +43,7 @@ namespace Model
             
             _truckPoints = GetTruckPointModels().ToList();
             _shelfs = GetShelfModels().ToList();
+            _cashDesks = GetCashDeskModels().ToList();
         }
 
         public Vector2Int Size => _size;
@@ -52,6 +54,7 @@ namespace Model
         public IReadOnlyDictionary<Vector2Int, BuildPointModel> BuildPoints => _buildPoints;
         public IReadOnlyList<TruckPointModel> TruckPoints => _truckPoints;
         public IReadOnlyList<ShelfModel> Shelfs => _shelfs;
+        public IReadOnlyList<CashDeskModel> CashDesks => _cashDesks;
 
         public bool HaveBuildPoint(Vector2Int cellCoords)
         {
@@ -93,6 +96,21 @@ namespace Model
                 }
             }
         }
+
+        public int GetCashDeskModelsAmount()
+        {
+            var result = 0;
+            
+            foreach (var kvp in _shopObjects)
+            {
+                if (kvp.Value.ShopObjectType == ShopObjectType.CashDesk)
+                {
+                    result++;
+                }
+            }
+
+            return result;
+        }
         
         public IEnumerable<ShelfModel> GetShelfModels()
         {
@@ -101,6 +119,17 @@ namespace Model
                 if (kvp.Value.ShopObjectType.IsShelf())
                 {
                     yield return kvp.Value as ShelfModel;
+                }
+            }
+        }
+        
+        public IEnumerable<CashDeskModel> GetCashDeskModels()
+        {
+            foreach (var kvp in _shopObjects)
+            {
+                if (kvp.Value.ShopObjectType == ShopObjectType.CashDesk)
+                {
+                    yield return kvp.Value as CashDeskModel;
                 }
             }
         }
@@ -169,6 +198,10 @@ namespace Model
                 else if (shopObject.ShopObjectType.IsShelf())
                 {
                     _shelfs.Add((ShelfModel)shopObject);
+                }
+                else if (shopObject.ShopObjectType == ShopObjectType.CashDesk)
+                {
+                    _cashDesks.Add((CashDeskModel)shopObject);
                 }
                 
                 ShopObjectAdded?.Invoke(shopObject);

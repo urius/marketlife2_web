@@ -114,16 +114,8 @@ namespace View.Game.People
 
         private void UpdateClockIconColor()
         {
-            var color = GetColorByPercent((float)TargetModel.WorkSecondsLeft / TargetModel.WorkSecondsSetting);
+            var color = StaffCharHelper.GetClockColorByPercent((float)TargetModel.WorkSecondsLeft / TargetModel.WorkSecondsSetting);
             _clockView.SetIconColor(color);
-        }
-
-        private Color GetColorByPercent(float percent)
-        {
-            var colorIndex = percent * (TimeProgressColors.Length - 1);
-            var index = (int)(colorIndex);
-        
-            return TimeProgressColors[index];
         }
 
         private void OnProductsBoxAdded()

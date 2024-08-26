@@ -1,3 +1,4 @@
+using Infra.Instance;
 using Model.ShopObjects;
 
 namespace Holders
@@ -16,10 +17,23 @@ namespace Holders
                 _ => -1
             };
         }
+
+        public int GetCashDeskHireStaffCost()
+        {
+            var playerModelHolder = Instance.Get<IPlayerModelHolder>();
+            var playerModel = playerModelHolder.PlayerModel;
+
+            var cashDesksAmount = playerModel.ShopModel.GetCashDeskModelsAmount();
+
+            var cost = DefaultHireStaffMoneyCost * cashDesksAmount;
+
+            return cost <= playerModel.MoneyAmount ? cost : HireStaffWatchAdsCost;
+        }
     }
 
     public interface IHireStaffCostProvider
     {
         public int GetTruckPointHireStaffCost(TruckPointModel truckPointModel);
+        public int GetCashDeskHireStaffCost();
     }
 }

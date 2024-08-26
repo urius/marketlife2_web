@@ -67,13 +67,14 @@ namespace Systems
         private void Subscribe()
         {
             _eventBus.Subscribe<TruckPointHireStaffButtonClickedEvent>(OnTruckPointHireStaffButtonClickedEvent);
+            _eventBus.Subscribe<CashDeskHireStaffButtonClickedEvent>(OnCashDeskHireStaffButtonClickedEvent);
             _eventBus.Subscribe<TrucPointStaffStepFinishedEvent>(OnStaffStepFinishedEvent);
             _eventBus.Subscribe<StaffTakeBoxFromTruckAnimationFinishedEvent>(OnStaffTakeBoxFromTruckAnimationFinishedEvent);
             _eventBus.Subscribe<PutProductOnShelfHalfAnimationEvent>(OnPutProductOnShelfHalfAnimationEvent);
             
             _updatesProvider.SecondPassed += OnSecondPassed;
         }
-
+        
         private void Unsubscribe()
         {            
             _eventBus.Unsubscribe<TruckPointHireStaffButtonClickedEvent>(OnTruckPointHireStaffButtonClickedEvent);
@@ -118,6 +119,11 @@ namespace Systems
             {
                 ProcessTruckPointStaff(truckPointModel);
             }
+
+            foreach (var cashDeskModel in _shopModel.CashDesks)
+            {
+                ProcessCashDeskStaff(cashDeskModel);
+            }
         }
 
         private void ProcessTruckPointStaff(TruckPointModel truckPointModel)
@@ -130,6 +136,14 @@ namespace Systems
                     
                     ProcessStaffTimeLogic(truckPointModel, staffCharModel);
                 }
+            }
+        }
+
+        private void ProcessCashDeskStaff(CashDeskModel cashDeskModel)
+        {
+            if (cashDeskModel.CashDeskStaffModel != null)
+            {
+                ProcessStaffTimeLogic(cashDeskModel, cashDeskModel.CashDeskStaffModel);
             }
         }
 
@@ -146,6 +160,19 @@ namespace Systems
             else if (staffCharModel.WorkSecondsLeft > 1 || staffCharModel.HasProducts == false)
             {
                 staffCharModel.AdvanceWorkingTime();
+            }
+        }
+
+        private void ProcessStaffTimeLogic(CashDeskModel cashDeskModel, StaffCharModelBase cashDeskStaffModel)
+        {
+            switch (cashDeskStaffModel.WorkSecondsLeft)
+            {
+                case <= 0:
+                    cashDeskModel.RemoveStaff();
+                    break;
+                case > 0:
+                    cashDeskStaffModel.AdvanceWorkingTime();
+                    break;
             }
         }
 
@@ -414,6 +441,25 @@ namespace Systems
             }
         }
 
+        private void OnCashDeskHireStaffButtonClickedEvent(CashDeskHireStaffButtonClickedEvent e)
+        {
+            var cashDeskModel = e.CashDeskModel;
+            var hireCost = e.HireStaffCost;
+            
+            if (hireCost > 0)
+            {
+                if (_playerModel.TrySpendMoney(hireCost))
+                {
+                    HireNewStaffTo(cashDeskModel, StaffWorkTimeForHiringByMoney);
+                }
+            }
+            else if (hireCost == HireStaffCostProvider.HireStaffWatchAdsCost)
+            {
+                //process watch ads and hire
+                //HireNewStaffTo(cashDeskModel, StaffWorkTimeForHiringByAds);
+            }
+        }
+
         private void HireNewStaffTo(TruckPointModel truckPointModel, int workTime)
         {
             var slotIndex = truckPointModel.GetReadyToHireStaffSlotIndex();
@@ -427,6 +473,14 @@ namespace Systems
             ConsiderNewStaff(staffModel, truckPointModel);
             
             truckPointModel.AddStaffToFreeSlot(staffModel);
+        }
+
+        private static void HireNewStaffTo(CashDeskModel cashDeskModel, int workingTime)
+        {
+            var staffModel = new CashDeskStaffModel(
+                cashDeskModel.CellCoords + Constants.CashDeskStaffPositionOffset, workingTime, workingTime);
+            
+            cashDeskModel.AddStaff(staffModel);
         }
 
         private bool IsNearToShelf(Vector2Int cellCoords, ShelfModel shelfModel)

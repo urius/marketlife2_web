@@ -100,7 +100,7 @@ namespace View.Game.People
             DisableSwitchToIdleOnNextFrame();
 
             ManView.ToLeftSide();
-            ManView.ToTakingProductState();
+            ManView.ToPayingState();
 
             _flyingProductFromBasketAnimationIndex = 0;
             AnimateProductFlyingFromBasket(_flyingProductFromBasketAnimationIndex);

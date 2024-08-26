@@ -5,6 +5,7 @@ namespace Data
     public static class Constants
     {
         public static readonly Vector2Int ShopObjectRelativeToBuildPointOffset = Vector2Int.left;
+        public static readonly Vector2Int CashDeskStaffPositionOffset = Vector2Int.left + Vector2Int.down;
         
         public const int TruckArrivingDuration = 2;
         public const int ProductsAmountInBox = 4;

@@ -1,11 +1,15 @@
 using System.Collections.Generic;
 using Data;
+using Events;
 using Holders;
+using Infra.EventBus;
 using Infra.Instance;
+using Model.People;
 using Model.ShopObjects;
 using Utils;
 using View.Game.Extensions;
 using View.Game.Misc;
+using View.Game.People;
 using View.Helpers;
 
 namespace View.Game.ShopObjects.CashDesk
@@ -15,10 +19,12 @@ namespace View.Game.ShopObjects.CashDesk
         private readonly IGridCalculator _gridCalculator = Instance.Get<IGridCalculator>();
         private readonly IOwnedCellsDataHolder _ownedCellsDataHolder = Instance.Get<IOwnedCellsDataHolder>();
         private readonly ISharedViewsDataHolder _sharedViewsDataHolder = Instance.Get<ISharedViewsDataHolder>();
+        private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
         
         private readonly LinkedList<MoneyView> _moneyItems = new();
 
         private CashDeskView _view;
+        private CashDeskStaffCharMediator _staffMediator;
 
         protected override void MediateInternal()
         {
@@ -28,6 +34,11 @@ namespace View.Game.ShopObjects.CashDesk
 
             _sharedViewsDataHolder.RegisterCashDeskMoneyPositionProvider(TargetModel, _view);
             OwnCells();
+
+            if (TargetModel.CashDeskStaffModel != null)
+            {
+                MediateNewStaff(TargetModel.CashDeskStaffModel);
+            }
 
             Subscribe();
         }
@@ -59,12 +70,46 @@ namespace View.Game.ShopObjects.CashDesk
         {
             TargetModel.MoneyAdded += OnMoneyAdded;
             TargetModel.MoneyReset += OnMoneyReset;
+            TargetModel.StaffAdded += OnStaffAdded;
+            TargetModel.StaffRemoved += OnStaffRemoved;
         }
 
         private void Unsubscribe()
         {
             TargetModel.MoneyAdded -= OnMoneyAdded;
             TargetModel.MoneyReset -= OnMoneyReset;
+            TargetModel.StaffAdded -= OnStaffAdded;
+            TargetModel.StaffRemoved -= OnStaffRemoved;
+        }
+
+        private void OnStaffAdded(CashDeskStaffModel model)
+        {
+            _eventBus.Dispatch(new VFXRequestSmokeEvent(model.CellCoords));
+
+            MediateNewStaff(model);
+        }
+
+        private void MediateNewStaff(CashDeskStaffModel model)
+        {
+            if (_staffMediator != null)
+            {
+                UnmediateCurrentStaff();
+            }
+
+            _staffMediator = MediateChild<CashDeskStaffCharMediator, CashDeskStaffModel>(TargetTransform.parent, model);
+        }
+
+        private void OnStaffRemoved(CashDeskStaffModel model)
+        {
+            _eventBus.Dispatch(new VFXRequestSmokeEvent(model.CellCoords));
+
+            UnmediateCurrentStaff();
+        }
+
+        private void UnmediateCurrentStaff()
+        {
+            UnmediateChild(_staffMediator);
+            _staffMediator = null;
         }
 
         private void OnMoneyAdded()

@@ -38,6 +38,12 @@ namespace View.Helpers
         {
             return (ManSpriteType.Clothes7, ManSpriteType.HandClothes7, ManSpriteType.FootClothes7);
         }
+        
+        public static (ManSpriteType BodyClothes, ManSpriteType HandClothes, ManSpriteType FootClothes)
+            GetCashDeskStaffClothes()
+        {
+            return (ManSpriteType.Clothes6, ManSpriteType.HandClothes6, ManSpriteType.FootClothes6);
+        }
 
         public static (ManSpriteType BodyClothes, ManSpriteType HandClothes, ManSpriteType FootClothes)
             GetClothesByIntType(int clothesIntType)
