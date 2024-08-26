@@ -60,6 +60,8 @@ MonoBehaviour:
     Animation: {fileID: 7400000, guid: 599868c2852f94dcd9c075462f6536d2, type: 2}
   - AnimationKey: 5
     Animation: {fileID: 7400000, guid: 897b4f326d9e84610be958c6329f68d9, type: 2}
+  - AnimationKey: 6
+    Animation: {fileID: 7400000, guid: 98ad58b9bd1c848cfb90cd057db42a8c, type: 2}
   _productsBoxPlaceholderTransform: {fileID: 212763377410095167}
   _productsBoxPrefab: {fileID: 3998808810290989356, guid: 7ec4afe83f23b45618b8a02092f3b60f, type: 3}
   _productsBasketPrefab: {fileID: 788191810681536239, guid: 0c34518120986492899b3cfd0701bb00, type: 3}
@@ -172,19 +174,23 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 3471575152118566654, guid: 1a23f95622c714718b008a6f5ffda471, type: 3}
       propertyPath: m_Animations.Array.size
-      value: 5
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 3471575152118566654, guid: 1a23f95622c714718b008a6f5ffda471, type: 3}
       propertyPath: m_Animations.Array.data[4]
       value: 
       objectReference: {fileID: 7400000, guid: 897b4f326d9e84610be958c6329f68d9, type: 2}
+    - target: {fileID: 3471575152118566654, guid: 1a23f95622c714718b008a6f5ffda471, type: 3}
+      propertyPath: m_Animations.Array.data[5]
+      value: 
+      objectReference: {fileID: 7400000, guid: 98ad58b9bd1c848cfb90cd057db42a8c, type: 2}
     - target: {fileID: 5587391881389376114, guid: 1a23f95622c714718b008a6f5ffda471, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: -42.778
+      value: -17.557516
       objectReference: {fileID: 0}
     - target: {fileID: 5587391882359455008, guid: 1a23f95622c714718b008a6f5ffda471, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: -43.839
+      value: -44.76865
       objectReference: {fileID: 0}
     - target: {fileID: 5587391882423970216, guid: 1a23f95622c714718b008a6f5ffda471, type: 3}
       propertyPath: m_LocalPosition.x

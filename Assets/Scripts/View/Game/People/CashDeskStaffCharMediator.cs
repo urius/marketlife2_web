@@ -69,7 +69,7 @@ namespace View.Game.People
 
             if (e.RequestFinishAnimation == false)
             {
-                ManView.ToAcceptingPayState();
+                ManView.ToProcessingPayState();
             }
             else
             {

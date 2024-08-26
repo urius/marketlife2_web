@@ -144,9 +144,9 @@ namespace View.Game.People
             PlayAnimationByKey(AnimationKey.TakingProduct);
         }
 
-        public void ToAcceptingPayState()
+        public void ToProcessingPayState()
         {
-            PlayAnimationByKey(AnimationKey.TakingProduct);
+            PlayAnimationByKey(AnimationKey.ProcessingPay);
         }
 
         public void SetClothesSprites(Sprite bodySprite, Sprite handSprite, Sprite footSprite)
@@ -228,6 +228,7 @@ namespace View.Game.People
             WalkWithBox,
             IdleWithBox,
             TakingProduct,
+            ProcessingPay,
         }
     }
 }
