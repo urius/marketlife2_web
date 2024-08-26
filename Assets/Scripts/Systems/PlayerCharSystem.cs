@@ -47,10 +47,10 @@ namespace Systems
             _eventBus.Subscribe<SpendMoneyOnBuildPointLastAnimationFinishedEvent>(OnSpendMoneyOnBuildPointLastAnimationFinished);
             _eventBus.Subscribe<TruckArrivedEvent>(OnTruckArrivedEvent);
             _eventBus.Subscribe<PutProductOnShelfHalfAnimationEvent>(OnPutProductOnShelfHalfAnimationEvent);
+            _eventBus.Subscribe<ShopObjectCellsRegisteredEvent>(OnShopObjectCellsRegisteredEvent);
             _updatesProvider.SecondPassed += OnSecondPassed;
             _updatesProvider.QuarterSecondPassed += OnQuarterSecondPassed;
             _playerCharModel.CellPositionChanged += OnCellPositionChanged;
-            _shopModel.ShopObjectAdded += OnShopObjectAdded;
         }
 
         private void Unsubscribe()
@@ -60,10 +60,10 @@ namespace Systems
             _eventBus.Unsubscribe<SpendMoneyOnBuildPointLastAnimationFinishedEvent>(OnSpendMoneyOnBuildPointLastAnimationFinished);
             _eventBus.Unsubscribe<TruckArrivedEvent>(OnTruckArrivedEvent);
             _eventBus.Unsubscribe<PutProductOnShelfHalfAnimationEvent>(OnPutProductOnShelfHalfAnimationEvent);
+            _eventBus.Unsubscribe<ShopObjectCellsRegisteredEvent>(OnShopObjectCellsRegisteredEvent);
             _updatesProvider.SecondPassed -= OnSecondPassed;
             _updatesProvider.QuarterSecondPassed -= OnQuarterSecondPassed;
             _playerCharModel.CellPositionChanged -= OnCellPositionChanged;
-            _shopModel.ShopObjectAdded -= OnShopObjectAdded;
         }
 
         private void OnSecondPassed()
@@ -104,7 +104,7 @@ namespace Systems
             PutProductOnShelfIfNeeded();
         }
 
-        private void OnShopObjectAdded(ShopObjectModelBase shopObjectModel)
+        private void OnShopObjectCellsRegisteredEvent(ShopObjectCellsRegisteredEvent e)
         {
             CheckNearShopObjects(_playerCharModel.CellPosition);
         }
@@ -115,13 +115,13 @@ namespace Systems
             ShelfModel nearShelf = null;
             TruckPointModel nearTruckPoint = null;
 
-            if (cellPosition.x==0 && 
-                (_shopModel.TryGetTruckPoint(cellPosition + Vector2Int.left, out var truckPointModel)
-                || _shopModel.TryGetTruckPoint(cellPosition + Vector2Int.left + Vector2Int.up, out truckPointModel)))
-            {
-                nearTruckPoint = truckPointModel;
-            }
-            else
+            // if (cellPosition.x == 0 &&
+            //     (_shopModel.TryGetTruckPoint(cellPosition + Vector2Int.left, out var truckPointModel)
+            //      || _shopModel.TryGetTruckPoint(cellPosition + Vector2Int.left + Vector2Int.up, out truckPointModel)))
+            // {
+            //     nearTruckPoint = truckPointModel;
+            // }
+            // else
             {
                 foreach (var cellOffset in Constants.NearCells8)
                 {
@@ -136,6 +136,12 @@ namespace Systems
                     if (_ownedCellsDataHolder.TryGetShelf(nearCell, out var shelfModel))
                     {
                         nearShelf = shelfModel;
+                        break;
+                    }
+                    
+                    if (_ownedCellsDataHolder.TryGetTruckPoint(nearCell, out var truckPoint))
+                    {
+                        nearTruckPoint = truckPoint;
                         break;
                     }
                 }

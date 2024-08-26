@@ -1,8 +1,9 @@
 using UnityEngine;
+using View.Game.ShopObjects.Common;
 
 namespace View.Game.ShopObjects.TruckPoint
 {
-    public class TruckGatesView : MonoBehaviour
+    public class TruckGatesView : ShopObjectViewBase
     {
         [SerializeField] private Transform _leftDoorTransform;
         [SerializeField] private Transform _leftDoorOpenPointTransform;
@@ -14,8 +15,10 @@ namespace View.Game.ShopObjects.TruckPoint
         private Vector3 _leftDoorClosedPosition;
         private Vector3 _rightDoorClosedPosition;
 
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
+            
             SetClosedPositions();
         }
 

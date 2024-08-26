@@ -1,13 +1,16 @@
 using Data;
+using Holders;
 using Infra.Instance;
 using Model.ShopObjects;
 using Utils;
+using View.Game.Extensions;
 
 namespace View.Game.ShopObjects.TruckPoint
 {
     public class TruckGatesMediator : MediatorWithModelBase<TruckPointModel>
     {
         private readonly IGridCalculator _gridCalculator = Instance.Get<IGridCalculator>();
+        private readonly IOwnedCellsDataHolder _ownedCellsDataHolder = Instance.Get<IOwnedCellsDataHolder>();
         
         private TruckGatesView _truckGatesView;
         private bool _isOpened = false;
@@ -20,6 +23,8 @@ namespace View.Game.ShopObjects.TruckPoint
             
             _truckGatesView.transform.position = pos;
 
+            OwnCells();
+
             Subscribe();
         }
 
@@ -28,6 +33,11 @@ namespace View.Game.ShopObjects.TruckPoint
             Unsubscribe();
             
             Destroy(_truckGatesView);
+        }
+
+        private void OwnCells()
+        {
+            _ownedCellsDataHolder.RegisterShopObject(TargetModel, _gridCalculator.GetOwnedCells(_truckGatesView));
         }
 
         private void Subscribe()

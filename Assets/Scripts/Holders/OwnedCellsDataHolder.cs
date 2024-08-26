@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using Data;
+using Events;
+using Infra.EventBus;
+using Infra.Instance;
 using Model.ShopObjects;
 using UnityEngine;
 
@@ -8,6 +11,8 @@ namespace Holders
 {
     public class OwnedCellsDataHolder : IOwnedCellsDataHolder
     {
+        private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
+        
         private readonly Dictionary<Vector2Int, OwnedCellsByShopObjectData> _ownedCellDataByCoords = new();
         private readonly LinkedList<OwnedCellsByShopObjectData> _ownedCellDataList = new();
         
@@ -27,6 +32,8 @@ namespace Holders
 
                     _ownedCellDataByCoords[ownedCell] = ownedCellData;
                 }
+                
+                _eventBus.Dispatch(new ShopObjectCellsRegisteredEvent(shopObjectModel));
 
                 return true;
             }
@@ -94,6 +101,19 @@ namespace Holders
     
             return shelfModel != null;
         }
+        
+        public bool TryGetTruckPoint(Vector2Int shopObjectCellCoords, out TruckPointModel truckPointModel)
+        {
+            truckPointModel = null;
+
+            if (_ownedCellDataByCoords.TryGetValue(shopObjectCellCoords, out var ownedCellData)
+                && ownedCellData.ShopObjectModel.ShopObjectType == ShopObjectType.TruckPoint)
+            {
+                truckPointModel = (TruckPointModel)ownedCellData.ShopObjectModel;
+            }
+    
+            return truckPointModel != null;
+        }
 
         public Vector2Int[] GetShopObjectOwnedCells(ShopObjectModelBase shopObjectModel)
         {
@@ -135,6 +155,7 @@ namespace Holders
         public bool IsOwnedByShopObject(Vector2Int cellCoords);
         public bool TryGetShopObjectOwner(Vector2Int shopObjectCellCoords, out OwnedCellsByShopObjectData ownedData);
         public bool TryGetCashDesk(Vector2Int shopObjectCellCoords, out CashDeskModel cashDeskModel);
+        public bool TryGetTruckPoint(Vector2Int nearCell, out TruckPointModel oTruckPointModel);
         public bool TryGetShelf(Vector2Int shopObjectCellCoords, out ShelfModel shelfModel);
         public Vector2Int[] GetShopObjectOwnedCells(ShopObjectModelBase shopObjectModel);
         public bool IsWalkableForPlayerChar(Vector2Int cellCoords);

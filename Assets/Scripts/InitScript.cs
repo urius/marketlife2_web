@@ -85,6 +85,11 @@ public class InitScript : MonoBehaviour
         SetupInstance.From(_commonGameSettings).As<ICommonGameSettings>();
         SetupInstance.From(_localizationsHolder).As<ILocalizationProvider>();
         
+        var commandExecutor = SetupNewInstance<CommandExecutor, ICommandExecutor>();
+        var eventBus = SetupNewInstance<EventBus, IEventBus>();
+
+        MapEventsToCommands(new EventCommandMapper(eventBus, commandExecutor));
+        
         SetupNewInstance<ScreenCalculator, IScreenCalculator>();
         SetupNewInstance<ShopModelHolder, IShopModelHolder>();
         SetupNewInstance<OwnedCellsDataHolder, IOwnedCellsDataHolder>();
@@ -96,10 +101,6 @@ public class InitScript : MonoBehaviour
         SetupNewInstance<HireStaffCostProvider, IHireStaffCostProvider>();
         
         _playerModelHolder = SetupNewInstance<PlayerModelHolder, IPlayerModelHolder>();
-        var commandExecutor = SetupNewInstance<CommandExecutor, ICommandExecutor>();
-        var eventBus = SetupNewInstance<EventBus, IEventBus>();
-
-        MapEventsToCommands(new EventCommandMapper(eventBus, commandExecutor));
         
         SetupInstance.AllSetupsDone();
     }
