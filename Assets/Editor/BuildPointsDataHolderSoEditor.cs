@@ -28,7 +28,7 @@ namespace Editor
         {
 
             var shopObjectOffset = Constants.ShopObjectRelativeToBuildPointOffset;
-            for (var i = 0; i < 3; i++)
+            for (var i = 0; i < 5; i++)
             {
                 var buildPointData = _targetSo.GetCashDeskBuildPointData(i);
                 
@@ -43,7 +43,7 @@ namespace Editor
                     DrawGizmoSolidDisc(buildPointData.CellCoords + shopObjectOffset + Vector2Int.down);
                 }
                 
-                for (var row = 0; row < 3; row++)
+                for (var row = 0; row < 15; row++)
                 {
                     if (_targetSo.TryGetShelfBuildPointData(row, i, out buildPointData))
                     {

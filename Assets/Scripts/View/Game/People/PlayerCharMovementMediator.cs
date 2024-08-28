@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using Data;
 using Events;
 using Holders;
 using Infra.EventBus;
@@ -98,6 +100,7 @@ namespace View.Game.People
         private void Subscribe()
         {
             _eventBus.Subscribe<MovingVectorChangedEvent>(OnMovingVectorChangedEvent);
+            _eventBus.Subscribe<ShopObjectCellsRegisteredEvent>(OnShopObjectCellsRegisteredEvent);
             _updatesProvider.GameplayFixedUpdate += OnGameplayFixedUpdate;
             _playerCharModel.ProductsBoxAdded += OnProductsBoxAdded;
             _playerCharModel.ProductRemoved += OnProductRemoved;
@@ -108,11 +111,31 @@ namespace View.Game.People
         private void Unsubscribe()
         {
             _eventBus.Unsubscribe<MovingVectorChangedEvent>(OnMovingVectorChangedEvent);
+            _eventBus.Unsubscribe<ShopObjectCellsRegisteredEvent>(OnShopObjectCellsRegisteredEvent);
             _updatesProvider.GameplayFixedUpdate -= OnGameplayFixedUpdate;
             _playerCharModel.ProductsBoxAdded -= OnProductsBoxAdded;
             _playerCharModel.ProductRemoved -= OnProductRemoved;
             
             DebugDrawGizmosDispatcher.DrawGizmosHappened -= OnDrawGizmosHappened;
+        }
+
+        private void OnShopObjectCellsRegisteredEvent(ShopObjectCellsRegisteredEvent e)
+        {
+            var playerIsStayingOnOwnedCell = Array.IndexOf(e.OwnedCells, _playerCharModel.CellPosition) > -1;
+            if (playerIsStayingOnOwnedCell)
+            {
+                foreach (var nearCellOffset in Constants.NearCells8)
+                {
+                    var nearCell = _playerCharModel.CellPosition + nearCellOffset;
+                    if (_ownedCellsDataHolder.IsWalkableForPlayerChar(nearCell))
+                    {
+                        var worldPosition = _gridCalculator.GetCellCenterWorld(nearCell);
+                        SetPlayerCharWorldPosition(worldPosition);
+                        
+                        return;
+                    }
+                }
+            }
         }
 
         private void OnProductRemoved(int slotIndex)
@@ -173,6 +196,13 @@ namespace View.Game.People
             var delta = clampedMoveDirection * speed;
             _playerWorldPosition += (Vector3)delta;
 
+            SetPlayerCharWorldPosition(_playerWorldPosition);
+        }
+
+        private void SetPlayerCharWorldPosition(Vector3 playerWorldPosition)
+        {
+            _playerWorldPosition = playerWorldPosition;
+            
             _playerCharView.transform.position = _playerWorldPosition;
 
             _eventBus.Dispatch(new PlayerCharPositionChangedEvent(_playerWorldPosition));

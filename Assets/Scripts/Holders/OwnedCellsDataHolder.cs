@@ -33,7 +33,7 @@ namespace Holders
                     _ownedCellDataByCoords[ownedCell] = ownedCellData;
                 }
                 
-                _eventBus.Dispatch(new ShopObjectCellsRegisteredEvent(shopObjectModel));
+                _eventBus.Dispatch(new ShopObjectCellsRegisteredEvent(shopObjectModel, ownedCells));
 
                 return true;
             }

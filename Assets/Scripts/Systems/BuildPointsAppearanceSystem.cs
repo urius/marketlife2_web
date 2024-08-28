@@ -20,6 +20,7 @@ namespace Systems
         private List<LinkedList<ShopObjectModelBase>> _shelfsByRow;
         private int _cashDesksAmount;
         private int _truckPointsAmount;
+        private int _shelfsCount;
 
         public void Start()
         {
@@ -38,49 +39,51 @@ namespace Systems
 
         private void UpdateBuildPoints()
         {
-            if (_cashDesksAmount <= 0)
+            UpdateCashDeskBuildPoints();
+
+            UpdateShelfBuildPoints();
+
+            UpdateTruckGateBuildPoints();
+        }
+
+        private void UpdateCashDeskBuildPoints()
+        {
+            if (_cashDesksAmount <= 0 || _shelfsCount > _cashDesksAmount * 2)
             {
-                var buildPointDto = _buildPointsDataHolder.GetCashDeskBuildPointData(0);
+                var buildPointDto = _buildPointsDataHolder.GetCashDeskBuildPointData(_cashDesksAmount);
                 TryAddBuildPoint(buildPointDto);
-                return;
             }
+        }
 
-            if (_cashDesksAmount > 0)
+        private void UpdateShelfBuildPoints()
+        {
+            if (_cashDesksAmount <= 0) return;
+
+            for (var rowIndex = 0; rowIndex <= _shelfsByRow.Count; rowIndex++)
             {
-                var shelfRowsCount = _shelfsByRow.Count;
-                if (shelfRowsCount <= 0)
+                var rowYCoord = _buildPointsDataHolder.RowIndexToYCoord(rowIndex);
+                var shelfBuildPointsOnRow = _shopModel.GetShelfBuildPointsCountByRowYCoord(rowYCoord);
+
+                if (shelfBuildPointsOnRow <= 0 && (rowIndex == 0 || _shelfsByRow[rowIndex - 1].Count > 0))
                 {
-                    if (_buildPointsDataHolder.TryGetShelfBuildPointData(_shelfsByRow.Count, 0, out var buildPointDto))
+                    var shelfsOnRowCount = rowIndex < _shelfsByRow.Count ? _shelfsByRow[rowIndex].Count : 0;
+
+                    if (_buildPointsDataHolder.TryGetShelfBuildPointData(rowIndex, shelfsOnRowCount,
+                            out var buildPointDto))
                     {
                         TryAddBuildPoint(buildPointDto);
                     }
                 }
-                else
+            }
+        }
+
+        private void UpdateTruckGateBuildPoints()
+        {
+            if (_shelfsByRow.Count > _truckPointsAmount)
+            {
+                if (_buildPointsDataHolder.TryGetTruckGateBuildPointData(_truckPointsAmount, out var buildPointDto))
                 {
-                    for (var rowIndex = 0; rowIndex <= _shelfsByRow.Count; rowIndex++)
-                    {
-                        var rowYCoord = _buildPointsDataHolder.RowIndexToYCoord(rowIndex);
-                        var shelfBuildPointsOnRow = _shopModel.GetShelfBuildPointsCountByRowYCoord(rowYCoord);
-
-                        if (shelfBuildPointsOnRow <= 0 && (rowIndex == 0 || _shelfsByRow[rowIndex - 1].Count > 0))
-                        {
-                            var shelfsOnRowCount = rowIndex < _shelfsByRow.Count ? _shelfsByRow[rowIndex].Count : 0;
-
-                            if (_buildPointsDataHolder.TryGetShelfBuildPointData(rowIndex, shelfsOnRowCount,
-                                    out var buildPointDto))
-                            {
-                                TryAddBuildPoint(buildPointDto);
-                            }
-                        }
-                    }
-                }
-
-                if (shelfRowsCount > _truckPointsAmount)
-                {
-                    if (_buildPointsDataHolder.TryGetTruckGateBuildPointData(_truckPointsAmount, out var buildPointDto))
-                    {
-                        TryAddBuildPoint(buildPointDto);
-                    }
+                    TryAddBuildPoint(buildPointDto);
                 }
             }
         }
@@ -109,6 +112,8 @@ namespace Systems
                 .OrderBy(g => g.Key)
                 .Select(g => new LinkedList<ShopObjectModelBase>(g))
                 .ToList();
+
+            _shelfsCount = _shelfsByRow.Sum(r => r.Count);
             
             _truckPointsAmount = shopObjects.Count(o => o.ShopObjectType == ShopObjectType.TruckPoint);
         }
@@ -166,6 +171,8 @@ namespace Systems
             shelfsInNewRowList.AddFirst(shopObjectModel);
             
             _shelfsByRow.Add(shelfsInNewRowList);
+            
+            _shelfsCount++;
         }
     }
 }
