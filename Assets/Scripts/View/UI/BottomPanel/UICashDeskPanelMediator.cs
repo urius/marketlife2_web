@@ -39,14 +39,14 @@ namespace View.UI.BottomPanel
 
         private void Subscribe()
         {
-            _playerCharModel.NearCashDeskUpdated += OnNearCashDeskUpdated;
+            _playerCharModel.NearShopObjectsUpdated += OnNearShopObjectsUpdated;
             PanelView.HireStaffButtonClicked += OnHireStaffButtonClicked;
             _updatesProvider.SecondPassed += OnSecondPassed;
         }
 
         private void Unsubscribe()
         {
-            _playerCharModel.NearCashDeskUpdated -= OnNearCashDeskUpdated;
+            _playerCharModel.NearShopObjectsUpdated -= OnNearShopObjectsUpdated;
             PanelView.HireStaffButtonClicked -= OnHireStaffButtonClicked;
             _updatesProvider.SecondPassed -= OnSecondPassed;
         }
@@ -64,7 +64,7 @@ namespace View.UI.BottomPanel
             }
         }
 
-        private void OnNearCashDeskUpdated()
+        private void OnNearShopObjectsUpdated()
         {
             if (_playerCharModel.NearCashDesk != null)
             {

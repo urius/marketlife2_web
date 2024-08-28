@@ -115,41 +115,25 @@ namespace Systems
             ShelfModel nearShelf = null;
             TruckPointModel nearTruckPoint = null;
 
-            // if (cellPosition.x == 0 &&
-            //     (_shopModel.TryGetTruckPoint(cellPosition + Vector2Int.left, out var truckPointModel)
-            //      || _shopModel.TryGetTruckPoint(cellPosition + Vector2Int.left + Vector2Int.up, out truckPointModel)))
-            // {
-            //     nearTruckPoint = truckPointModel;
-            // }
-            // else
+            foreach (var cellOffset in Constants.NearCells8)
             {
-                foreach (var cellOffset in Constants.NearCells8)
+                var nearCell = cellPosition + cellOffset;
+
+                if (_ownedCellsDataHolder.TryGetCashDesk(nearCell, out var cashDeskModel))
                 {
-                    var nearCell = cellPosition + cellOffset;
-
-                    if (_ownedCellsDataHolder.TryGetCashDesk(nearCell, out var cashDeskModel))
-                    {
-                        nearCashDesk = cashDeskModel;
-                        break;
-                    }
-
-                    if (_ownedCellsDataHolder.TryGetShelf(nearCell, out var shelfModel))
-                    {
-                        nearShelf = shelfModel;
-                        break;
-                    }
-                    
-                    if (_ownedCellsDataHolder.TryGetTruckPoint(nearCell, out var truckPoint))
-                    {
-                        nearTruckPoint = truckPoint;
-                        break;
-                    }
+                    nearCashDesk = cashDeskModel;
+                }
+                else if (_ownedCellsDataHolder.TryGetShelf(nearCell, out var shelfModel))
+                {
+                    nearShelf = shelfModel;
+                }
+                else if (_ownedCellsDataHolder.TryGetTruckPoint(nearCell, out var truckPoint))
+                {
+                    nearTruckPoint = truckPoint;
                 }
             }
 
-            _playerCharModel.SetNearCashDesk(nearCashDesk);
-            _playerCharModel.SetNearShelf(nearShelf);
-            _playerCharModel.SetNearTruckPoint(nearTruckPoint);
+            _playerCharModel.SetNearShopObjects(nearCashDesk, nearTruckPoint, nearShelf);
         }
 
         private void PutProductOnShelfIfNeeded()

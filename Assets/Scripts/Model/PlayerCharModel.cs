@@ -21,9 +21,7 @@ namespace Model
             remove => ProductsBox.ProductRemoved -= value;
         }
 
-        public event Action NearCashDeskUpdated;
-        public event Action NearTruckPointUpdated;
-        public event Action NearShelfUpdated;
+        public event Action NearShopObjectsUpdated;
 
         public PlayerCharModel(Vector2Int cellPosition)
         {
@@ -39,36 +37,16 @@ namespace Model
         public ShelfModel NearShelf { get; private set; }
         public TruckPointModel NearTruckPoint { get; private set; }
 
+        public bool IsMultipleShopObjectsNear => (NearCashDesk != null ? 1 : 0) +
+            (NearShelf != null ? 1 : 0) +
+            (NearTruckPoint != null ? 1 : 0) > 1;
+
         public void SetCellPosition(Vector2Int cellPosition)
         {
             if (CellPosition == cellPosition) return;
 
             CellPosition = cellPosition;
             CellPositionChanged?.Invoke(CellPosition);
-        }
-
-        public void SetNearCashDesk(CashDeskModel cashDeskModel)
-        {
-            if (NearCashDesk == cashDeskModel) return;
-
-            NearCashDesk = cashDeskModel;
-            NearCashDeskUpdated?.Invoke();
-        }
-
-        public void SetNearShelf(ShelfModel shelfModel)
-        {
-            if (NearShelf == shelfModel) return;
-
-            NearShelf = shelfModel;
-            NearShelfUpdated?.Invoke();
-        }
-
-        public void SetNearTruckPoint(TruckPointModel truckPointModel)
-        {
-            if (NearTruckPoint == truckPointModel) return;
-
-            NearTruckPoint = truckPointModel;
-            NearTruckPointUpdated?.Invoke();
         }
 
         public void FillBoxWithProduct(ProductType product)
@@ -84,6 +62,17 @@ namespace Model
         public void RemoveProductFromSlot(int boxSlotIndex)
         {
             ProductsBox.RemoveProductFromSlot(boxSlotIndex);
+        }
+
+        public void SetNearShopObjects(CashDeskModel nearCashDesk, TruckPointModel nearTruckPoint, ShelfModel nearShelf)
+        {
+            if (NearCashDesk == nearCashDesk && NearTruckPoint == nearTruckPoint && NearShelf == nearShelf) return;
+            
+            NearCashDesk = nearCashDesk;
+            NearTruckPoint = nearTruckPoint;
+            NearShelf = nearShelf;
+
+            NearShopObjectsUpdated?.Invoke();
         }
     }
 }

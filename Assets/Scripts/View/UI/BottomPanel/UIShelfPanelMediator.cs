@@ -38,29 +38,27 @@ namespace View.UI.BottomPanel
 
         private void Subscribe()
         {
-            _playerCharModel.NearShelfUpdated += OnNearShelfUpdated;
+            _playerCharModel.NearShopObjectsUpdated += OnNearShopObjectsUpdated;
             PanelView.UpgradeButtonClicked += OnUpgradeButtonClicked;
         }
 
         private void Unsubscribe()
         {
-            _playerCharModel.NearShelfUpdated -= OnNearShelfUpdated;
+            _playerCharModel.NearShopObjectsUpdated -= OnNearShopObjectsUpdated;
             PanelView.UpgradeButtonClicked -= OnUpgradeButtonClicked;
             
             UnsubscribeFromTargetShelf();
         }
 
-        private void OnNearShelfUpdated()
+        private void OnNearShopObjectsUpdated()
         {
-            var canUpgrade = CanUpgradeShelfModel(_playerCharModel.NearShelf);
-
-            if (canUpgrade)
+            if (_playerCharModel.NearShelf != null && _playerCharModel.IsMultipleShopObjectsNear == false)
             {
                 ProcessNewTargetShelfModel(_playerCharModel.NearShelf);
 
                 SlideUp();
             }
-            else if (_targetShelfModel != null)
+            else
             {
                 ResetTargetShelfModel();
 
@@ -71,8 +69,10 @@ namespace View.UI.BottomPanel
         private void ProcessNewTargetShelfModel(ShelfModel shelfModel)
         {
             _targetShelfModel = shelfModel;
-                
-            UpdateView(true, _targetShelfModel);
+            
+            var canUpgrade = CanUpgradeShelfModel(shelfModel);
+
+            UpdateView(canUpgrade, shelfModel);
 
             SubscribeOnTargetShelf();
         }

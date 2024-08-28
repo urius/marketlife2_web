@@ -10,7 +10,7 @@ namespace View.UI.BottomPanel
         private readonly IUpdatesProvider _updatesProvider = Instance.Get<IUpdatesProvider>();
 
         private float _slideUpPositionPercent = 0;
-        private int _slideDirection = 1;
+        private int _slideDirection = 0;
         
         protected TView PanelView { get; private set; }
 
@@ -24,6 +24,8 @@ namespace View.UI.BottomPanel
 
         protected void SlideUp()
         {
+            if (_slideDirection > 0) return;
+            
             _slideDirection = 1;
             
             PanelView.SetActive(true);
@@ -33,6 +35,8 @@ namespace View.UI.BottomPanel
         
         protected void SlideDown()
         {
+            if (_slideDirection < 0) return;
+            
             _slideDirection = -1;
             
             ResubscribeOnSlideUpdate();

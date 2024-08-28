@@ -40,7 +40,7 @@ namespace View.UI.BottomPanel
 
         private void Subscribe()
         {
-            _playerCharModel.NearTruckPointUpdated += OnNearTruckPointUpdated;
+            _playerCharModel.NearShopObjectsUpdated += OnNearShopObjectsUpdated;
             PanelView.UpgradeButtonClicked += OnUpgradeButtonClicked;
             PanelView.HireStaffButtonClicked += OnHireStaffButtonClicked;
             _updatesProvider.SecondPassed += OnSecondPassed;
@@ -48,7 +48,7 @@ namespace View.UI.BottomPanel
 
         private void Unsubscribe()
         {
-            _playerCharModel.NearTruckPointUpdated -= OnNearTruckPointUpdated;
+            _playerCharModel.NearShopObjectsUpdated -= OnNearShopObjectsUpdated;
             PanelView.UpgradeButtonClicked -= OnUpgradeButtonClicked;
             PanelView.HireStaffButtonClicked -= OnHireStaffButtonClicked;
             _updatesProvider.SecondPassed -= OnSecondPassed;
@@ -72,9 +72,9 @@ namespace View.UI.BottomPanel
             }
         }
 
-        private void OnNearTruckPointUpdated()
+        private void OnNearShopObjectsUpdated()
         {
-            if (_playerCharModel.NearTruckPoint != null)
+            if (_playerCharModel.NearTruckPoint != null && _playerCharModel.IsMultipleShopObjectsNear == false)
             {
                 _secondsPostfix = _localizationProvider.GetLocale(Constants.LocalizationSecondsShortPostfix);
                 
