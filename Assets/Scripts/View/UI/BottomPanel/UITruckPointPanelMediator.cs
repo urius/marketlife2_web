@@ -74,7 +74,9 @@ namespace View.UI.BottomPanel
 
         private void OnNearShopObjectsUpdated()
         {
-            if (_playerCharModel.NearTruckPoint != null && _playerCharModel.IsMultipleShopObjectsNear == false)
+            if (_playerCharModel.NearTruckPoint != null 
+                && _playerCharModel.IsMultipleShopObjectsNear == false
+                && _playerModelHolder.PlayerModel.Level >= Constants.MinLevelForTruckPointUpgrades)
             {
                 _secondsPostfix = _localizationProvider.GetLocale(Constants.LocalizationSecondsShortPostfix);
                 

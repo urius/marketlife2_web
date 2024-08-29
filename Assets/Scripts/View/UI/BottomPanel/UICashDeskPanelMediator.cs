@@ -66,7 +66,8 @@ namespace View.UI.BottomPanel
 
         private void OnNearShopObjectsUpdated()
         {
-            if (_playerCharModel.NearCashDesk != null)
+            if (_playerCharModel.NearCashDesk != null 
+                && _playerModelHolder.PlayerModel.Level >= Constants.MinLevelForCashDeskUpgrades)
             {
                 _secondsPostfix = _localizationProvider.GetLocale(Constants.LocalizationSecondsShortPostfix);
                 

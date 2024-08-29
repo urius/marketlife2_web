@@ -37,5 +37,10 @@ namespace View.UI.TopPanel
         {
             _levelStatusText.text = levelStatusText;
         }
+
+        public void SetVisibility(bool isVisible)
+        {
+            gameObject.SetActive(isVisible);
+        }
     }
 }

@@ -21,6 +21,8 @@ namespace View.UI.TopPanel
             _levelView = TargetTransform.GetComponent<UITopPanelLevelView>();
 
             _playerModel = _playerModelHolder.PlayerModel;
+
+            UpdateVisibility();
             
             UpdateNextLevelMoney();
             DisplayLevel();
@@ -38,12 +40,24 @@ namespace View.UI.TopPanel
         {
             _playerModel.MoneyChanged += OnMoneyChanged;
             _playerModel.LevelChanged += OnLevelChanged;
+            _playerModel.IsLevelProcessingActiveFlagUpdated += OnIsLevelProcessingActiveFlagUpdated;
         }
 
         private void Unsubscribe()
         {
             _playerModel.MoneyChanged -= OnMoneyChanged;
             _playerModel.LevelChanged -= OnLevelChanged;
+            _playerModel.IsLevelProcessingActiveFlagUpdated -= OnIsLevelProcessingActiveFlagUpdated;
+        }
+
+        private void OnIsLevelProcessingActiveFlagUpdated(bool isActive)
+        {
+            UpdateVisibility();
+        }
+
+        private void UpdateVisibility()
+        {
+            _levelView.SetVisibility(_playerModel.IsLevelProcessingActive);
         }
 
         private void OnMoneyChanged(int moneyAmount)

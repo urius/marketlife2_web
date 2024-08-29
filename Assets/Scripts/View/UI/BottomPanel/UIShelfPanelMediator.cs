@@ -52,7 +52,9 @@ namespace View.UI.BottomPanel
 
         private void OnNearShopObjectsUpdated()
         {
-            if (_playerCharModel.NearShelf != null && _playerCharModel.IsMultipleShopObjectsNear == false)
+            if (_playerCharModel.NearShelf != null 
+                && _playerCharModel.IsMultipleShopObjectsNear == false
+                && _playerModelHolder.PlayerModel.Level >= Constants.MinLevelForShelfUpgrades)
             {
                 ProcessNewTargetShelfModel(_playerCharModel.NearShelf);
 

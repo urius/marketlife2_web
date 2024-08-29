@@ -12,6 +12,9 @@ namespace Data
         public const int MinDeliverTimeSeconds = 5;
         public const int YTopWalkableCoordForCustomers = -10;
         public const string GeneralTopSortingLayerName = "GeneralTop";
+        public const int MinLevelForCashDeskUpgrades = 2;
+        public const int MinLevelForTruckPointUpgrades = 2;
+        public const int MinLevelForShelfUpgrades = 1;
 
         public const string LocalizationKeyMarketLevelPrefix = "market_level_";
         public const string LocalizationBottomPanelDeliveryTitle = "bottom_panel_delivery_title";

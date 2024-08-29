@@ -7,6 +7,7 @@ namespace Model
         public event Action<int> MoneyChanged;
         public event Action<int> LevelChanged;
         public event Action<int> InsufficientFunds;
+        public event Action<bool> IsLevelProcessingActiveFlagUpdated;
         
         public readonly ShopModel ShopModel;
         public readonly PlayerCharModel PlayerCharModel;
@@ -18,7 +19,9 @@ namespace Model
             Level = level <= 0 ? 1 : level;
             PlayerCharModel = playerCharModel;
         }
-        
+
+
+        public bool IsLevelProcessingActive { get; private set; }
         public int MoneyAmount { get; private set; }
         public int Level { get; private set; }
         public int LevelIndex => Level - 1;
@@ -49,6 +52,15 @@ namespace Model
             Level = level;
 
             LevelChanged?.Invoke(Level);
+        }
+
+        public void SetIsLevelProcessingActive(bool isActive)
+        {
+            if (IsLevelProcessingActive == isActive) return;
+
+            IsLevelProcessingActive = isActive;
+
+            IsLevelProcessingActiveFlagUpdated?.Invoke(isActive);
         }
     }
 }

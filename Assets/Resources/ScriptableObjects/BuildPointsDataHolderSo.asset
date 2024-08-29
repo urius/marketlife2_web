@@ -36,6 +36,46 @@ MonoBehaviour:
     - ShopObjectType: 104
       XCellCoord: 9
       Cost: 15
+  - YCellCoord: 10
+    Shelfs:
+    - ShopObjectType: 103
+      XCellCoord: 5
+      Cost: 10
+    - ShopObjectType: 103
+      XCellCoord: 9
+      Cost: 15
+  - YCellCoord: 13
+    Shelfs:
+    - ShopObjectType: 101
+      XCellCoord: 5
+      Cost: 10
+    - ShopObjectType: 101
+      XCellCoord: 9
+      Cost: 15
+  - YCellCoord: 16
+    Shelfs:
+    - ShopObjectType: 102
+      XCellCoord: 5
+      Cost: 10
+    - ShopObjectType: 102
+      XCellCoord: 9
+      Cost: 15
+  - YCellCoord: 19
+    Shelfs:
+    - ShopObjectType: 104
+      XCellCoord: 5
+      Cost: 10
+    - ShopObjectType: 104
+      XCellCoord: 9
+      Cost: 15
+  - YCellCoord: 22
+    Shelfs:
+    - ShopObjectType: 103
+      XCellCoord: 5
+      Cost: 10
+    - ShopObjectType: 103
+      XCellCoord: 9
+      Cost: 15
   _truckGatePositionSettings:
     FirstGateOffset: 5
     DefaultGateOffset: 4
