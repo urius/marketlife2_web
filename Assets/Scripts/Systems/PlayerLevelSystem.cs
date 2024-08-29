@@ -42,6 +42,8 @@ namespace Systems
 
         private void OnMoneyChanged(int moneyAmount)
         {
+            if (!_playerModel.IsLevelProcessingActive) return;
+            
             var levelIndex = _commonGameSettings.GetLevelIndexByMoneyAmount(_playerModel.MoneyAmount);
             
             if (levelIndex > _playerModel.LevelIndex)

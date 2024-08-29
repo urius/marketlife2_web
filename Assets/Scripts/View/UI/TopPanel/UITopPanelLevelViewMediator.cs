@@ -53,6 +53,10 @@ namespace View.UI.TopPanel
         private void OnIsLevelProcessingActiveFlagUpdated(bool isActive)
         {
             UpdateVisibility();
+            
+            UpdateNextLevelMoney();
+            DisplayLevel();
+            DisplayLevelProgress();
         }
 
         private void UpdateVisibility()
