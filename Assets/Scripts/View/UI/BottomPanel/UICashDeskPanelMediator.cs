@@ -71,7 +71,7 @@ namespace View.UI.BottomPanel
             {
                 _secondsPostfix = _localizationProvider.GetLocale(Constants.LocalizationSecondsShortPostfix);
                 
-                PanelView.SetStaffTitleText(_localizationProvider.GetLocale(Constants.LocalizationBottomPanelStaffTitle));
+                PanelView.SetStaffTitleText(_localizationProvider.GetLocale(Constants.LocalizationBottomPanelCashDeskStaffTitle));
                 
                 ProcessNewTargetCashDesk(_playerCharModel.NearCashDesk);
                 

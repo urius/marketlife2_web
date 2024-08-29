@@ -19,6 +19,7 @@ namespace Data
         public const string LocalizationKeyMarketLevelPrefix = "market_level_";
         public const string LocalizationBottomPanelDeliveryTitle = "bottom_panel_delivery_title";
         public const string LocalizationBottomPanelStaffTitle = "bottom_panel_staff_title";
+        public const string LocalizationBottomPanelCashDeskStaffTitle = "bottom_panel_cash_desk_staff_title";
         public const string LocalizationHireButton = "hire_button";
         public const string LocalizationUpgradeButton = "upgrade_button";
         public const string LocalizationMaxUpgrade = "max_upgrade";

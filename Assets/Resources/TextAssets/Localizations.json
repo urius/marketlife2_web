@@ -102,13 +102,18 @@
 		},
 		{
 			"key": "bottom_panel_delivery_title",
-			"en": "delivery",
-			"ru": "доставка"
+			"en": "Delivery",
+			"ru": "Доставка"
 		},
 		{
 			"key": "bottom_panel_staff_title",
-			"en": "staff",
-			"ru": "персонал"
+			"en": "Staff",
+			"ru": "Персонал"
+		},
+		{
+			"key": "bottom_panel_cash_desk_staff_title",
+			"en": "Cash desk staff",
+			"ru": "Кассиры"
 		},
 		{
 			"key": "hire_button",
@@ -142,8 +147,8 @@
 		},
 		{
 			"key": "upgrade_shelf",
-			"en": "upgrade shelf",
-			"ru": "улучшенить полку"
+			"en": "Upgrade shelf",
+			"ru": "Улучшить полку"
 		}
 	]
 }
