@@ -1,24 +1,35 @@
 using System;
+using System.Collections.Generic;
 using Events;
 using Holders;
 using Infra.EventBus;
 using Infra.Instance;
+using Model.SpendPoints;
 using UnityEngine;
+using Utils;
 using View.Game.Shared;
 
 namespace View.Camera
 {
     public class MainCameraMediator : MediatorBase
     {
+        private const int ShowPositionsDelayFrames = 20;
+        
         private readonly IMainCameraHolder _mainCameraHolder = Instance.Get<IMainCameraHolder>();
+        private readonly IPlayerModelHolder _playerModelHolder = Instance.Get<IPlayerModelHolder>();
         private readonly IPlayerCharViewSharedDataHolder _playerCharViewSharedDataHolder = Instance.Get<IPlayerCharViewSharedDataHolder>();
+        private readonly IGridCalculator _gridCalculator = Instance.Get<IGridCalculator>();
         private readonly IUpdatesProvider _updatesProvider = Instance.Get<IUpdatesProvider>();
         private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
+
+        private readonly Queue<Vector2> _showPositionsQueue = new();
         
         private UnityEngine.Camera _mainCamera;
         private Vector2 _cameraOffset;
         private float _cameraZPos;
         private Vector2 _playerCharPos;
+        private Action _fixedUpdateAction;
+        private int _showPositionsDelayFramesLeft;
 
         protected override async void MediateInternal()
         {
@@ -32,6 +43,8 @@ namespace View.Camera
             _playerCharPos = _playerCharViewSharedDataHolder.PlayerCharPosition;
             PointCameraToWorldPos(_playerCharPos);
 
+            _fixedUpdateAction = FollowMainChar;
+
             Subscribe();
         }
 
@@ -40,16 +53,36 @@ namespace View.Camera
             Unsubscribe();
         }
 
-        private void Subscribe()
+        private async void Subscribe()
         {
             _updatesProvider.GameplayFixedUpdate += OnGameplayFixedUpdate;
             _eventBus.Subscribe<PlayerCharPositionChangedEvent>(OnPlayerCharPositionChanged);
+
+            await _playerModelHolder.PlayerModelSetTask;
+
+            _playerModelHolder.PlayerModel.ShopModel.BuildPointAdded += OnBuildPointAdded;
         }
 
         private void Unsubscribe()
         {
             _updatesProvider.GameplayFixedUpdate -= OnGameplayFixedUpdate;
             _eventBus.Unsubscribe<PlayerCharPositionChangedEvent>(OnPlayerCharPositionChanged);
+            
+            _playerModelHolder.PlayerModel.ShopModel.BuildPointAdded -= OnBuildPointAdded;
+        }
+
+        private void OnBuildPointAdded(BuildPointModel buildPointModel)
+        {
+            var worldPosition = _gridCalculator.GetCellCenterWorld(buildPointModel.CellCoords);
+            _showPositionsQueue.Enqueue(worldPosition);
+
+            ResetDelay();
+            _fixedUpdateAction = ShowRequestedPositionsDelay;
+        }
+
+        private void ResetDelay()
+        {
+            _showPositionsDelayFramesLeft = ShowPositionsDelayFrames;
         }
 
         private void OnPlayerCharPositionChanged(PlayerCharPositionChangedEvent e)
@@ -59,19 +92,49 @@ namespace View.Camera
 
         private void OnGameplayFixedUpdate()
         {
-            FollowMainChar();
+            _fixedUpdateAction?.Invoke();
         }
 
         private void FollowMainChar()
         {
-            var cameraPos = GetCameraOnPlanePosition();
-            var deltaPos = _playerCharPos - cameraPos;
+            MoveCameraToPosition(_playerCharPos);
+        }
 
-            if (deltaPos.sqrMagnitude > 0.01f)
+        private void ShowRequestedPositionsDelay()
+        {
+            if (_showPositionsDelayFramesLeft > 0)
             {
-                var cameraMoveOffset = deltaPos * 0.1f;
-                PointCameraToWorldPos(cameraPos + cameraMoveOffset);
+                _showPositionsDelayFramesLeft--;
             }
+            else
+            {
+                _fixedUpdateAction = _showPositionsQueue.Count > 0 ? ShowRequestedPositions : FollowMainChar;
+            }
+        }
+
+        private void ShowRequestedPositions()
+        {
+            var wasCameraMoved = MoveCameraToPosition(_showPositionsQueue.Peek());
+            if (wasCameraMoved == false)
+            {
+                _showPositionsQueue.Dequeue();
+                
+                ResetDelay();
+                _fixedUpdateAction = ShowRequestedPositionsDelay;
+            }
+        }
+
+        private bool MoveCameraToPosition(Vector2 targetWorldPosition)
+        {
+            var cameraPos = GetCameraOnPlanePosition();
+            var deltaPos = targetWorldPosition - cameraPos;
+
+            if (deltaPos.sqrMagnitude <= 0.01f) return false;
+            
+            var cameraMoveOffset = deltaPos * 0.1f;
+            PointCameraToWorldPos(cameraPos + cameraMoveOffset);
+                
+            return true;
         }
 
         private void CalculateCameraOffset()
