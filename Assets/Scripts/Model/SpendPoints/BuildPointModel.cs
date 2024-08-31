@@ -2,18 +2,20 @@ using System;
 using Data;
 using UnityEngine;
 
-namespace Model.BuildPoint
+namespace Model.SpendPoints
 {
     public class BuildPointModel
     {
         public event Action MoneyToBuildLeftChanged;
-        
+
+        public readonly BuildPointType BuildPointType;
         public readonly ShopObjectType ShopObjectType;
         public readonly Vector2Int CellCoords;
 
-        public BuildPointModel(ShopObjectType shopObjectType, Vector2Int cellCoords, int moneyToBuildLeft)
+        public BuildPointModel(BuildPointType buildPointType, ShopObjectType shopObjectType, Vector2Int cellCoords, int moneyToBuildLeft)
         {
             ShopObjectType = shopObjectType;
+            BuildPointType = buildPointType;
             CellCoords = cellCoords;
             MoneyToBuildLeft = moneyToBuildLeft;
         }

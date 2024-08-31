@@ -1,11 +1,12 @@
 using Data;
+using Events;
 using Holders;
+using Infra.EventBus;
 using Infra.Instance;
 using Model;
 using Model.ShopObjects;
 using UnityEngine;
 using UnityEngine.Tilemaps;
-using Random = UnityEngine.Random;
 
 namespace View.Game.Floors
 {
@@ -13,6 +14,7 @@ namespace View.Game.Floors
     {
         private readonly IPlayerModelHolder _playerModelHolder = Instance.Get<IPlayerModelHolder>();
         private readonly SpritesHolderSo _spritesHolder = Instance.Get<SpritesHolderSo>();
+        private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
         
         private Tilemap _tilemap;
         private ShopModel _shopModel;
@@ -36,11 +38,45 @@ namespace View.Game.Floors
         private void Subscribe()
         {
             _shopModel.ShopObjectAdded += OnShopObjectAdded;
+            _shopModel.ShopExpanded += OnShopExpanded;
         }
 
         private void Unsubscribe()
         {
             _shopModel.ShopObjectAdded -= OnShopObjectAdded;
+            _shopModel.ShopExpanded -= OnShopExpanded;
+        }
+
+        private void OnShopExpanded(Vector2Int deltaSize)
+        {
+            DisplayFloors();
+            DisplayTruckRoads();
+
+            ShowExpandVFX(deltaSize);
+        }
+
+        private void ShowExpandVFX(Vector2Int deltaSize)
+        {
+            Vector2Int vfxPosition1;
+            Vector2Int vfxPosition2;
+            Vector2Int vfxPosition3;
+            var playerPosition = _playerModelHolder.PlayerCharModel.CellPosition;
+            if (deltaSize.x > 0)
+            {
+                vfxPosition1 = playerPosition + new Vector2Int(2, 2);
+                vfxPosition2 = playerPosition + new Vector2Int(2, -2);
+                vfxPosition3 = playerPosition + new Vector2Int(2, 0);
+            }
+            else
+            {
+                vfxPosition1 = playerPosition + new Vector2Int(2, 2);
+                vfxPosition2 = playerPosition + new Vector2Int(-2, 2);
+                vfxPosition3 = playerPosition + new Vector2Int(0, 2);
+            }
+
+            _eventBus.Dispatch(new VFXRequestSmokeEvent(vfxPosition1, useBigSmoke: false));
+            _eventBus.Dispatch(new VFXRequestSmokeEvent(vfxPosition2, useBigSmoke: false));
+            _eventBus.Dispatch(new VFXRequestSmokeEvent(vfxPosition3, useBigSmoke: false));
         }
 
         private void OnShopObjectAdded(ShopObjectModelBase model)

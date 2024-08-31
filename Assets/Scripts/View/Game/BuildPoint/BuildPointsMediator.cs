@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Holders;
 using Infra.Instance;
 using Model;
-using Model.BuildPoint;
+using Model.SpendPoints;
 
 namespace View.Game.BuildPoint
 {

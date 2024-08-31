@@ -15,5 +15,7 @@ namespace Data.Dto
         public ShopObjectDto[] ShopObjects;
         [LabeledArray(nameof(ShopObjectDto.ShopObjectType))]
         public BuildPointDto[] BuildPoints;
+        [LabeledArray(nameof(ExpandPointDto.CellCoords))]
+        public ExpandPointDto[] ExpandPoints;
     }
 }

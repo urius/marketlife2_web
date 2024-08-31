@@ -12,13 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cc483f647cf84d8284100cdcc38ca0e1, type: 3}
   m_Name: BuildPointsDataHolderSo
   m_EditorClassIdentifier: 
-  _cashDesks:
-  - ShopObjectType: 1
-    CellCoords: {x: 2, y: 2}
-    MoneyToBuildLeft: 5
-  - ShopObjectType: 1
-    CellCoords: {x: 6, y: 2}
-    MoneyToBuildLeft: 10
+  _cashDesksData:
+  - CellCoords: {x: 2, y: 2}
+    Cost: 5
+  - CellCoords: {x: 6, y: 2}
+    Cost: 10
   _shelfsByRow:
   - YCellCoord: 4
     Shelfs:

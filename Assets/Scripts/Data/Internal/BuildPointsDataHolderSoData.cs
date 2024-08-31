@@ -1,9 +1,17 @@
 using System;
 using Data.Dto.ShopObjects;
 using Other;
+using UnityEngine;
 
 namespace Data.Internal
 {
+    [Serializable]
+    public struct CashDeskBuildPointRowData
+    {
+        public Vector2Int CellCoords;
+        public int Cost;
+    }
+    
     [Serializable]
     public struct ShelfBuildPointRowData
     {

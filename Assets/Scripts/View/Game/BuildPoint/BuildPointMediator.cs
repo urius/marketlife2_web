@@ -1,9 +1,11 @@
 using System.Collections.Generic;
 using Data;
 using Events;
+using Holders;
 using Infra.EventBus;
 using Infra.Instance;
-using Model.BuildPoint;
+using Model;
+using Model.SpendPoints;
 using UnityEngine;
 using Utils;
 using View.Game.Shared;
@@ -14,21 +16,32 @@ namespace View.Game.BuildPoint
     {
         private const float AnimDuration = 0.22f;
         private const float AnimDurationHalf = AnimDuration * 0.5f;
-        
+
+        private readonly IPlayerModelHolder _playerModelHolder = Instance.Get<IPlayerModelHolder>();
         private readonly IGridCalculator _gridCalculator = Instance.Get<IGridCalculator>();
         private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
         private readonly IPlayerCharViewSharedDataHolder _playerCharViewSharedDataHolder = Instance.Get<IPlayerCharViewSharedDataHolder>();
+        private readonly SpritesHolderSo _spritesHolderSo = Instance.Get<SpritesHolderSo>();
+        private readonly ILocalizationProvider _localizationProvider = Instance.Get<ILocalizationProvider>();
 
         private readonly Queue<SpendAnimationContext> _contextsQueue = new();
         
         private BuildPointView _view;
+        private PlayerModel _playerModel;
+
+        private bool IsSpendLocked => TargetModel.BuildPointType == BuildPointType.Expand &&
+                                      ExpandShopHelper.IsExpandUnlocked(TargetModel) == false;
 
         protected override void MediateInternal()
         {
+            _playerModel = _playerModelHolder.PlayerModel;
+            
             _view = InstantiatePrefab<BuildPointView>(PrefabKey.BuildPoint);
             
             _view.transform.position = _gridCalculator.GetCellCenterWorld(TargetModel.CellCoords);
-            DisplayMoneyText(TargetModel.MoneyToBuildLeft);
+            DisplayTooltip();
+
+            DisplayFloorIcon();
 
             Subscribe();
         }
@@ -53,6 +66,7 @@ namespace View.Game.BuildPoint
         private void Subscribe()
         {
             _eventBus.Subscribe<TriggerSpendMoneyOnBuildPointAnimationEvent>(OnTriggerSpendMoneyOnBuildPointAnimation);
+            _playerModel.LevelChanged += OnLevelChanged;
             
             TargetModel.MoneyToBuildLeftChanged += OnMoneyToBuildLeftChanged;
         }
@@ -60,13 +74,65 @@ namespace View.Game.BuildPoint
         private void Unsubscribe()
         {
             _eventBus.Unsubscribe<TriggerSpendMoneyOnBuildPointAnimationEvent>(OnTriggerSpendMoneyOnBuildPointAnimation);
+            _playerModel.LevelChanged -= OnLevelChanged;
             
             TargetModel.MoneyToBuildLeftChanged -= OnMoneyToBuildLeftChanged;
         }
+
+        private void OnLevelChanged(int newLevel)
+        {
+            DisplayTooltip();
+        }
+
+        private void DisplayTooltip()
+        {
+            DisplayTooltipIcon();
+            DisplayTooltipText();
+        }
+
+        private void DisplayTooltipText()
+        {
+            if (IsSpendLocked)
+            {
+                var expandLevel = ExpandShopHelper.GetExpandLevelByExpandPoint(TargetModel);
+                var levelText = $"{_localizationProvider.GetLocale(Constants.LocalizationKeyLevel)} {expandLevel}";
+                _view.SetText(levelText);
+            }
+            else
+            {
+                DisplayMoneyText(TargetModel.MoneyToBuildLeft);
+            }
+        }
+
+        private void DisplayTooltipIcon()
+        {
+            if (IsSpendLocked)
+            {
+                var starSprite = _spritesHolderSo.GetCommonSpriteByKey(SpriteKey.GUIStar);
+                _view.SetIconOnTooltipSprite(starSprite);
+            }
+            else
+            {
+                var moneySprite = _spritesHolderSo.GetCommonSpriteByKey(SpriteKey.GUIMoney50);
+                _view.SetIconOnTooltipSprite(moneySprite);
+            }
+        }
         
+
+        private void DisplayFloorIcon()
+        {
+            if (TargetModel.BuildPointType == BuildPointType.Expand)
+            {
+                var isExpandX = ExpandShopHelper.IsExpandX(TargetModel.CellCoords);
+                var sprite = _spritesHolderSo.GetCommonSpriteByKey(isExpandX ? SpriteKey.ExpandX : SpriteKey.ExpandY);
+                _view.SetIconOnSquareSprite(sprite);
+            }
+        }
 
         private void OnTriggerSpendMoneyOnBuildPointAnimation(TriggerSpendMoneyOnBuildPointAnimationEvent e)
         {
+            if (e.BuildPoint != TargetModel) return;
+            
             var moneyGo = GetFromCache(PrefabKey.Money);
             var targetCellCoords = e.BuildPoint.CellCoords;
             

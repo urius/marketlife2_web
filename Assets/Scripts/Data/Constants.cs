@@ -15,6 +15,9 @@ namespace Data
         public const int MinLevelForCashDeskUpgrades = 2;
         public const int MinLevelForTruckPointUpgrades = 2;
         public const int MinLevelForShelfUpgrades = 1;
+        public const int MinLevelForShopExpand = 2;
+        public const int ExpandCellsAmount = 3;
+        public const int ExpandPointFreeCoord = 3;
 
         public const string LocalizationKeyMarketLevelPrefix = "market_level_";
         public const string LocalizationBottomPanelDeliveryTitle = "bottom_panel_delivery_title";
@@ -27,6 +30,7 @@ namespace Data
         public const string LocalizationUpgraded = "upgraded";
         public const string LocalizationHired = "hired";
         public const string LocalizationUpgradeShelf = "upgrade_shelf";
+        public const string LocalizationKeyLevel = "level";
         
         public const string TextIconMoney = "<sprite name=\"money\">";
         public const string TextIconAds = "<sprite name=\"ads\">";

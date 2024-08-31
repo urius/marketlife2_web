@@ -5,8 +5,8 @@ using Data;
 using Data.Dto;
 using Data.Dto.ShopObjects;
 using Model;
-using Model.BuildPoint;
 using Model.ShopObjects;
+using Model.SpendPoints;
 
 namespace Utils
 {
@@ -24,7 +24,10 @@ namespace Utils
 
         public static BuildPointModel ToBuildPointModel(BuildPointDto buildPointDto)
         {
-            return new BuildPointModel(buildPointDto.ShopObjectType, buildPointDto.CellCoords,
+            return new BuildPointModel(
+                buildPointDto.BuildPointType, 
+                buildPointDto.ShopObjectType,
+                buildPointDto.CellCoords,
                 buildPointDto.MoneyToBuildLeft);
         }
 

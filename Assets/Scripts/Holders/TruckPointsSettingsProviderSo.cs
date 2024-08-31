@@ -22,5 +22,7 @@ namespace Holders
             setting = default;
             return false;
         }
+
+        public int TruckPointSettingsCount => _truckPointsSettings.Length;
     }
 }

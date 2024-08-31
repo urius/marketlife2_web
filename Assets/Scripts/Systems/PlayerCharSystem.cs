@@ -7,9 +7,10 @@ using Infra.CommandExecutor;
 using Infra.EventBus;
 using Infra.Instance;
 using Model;
-using Model.BuildPoint;
 using Model.ShopObjects;
+using Model.SpendPoints;
 using UnityEngine;
+using Utils;
 
 namespace Systems
 {
@@ -134,6 +135,11 @@ namespace Systems
             }
 
             _playerCharModel.SetNearShopObjects(nearCashDesk, nearTruckPoint, nearShelf);
+
+            if (nearCashDesk == null && nearShelf == null && nearTruckPoint == null)
+            {
+                _putProductsIsBlocked = false;
+            }
         }
 
         private void PutProductOnShelfIfNeeded()
@@ -199,7 +205,8 @@ namespace Systems
         {
             if (_shopModel.BuildPoints.TryGetValue(cellPosition, out var buildPoint)
                 && buildPoint.MoneyToBuildLeft > 0
-                && _playerModel.MoneyAmount > 0)
+                && _playerModel.MoneyAmount > 0
+                && CheckLevelForExpandIfNeeded(buildPoint))
             {
                 var deltaMoneyAmount = GetMoneyPerSingleAnimation(buildPoint.MoneyToBuildLeft);
                 
@@ -211,6 +218,11 @@ namespace Systems
                     buildPoint.MoneyToBuildLeft + deltaMoneyAmount,
                     buildPoint.MoneyToBuildLeft));
             }
+        }
+
+        private static bool CheckLevelForExpandIfNeeded(BuildPointModel buildPoint)
+        {
+            return buildPoint.BuildPointType != BuildPointType.Expand || ExpandShopHelper.IsExpandUnlocked(buildPoint);
         }
 
         private void OnSpendMoneyOnBuildPointHalfAnimation(SpendMoneyOnBuildPointAnimationHalfEvent e)
@@ -230,7 +242,18 @@ namespace Systems
             {
                 if (buildPoint.MoneyToBuildLeft <= 0)
                 {
-                    _commandExecutor.Execute<BuildShopObjectCommand, BuildPointModel>(buildPoint);
+                    switch (buildPoint.BuildPointType)
+                    {
+                        case BuildPointType.BuildShopObject:
+                            _commandExecutor.Execute<BuildShopObjectCommand, BuildPointModel>(buildPoint);
+                            break;
+                        case BuildPointType.Expand:
+                            _commandExecutor.Execute<ExpandShopObjectCommand, BuildPointModel>(buildPoint);
+                            break;
+                        default:
+                            throw new NotSupportedException(
+                                $"unsupported {nameof(buildPoint.BuildPointType)}: {buildPoint.BuildPointType}");
+                    }
                 }
             }
         }

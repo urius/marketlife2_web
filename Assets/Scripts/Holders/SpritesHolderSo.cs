@@ -21,6 +21,9 @@ namespace Holders
         
         [LabeledArray(nameof(SpritesHolderManSpriteItem.Key))] [SerializeField]
         private SpritesHolderManSpriteItem[] _manSpriteItems;
+        
+        [LabeledArray(nameof(CommonSpriteItem.Key))] [SerializeField]
+        private CommonSpriteItem[] _commonSpriteItems;
 
         public Tile GetFloorTileByKey(FloorType key)
         {
@@ -40,6 +43,11 @@ namespace Holders
         public Sprite GetManSpriteByKey(ManSpriteType key)
         {
             return _manSpriteItems.FirstOrDefault(i => i.Key == key).Sprite;
+        }
+
+        public Sprite GetCommonSpriteByKey(SpriteKey key)
+        {
+            return _commonSpriteItems.FirstOrDefault(i => i.Key == key).Sprite;
         }
 
         [Serializable]
@@ -67,6 +75,13 @@ namespace Holders
         private struct SpritesHolderManSpriteItem
         {
             public ManSpriteType Key;
+            public Sprite Sprite;
+        }
+
+        [Serializable]
+        private struct CommonSpriteItem
+        {
+            public SpriteKey Key;
             public Sprite Sprite;
         }
     }

@@ -1,6 +1,7 @@
 using Data;
 using Infra.Instance;
 using Model.ShopObjects;
+using Utils;
 
 namespace Holders
 {
@@ -8,6 +9,7 @@ namespace Holders
     {
         private readonly BuildPointsDataHolderSo _buildPointsDataHolder = Instance.Get<BuildPointsDataHolderSo>();
         private readonly IShelfUpgradeSettingsProvider _shelfUpgradeSettingsProvider = Instance.Get<IShelfUpgradeSettingsProvider>();
+        private readonly ICommonGameSettings _commonGameSettings = Instance.Get<ICommonGameSettings>();
         
         public int GetTruckPointUpgradeCost(TruckPointModel truckPointModel)
         {
@@ -42,11 +44,31 @@ namespace Holders
 
             return -1;
         }
+
+        public int GetExpandXCost(int currentXSize)
+        {
+            var expandLevelIndex = ExpandShopHelper.GetXExpandLevel(currentXSize) - 1;
+            
+            var levelTargetMoney = _commonGameSettings.GetLevelTargetMoney(expandLevelIndex + 1);
+            
+            return (int)(levelTargetMoney * 0.2);
+        }
+        
+        public int GetExpandYCost(int currentYSize)
+        {
+            var expandLevelIndex = ExpandShopHelper.GetXExpandLevel(currentYSize) - 1;
+            
+            var levelTargetMoney = _commonGameSettings.GetLevelTargetMoney(expandLevelIndex + 1);
+            
+            return (int)(levelTargetMoney * 0.2);
+        }
     }
 
     public interface IUpgradeCostProvider
     {
         public int GetTruckPointUpgradeCost(TruckPointModel truckPointModel);
         public int GetShelfUpgradeCost(ShelfModel shelfModel);
+        public int GetExpandXCost(int currentXSize);
+        public int GetExpandYCost(int currentYSize);
     }
 }

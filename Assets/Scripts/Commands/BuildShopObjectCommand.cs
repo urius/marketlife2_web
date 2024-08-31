@@ -4,9 +4,10 @@ using Data;
 using Holders;
 using Infra.CommandExecutor;
 using Infra.Instance;
-using Model.BuildPoint;
 using Model.People;
 using Model.ShopObjects;
+using Model.SpendPoints;
+using UnityEngine;
 
 namespace Commands
 {
@@ -14,6 +15,13 @@ namespace Commands
     {
         public void Execute(BuildPointModel buildPoint)
         {
+            if (buildPoint.BuildPointType != BuildPointType.BuildShopObject)
+            {
+                Debug.LogWarning(
+                    $"trying to execute {nameof(BuildShopObjectCommand)} with unsupported {nameof(buildPoint.BuildPointType)}: {buildPoint.BuildPointType}");
+                return;
+            }
+            
             var shopModel = Instance.Get<IShopModelHolder>().ShopModel;
             
             shopModel.RemoveBuildPoint(buildPoint.CellCoords);

@@ -12,7 +12,7 @@ namespace Holders
     {
         [LabeledArray(nameof(ShopObjectDto.CellCoords))]
         [SerializeField]
-        private BuildPointDto[] _cashDesks;
+        private CashDeskBuildPointRowData[] _cashDesksData;
         
         [SerializeField]
         private ShelfBuildPointRowData[] _shelfsByRow;
@@ -25,25 +25,20 @@ namespace Holders
 
         public BuildPointDto GetCashDeskBuildPointData(int index)
         {
-            if (index < _cashDesks.Length)
+            if (index < _cashDesksData.Length)
             {
-                return _cashDesks[index];
+                return ToBuildPointDto(_cashDesksData[index]);
             }
             else
             {
-                var buildCost = InterpolateBuildCostFor(index, _cashDesks.Length - 1,
-                    _cashDesks[^1].MoneyToBuildLeft,
-                    _cashDesks[^2].MoneyToBuildLeft);
-                var coords = InterpolateCellCoordsFor(index, _cashDesks.Length - 1,
-                    _cashDesks[^1].CellCoords,
-                    _cashDesks[^2].CellCoords);
-                
-                return new BuildPointDto()
-                {
-                    ShopObjectType = ShopObjectType.CashDesk,
-                    MoneyToBuildLeft = buildCost,
-                    CellCoords = coords,
-                };
+                var buildCost = InterpolateBuildCostFor(index, _cashDesksData.Length - 1,
+                    _cashDesksData[^1].Cost,
+                    _cashDesksData[^2].Cost);
+                var coords = InterpolateCellCoordsFor(index, _cashDesksData.Length - 1,
+                    _cashDesksData[^1].CellCoords,
+                    _cashDesksData[^2].CellCoords);
+
+                return new BuildPointDto(BuildPointType.BuildShopObject, ShopObjectType.CashDesk, coords, buildCost);
             }
         }
 
@@ -66,13 +61,9 @@ namespace Holders
                     var coords = InterpolateCellCoordsFor(index, shelfsInRow.Length - 1,
                         new Vector2Int(shelfsInRow[^1].XCellCoord, yCoord),
                         new Vector2Int(shelfsInRow[^2].XCellCoord, yCoord));
-                
-                    buildPointDto = new BuildPointDto()
-                    {
-                        ShopObjectType = shelfsInRow[0].ShopObjectType,
-                        MoneyToBuildLeft = buildCost,
-                        CellCoords = coords,
-                    };
+
+                    buildPointDto = new BuildPointDto(
+                        BuildPointType.BuildShopObject, shelfsInRow[0].ShopObjectType, coords, buildCost);
                 }
 
                 return true;
@@ -90,7 +81,7 @@ namespace Holders
 
             return firstRowYCoord + rowIndex * (secondRowYCoords - firstRowYCoord);
         }
-        
+
         public int YCoordToRowIndex(int yCoord)
         {
             var firstRowYCoord = _shelfsByRow[0].YCellCoord;
@@ -121,13 +112,10 @@ namespace Holders
             if (haveData)
             {
                 var data = _truckGates[truckGateIndex];
-                
-                result = new BuildPointDto()
-                {
-                    ShopObjectType = ShopObjectType.TruckPoint,
-                    CellCoords = GetTruckPointCoordsByIndex(truckGateIndex),
-                    MoneyToBuildLeft = data.BuildCost,
-                };
+                var cellCoords = GetTruckPointCoordsByIndex(truckGateIndex);
+
+                result = new BuildPointDto(
+                    BuildPointType.BuildShopObject, ShopObjectType.TruckPoint, cellCoords, data.BuildCost);
             }
 
             return haveData;
@@ -149,6 +137,12 @@ namespace Holders
             }
 
             return -1;
+        }
+
+        private static BuildPointDto ToBuildPointDto(CashDeskBuildPointRowData cashDeskBuildPointRowData)
+        {
+            return new BuildPointDto(BuildPointType.BuildShopObject, ShopObjectType.CashDesk,
+                cashDeskBuildPointRowData.CellCoords, cashDeskBuildPointRowData.Cost);
         }
 
         private static int InterpolateBuildCostFor(int index, int lastIndex, int lastItemCost, int preLastItemCost)
@@ -174,12 +168,11 @@ namespace Holders
 
         private static BuildPointDto ToBuildPointDto(int yCoord, ShelfBuildPointData shelfBuildPointData)
         {
-            return new BuildPointDto()
-            {
-                ShopObjectType = shelfBuildPointData.ShopObjectType,
-                CellCoords = new Vector2Int(shelfBuildPointData.XCellCoord, yCoord),
-                MoneyToBuildLeft = shelfBuildPointData.Cost,
-            };
+            return new BuildPointDto(
+                BuildPointType.BuildShopObject,
+                shelfBuildPointData.ShopObjectType,
+                new Vector2Int(shelfBuildPointData.XCellCoord, yCoord),
+                shelfBuildPointData.Cost);
         }
     }
 }

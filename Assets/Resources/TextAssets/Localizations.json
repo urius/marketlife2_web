@@ -149,6 +149,11 @@
 			"key": "upgrade_shelf",
 			"en": "Upgrade shelf",
 			"ru": "Улучшить полку"
+		},
+		{
+			"key": "level",
+			"en": "Level",
+			"ru": "Уровень"
 		}
 	]
 }

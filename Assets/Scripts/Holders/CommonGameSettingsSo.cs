@@ -36,7 +36,7 @@ namespace Holders
             return result;
         }
 
-        public int GetLevelMoney(int targetLevelIndex)
+        public int GetLevelTargetMoney(int targetLevelIndex)
         {
             if (targetLevelIndex < _commonGameSettingsData.levels.Length)
             {
@@ -50,6 +50,6 @@ namespace Holders
     public interface ICommonGameSettings
     {
         public int GetLevelIndexByMoneyAmount(int moneyAmount);
-        public int GetLevelMoney(int targetLevelIndex);
+        public int GetLevelTargetMoney(int targetLevelIndex);
     }
 }

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using Data;
@@ -7,6 +6,7 @@ using Holders;
 using Infra.Instance;
 using Model;
 using Model.ShopObjects;
+using UnityEngine;
 using Utils;
 
 namespace Systems
@@ -15,12 +15,15 @@ namespace Systems
     {
         private readonly IShopModelHolder _shopModelHolder = Instance.Get<IShopModelHolder>();
         private readonly BuildPointsDataHolderSo _buildPointsDataHolder = Instance.Get<BuildPointsDataHolderSo>();
+        private readonly IUpgradeCostProvider _upgradeCostProvider = Instance.Get<IUpgradeCostProvider>();
+        private readonly TruckPointsSettingsProviderSo _truckPointsSettingsProviderSo = Instance.Get<TruckPointsSettingsProviderSo>();
         
         private ShopModel _shopModel;
         private List<LinkedList<ShopObjectModelBase>> _shelfsByRow;
-        private int _cashDesksAmount;
-        private int _truckPointsAmount;
-        private int _shelfsCount;
+        
+        private int CashDesksAmount => _shopModel.CashDesks.Count;
+        private int TruckPointsAmount => _shopModel.TruckPoints.Count;
+        private int ShelfsCount => _shopModel.Shelfs.Count;
 
         public void Start()
         {
@@ -44,20 +47,71 @@ namespace Systems
             UpdateShelfBuildPoints();
 
             UpdateTruckGateBuildPoints();
+
+            UpdateExpandShopPoints();
+        }
+
+        private void UpdateExpandShopPoints()
+        {
+            if (CashDesksAmount > 0 && ShelfsCount > 0 && TruckPointsAmount > 0 
+                && _shopModel.ExpandPoints.Count < 2)
+            {
+                TryAddExpandXPoint();
+
+                TryAddExpandYPoint();
+            }
+        }
+
+        private void TryAddExpandXPoint()
+        {
+            var cellCoords = new Vector2Int(_shopModel.Size.x - 1, Constants.ExpandPointFreeCoord);
+
+            if (_shopModel.ExpandPoints.Any(p => p.CellCoords == cellCoords)) return;
+            
+            var prevExpandXPoint = _shopModel.ExpandPoints.FirstOrDefault(p => p.CellCoords.y == Constants.ExpandPointFreeCoord);
+            if (prevExpandXPoint != null)
+            {
+                _shopModel.RemoveBuildPoint(prevExpandXPoint.CellCoords);
+            }
+
+            var cost = _upgradeCostProvider.GetExpandXCost(_shopModel.Size.x);
+            
+            var expandXPoint = new BuildPointDto(BuildPointType.Expand, ShopObjectType.Undefined, cellCoords, cost);
+            
+            TryAddBuildPoint(expandXPoint);
+        }
+
+        private void TryAddExpandYPoint()
+        {
+            var cellCoords = new Vector2Int(Constants.ExpandPointFreeCoord, _shopModel.Size.y - 1);
+            
+            if (_shopModel.ExpandPoints.Any(p => p.CellCoords == cellCoords)) return;
+            
+            var prevExpandXPoint = _shopModel.ExpandPoints.FirstOrDefault(p => p.CellCoords.x == Constants.ExpandPointFreeCoord);
+            if (prevExpandXPoint != null)
+            {
+                _shopModel.RemoveBuildPoint(prevExpandXPoint.CellCoords);
+            }
+            
+            var cost = _upgradeCostProvider.GetExpandYCost(_shopModel.Size.y);
+            
+            var expandYPoint = new BuildPointDto(BuildPointType.Expand, ShopObjectType.Undefined, cellCoords, cost);
+            
+            TryAddBuildPoint(expandYPoint);
         }
 
         private void UpdateCashDeskBuildPoints()
         {
-            if (_cashDesksAmount <= 0 || _shelfsCount > _cashDesksAmount * 2)
+            if (CashDesksAmount <= 0 || ShelfsCount > CashDesksAmount)
             {
-                var buildPointDto = _buildPointsDataHolder.GetCashDeskBuildPointData(_cashDesksAmount);
+                var buildPointDto = _buildPointsDataHolder.GetCashDeskBuildPointData(CashDesksAmount);
                 TryAddBuildPoint(buildPointDto);
             }
         }
 
         private void UpdateShelfBuildPoints()
         {
-            if (_cashDesksAmount <= 0) return;
+            if (CashDesksAmount <= 0) return;
 
             for (var rowIndex = 0; rowIndex <= _shelfsByRow.Count; rowIndex++)
             {
@@ -79,9 +133,10 @@ namespace Systems
 
         private void UpdateTruckGateBuildPoints()
         {
-            if (_shelfsByRow.Count > _truckPointsAmount)
+            if (_shelfsByRow.Count > TruckPointsAmount 
+                && TruckPointsAmount < _truckPointsSettingsProviderSo.TruckPointSettingsCount)
             {
-                if (_buildPointsDataHolder.TryGetTruckGateBuildPointData(_truckPointsAmount, out var buildPointDto))
+                if (_buildPointsDataHolder.TryGetTruckGateBuildPointData(TruckPointsAmount, out var buildPointDto))
                 {
                     TryAddBuildPoint(buildPointDto);
                 }
@@ -92,10 +147,11 @@ namespace Systems
         {
             if (_shopModel.HaveBuildPoint(buildPointData.CellCoords) == false
                 && _shopModel.Size.x > buildPointData.CellCoords.x
-                && _shopModel.Size.y > buildPointData.CellCoords.y + 1)
+                && _shopModel.Size.y > buildPointData.CellCoords.y +
+                (buildPointData.BuildPointType == BuildPointType.BuildShopObject ? 1 : 0))
             {
                 var buildPointModel = DataConverter.ToBuildPointModel(buildPointData);
-                
+
                 _shopModel.AddBuildPoint(buildPointModel);
             }
         }
@@ -104,28 +160,24 @@ namespace Systems
         {
             var shopObjects = _shopModel.ShopObjects.Values.ToArray();
 
-            _cashDesksAmount = shopObjects.Count(o => o.ShopObjectType == ShopObjectType.CashDesk);
-
             _shelfsByRow = shopObjects
                 .Where(s => s.ShopObjectType.IsShelf())
                 .GroupBy(s => s.CellCoords.y, s => s)
                 .OrderBy(g => g.Key)
                 .Select(g => new LinkedList<ShopObjectModelBase>(g))
                 .ToList();
-
-            _shelfsCount = _shelfsByRow.Sum(r => r.Count);
-            
-            _truckPointsAmount = shopObjects.Count(o => o.ShopObjectType == ShopObjectType.TruckPoint);
         }
 
         private void Subscribe()
         {
             _shopModel.ShopObjectAdded += OnShopObjectAdded;
+            _shopModel.ShopExpanded += OnShopExpanded;
         }
 
         private void Unsubscribe()
         {
             _shopModel.ShopObjectAdded -= OnShopObjectAdded;
+            _shopModel.ShopExpanded -= OnShopExpanded;
         }
 
         private void OnShopObjectAdded(ShopObjectModelBase shopObjectModel)
@@ -134,25 +186,16 @@ namespace Systems
             UpdateBuildPoints();
         }
 
+        private void OnShopExpanded(Vector2Int _)
+        {
+            UpdateBuildPoints();
+        }
+
         private void ConsiderShopObjectAdded(ShopObjectModelBase shopObjectModel)
         {
             if (shopObjectModel.ShopObjectType.IsShelf())
             {
                 ConsiderNewShelf(shopObjectModel);
-                return;
-            }
-            
-            switch (shopObjectModel.ShopObjectType)
-            {
-                case ShopObjectType.CashDesk:
-                    _cashDesksAmount++;
-                    break;
-                case ShopObjectType.TruckPoint:
-                    _truckPointsAmount++;
-                    break;
-                default:
-                    throw new NotImplementedException(
-                        $"{nameof(OnShopObjectAdded)}: unsupported {nameof(shopObjectModel.ShopObjectType)} = {shopObjectModel.ShopObjectType}");
             }
         }
 
@@ -171,8 +214,6 @@ namespace Systems
             shelfsInNewRowList.AddFirst(shopObjectModel);
             
             _shelfsByRow.Add(shelfsInNewRowList);
-            
-            _shelfsCount++;
         }
     }
 }

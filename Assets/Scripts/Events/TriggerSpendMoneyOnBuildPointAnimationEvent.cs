@@ -1,4 +1,4 @@
-using Model.BuildPoint;
+using Model.SpendPoints;
 
 namespace Events
 {

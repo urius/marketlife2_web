@@ -16,6 +16,7 @@ namespace View.Game.Walls
         private readonly IGridCalculator _gridCalculator = Instance.Get<IGridCalculator>();
         private readonly SpritesHolderSo _spritesHolder = Instance.Get<SpritesHolderSo>();
         private readonly Dictionary<Vector2Int, WallView> _wallByCoords = new();
+        private readonly IOwnedCellsDataHolder _ownedCellsDataHolder = Instance.Get<IOwnedCellsDataHolder>();
 
         private ShopModel ShopModel => _playerModelHolder.PlayerModel.ShopModel;
 
@@ -48,11 +49,18 @@ namespace View.Game.Walls
         private void Subscribe()
         {
             ShopModel.ShopObjectAdded += OnShopObjectAdded;
+            ShopModel.ShopExpanded += OnShopExpanded;
         }
 
         private void Unsubscribe()
         {
             ShopModel.ShopObjectAdded -= OnShopObjectAdded;
+            ShopModel.ShopExpanded -= OnShopExpanded;
+        }
+
+        private void OnShopExpanded(Vector2Int deltaSize)
+        {
+            DisplayWalls();
         }
 
         private void OnShopObjectAdded(ShopObjectModelBase shopObjectModel)
@@ -158,8 +166,7 @@ namespace View.Game.Walls
 
         private bool HaveTruckGatesOn(int y)
         {
-            return ShopModel.ShopObjects.TryGetValue(new Vector2Int(-1, y), out var shopObject) 
-                    && shopObject.ShopObjectType == ShopObjectType.TruckPoint;
+            return _ownedCellsDataHolder.TryGetTruckPoint(new Vector2Int(-1, y), out _);
         }
 
         private bool TrySetWallSprite(Vector2Int coords, Sprite wallSprite)

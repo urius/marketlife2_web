@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Data;
-using Model.BuildPoint;
 using Model.People;
 using Model.ShopObjects;
+using Model.SpendPoints;
 using UnityEngine;
 
 namespace Model
@@ -15,12 +15,14 @@ namespace Model
         public event Action<BuildPointModel> BuildPointAdded;
         public event Action<BuildPointModel> BuildPointRemoved;
         public event Action DoorsAdded;
+        public event Action<Vector2Int> ShopExpanded;
 
         public readonly CustomersModel CustomersModel = new();
         public readonly BotCharsOwnedCellModel TruckPointStaffOwnedCellModel = new();
         
         private readonly Dictionary<Vector2Int, ShopObjectModelBase> _shopObjects = new();
         private readonly Dictionary<Vector2Int, BuildPointModel> _buildPoints = new();
+        private readonly List<BuildPointModel> _expandPoints = new(2);
         private readonly List<TruckPointModel> _truckPoints;
         private readonly List<ShelfModel> _shelfs;
         private readonly List<CashDeskModel> _cashDesks;
@@ -55,6 +57,7 @@ namespace Model
         public IReadOnlyList<TruckPointModel> TruckPoints => _truckPoints;
         public IReadOnlyList<ShelfModel> Shelfs => _shelfs;
         public IReadOnlyList<CashDeskModel> CashDesks => _cashDesks;
+        public IReadOnlyList<BuildPointModel> ExpandPoints => _expandPoints; 
 
         public bool HaveBuildPoint(Vector2Int cellCoords)
         {
@@ -69,21 +72,10 @@ namespace Model
         public void AddBuildPoint(BuildPointModel buildPoint)
         {
             _buildPoints[buildPoint.CellCoords] = buildPoint;
+
+            ConsiderExpandPointIfNeeded(buildPoint);
             
             BuildPointAdded?.Invoke(buildPoint);
-        }
-
-        public bool TryGetTruckPoint(Vector2Int cellCoords, out TruckPointModel truckPointModel)
-        {
-            truckPointModel = null;
-            
-            if (ShopObjects.TryGetValue(cellCoords, out var shopObject)
-                && shopObject.ShopObjectType == ShopObjectType.TruckPoint)
-            {
-                truckPointModel = (TruckPointModel)shopObject;
-            }
-
-            return truckPointModel != null;
         }
 
         public IEnumerable<TruckPointModel> GetTruckPointModels()
@@ -133,51 +125,17 @@ namespace Model
                 }
             }
         }
-        
-        public bool TryGetCashDesk(Vector2Int cellCoords, out CashDeskModel truckPointModel)
-        {
-            truckPointModel = null;
-            
-            if (ShopObjects.TryGetValue(cellCoords, out var shopObject)
-                && shopObject.ShopObjectType == ShopObjectType.CashDesk)
-            {
-                truckPointModel = (CashDeskModel)shopObject;
-            }
-
-            return truckPointModel != null;
-        }
-        
-        public bool TryGetShelfModel(Vector2Int cellCoords, out ShelfModel shelfModel)
-        {
-            shelfModel = null;
-    
-            if (ShopObjects.TryGetValue(cellCoords, out var shopObject)
-                && shopObject.ShopObjectType.IsShelf())
-            {
-                shelfModel = (ShelfModel)shopObject;
-            }
-
-            return shelfModel != null;
-        }
-        
-        public bool TryGetTruckPointModel(Vector2Int cellCoords, out TruckPointModel truckPointModel)
-        {
-            truckPointModel = null;
-
-            if (ShopObjects.TryGetValue(cellCoords, out var shopObject)
-                && shopObject.ShopObjectType == ShopObjectType.TruckPoint)
-            {
-                truckPointModel = (TruckPointModel)shopObject;
-            }
-
-            return truckPointModel != null;
-        }
 
         public bool RemoveBuildPoint(Vector2Int cellCoords)
         {
             if (_buildPoints.TryGetValue(cellCoords, out var buildPointModel))
             {
                 _buildPoints.Remove(cellCoords);
+
+                if (buildPointModel.BuildPointType == BuildPointType.Expand)
+                {
+                    _expandPoints.Remove(buildPointModel);
+                }
                 
                 BuildPointRemoved?.Invoke(buildPointModel);
 
@@ -230,6 +188,13 @@ namespace Model
             return cell.x < 0 || cell.y < 0 || cell.x >= Size.x || cell.y >= Size.y;
         }
 
+        public void Expand(Vector2Int deltaSize)
+        {
+            SetSize(_size + deltaSize);
+            
+            ShopExpanded?.Invoke(deltaSize);
+        }
+
         private (int Left, int Right) GetDoorsCoords(int doorIndex)
         {
             return (GetDoorLeftPoint(doorIndex), GetDoorRightPoint(doorIndex));
@@ -248,6 +213,18 @@ namespace Model
             foreach (var buildPointModel in buildPoints)
             {
                 _buildPoints[buildPointModel.CellCoords] = buildPointModel;
+                ConsiderExpandPointIfNeeded(buildPointModel);
+            }
+        }
+
+        private void ConsiderExpandPointIfNeeded(BuildPointModel buildPointModel)
+        {
+            if (buildPointModel.BuildPointType == BuildPointType.Expand)
+            {
+                if (_expandPoints.All(p => p.CellCoords != buildPointModel.CellCoords))
+                {
+                    _expandPoints.Add(buildPointModel);
+                }
             }
         }
 
