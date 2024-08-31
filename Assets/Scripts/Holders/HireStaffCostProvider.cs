@@ -23,9 +23,9 @@ namespace Holders
             var playerModelHolder = Instance.Get<IPlayerModelHolder>();
             var playerModel = playerModelHolder.PlayerModel;
 
-            var cashDesksAmount = playerModel.ShopModel.GetCashDeskModelsAmount();
+            //var cashDesksAmount = playerModel.ShopModel.GetCashDeskModelsAmount();
 
-            var cost = DefaultHireStaffMoneyCost * cashDesksAmount;
+            var cost = DefaultHireStaffMoneyCost;
 
             return cost <= playerModel.MoneyAmount ? cost : HireStaffWatchAdsCost;
         }
