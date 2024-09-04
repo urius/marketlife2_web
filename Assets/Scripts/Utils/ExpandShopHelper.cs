@@ -13,21 +13,11 @@ namespace Utils
             if (expandPoint.BuildPointType == BuildPointType.Expand)
             {
                 var playerModelHolder = Instance.Get<IPlayerModelHolder>();
-                
                 var playerModel = playerModelHolder.PlayerModel;
-                var shopModel = playerModel.ShopModel;
-                
-                if (IsExpandX(expandPoint.CellCoords))
-                {
-                    var targetLevel = GetXExpandLevel(shopModel.Size.x);
-                    return playerModel.Level >= targetLevel;
-                }
 
-                if (IsExpandY(expandPoint.CellCoords))
-                {
-                    var targetLevel = GetYExpandLevel(shopModel.Size.y);
-                    return playerModel.Level >= targetLevel;
-                }
+                var unlockLevel = GetExpandLevelByExpandPoint(expandPoint);
+                
+                return playerModel.Level >= unlockLevel;
             }
 
             return false;

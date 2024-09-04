@@ -22,7 +22,7 @@ namespace View.Camera
         private readonly IUpdatesProvider _updatesProvider = Instance.Get<IUpdatesProvider>();
         private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
 
-        private readonly Queue<Vector2> _showPositionsQueue = new();
+        private readonly Queue<ShowPositionItemData> _showPositionsQueue = new();
         
         private UnityEngine.Camera _mainCamera;
         private Vector2 _cameraOffset;
@@ -57,6 +57,7 @@ namespace View.Camera
         {
             _updatesProvider.GameplayFixedUpdate += OnGameplayFixedUpdate;
             _eventBus.Subscribe<PlayerCharPositionChangedEvent>(OnPlayerCharPositionChanged);
+            _eventBus.Subscribe<ExpandPointUnlockedEvent>(OnExpandPointUnlockedEvent);
 
             await _playerModelHolder.PlayerModelSetTask;
 
@@ -67,17 +68,50 @@ namespace View.Camera
         {
             _updatesProvider.GameplayFixedUpdate -= OnGameplayFixedUpdate;
             _eventBus.Unsubscribe<PlayerCharPositionChangedEvent>(OnPlayerCharPositionChanged);
+            _eventBus.Unsubscribe<ExpandPointUnlockedEvent>(OnExpandPointUnlockedEvent);
             
             _playerModelHolder.PlayerModel.ShopModel.BuildPointAdded -= OnBuildPointAdded;
+        }
+
+        private void OnExpandPointUnlockedEvent(ExpandPointUnlockedEvent e)
+        {
+            var worldPosition = _gridCalculator.GetCellCenterWorld(e.BuildPointModel.CellCoords);
+            
+            AddShowPosition(worldPosition, DispatchExpandPointShown);
+
+            SetDelayState();
+        }
+
+        private void DispatchExpandPointShown(Vector2 worldPosition)
+        {
+            var cellPosition = _gridCalculator.WorldToCell(worldPosition);
+            
+            _eventBus.Dispatch(new ExpandPointShownEvent(cellPosition));
         }
 
         private void OnBuildPointAdded(BuildPointModel buildPointModel)
         {
             var worldPosition = _gridCalculator.GetCellCenterWorld(buildPointModel.CellCoords);
-            _showPositionsQueue.Enqueue(worldPosition);
+            
+            AddShowPosition(worldPosition);
 
+            SetDelayState();
+        }
+
+        private void SetDelayState()
+        {
             ResetDelay();
             _fixedUpdateAction = ShowRequestedPositionsDelay;
+        }
+
+        private void AddShowPosition(Vector3 worldPosition, Action<Vector2> shownAction = null)
+        {
+            var showPositionData = new ShowPositionItemData()
+            {
+                WorldPosition = worldPosition,
+                PositionShownAction = shownAction,
+            };
+            _showPositionsQueue.Enqueue(showPositionData);
         }
 
         private void ResetDelay()
@@ -114,13 +148,16 @@ namespace View.Camera
 
         private void ShowRequestedPositions()
         {
-            var wasCameraMoved = MoveCameraToPosition(_showPositionsQueue.Peek());
+            var showPositionData = _showPositionsQueue.Peek();
+            
+            var wasCameraMoved = MoveCameraToPosition(showPositionData.WorldPosition);
             if (wasCameraMoved == false)
             {
                 _showPositionsQueue.Dequeue();
+
+                showPositionData.PositionShownAction?.Invoke(showPositionData.WorldPosition);
                 
-                ResetDelay();
-                _fixedUpdateAction = ShowRequestedPositionsDelay;
+                SetDelayState();
             }
         }
 
@@ -172,6 +209,12 @@ namespace View.Camera
             var pos = _mainCamera.transform.position;
             
             return new Vector2(pos.x, pos.y) - _cameraOffset;
+        }
+        
+        private struct ShowPositionItemData
+        {
+            public Vector2 WorldPosition;
+            public Action<Vector2> PositionShownAction;
         }
     }
 }

@@ -66,7 +66,7 @@ namespace View.Game.BuildPoint
         private void Subscribe()
         {
             _eventBus.Subscribe<TriggerSpendMoneyOnBuildPointAnimationEvent>(OnTriggerSpendMoneyOnBuildPointAnimation);
-            _playerModel.LevelChanged += OnLevelChanged;
+            _eventBus.Subscribe<ExpandPointShownEvent>(OnExpandPointShownEvent);
             
             TargetModel.MoneyToBuildLeftChanged += OnMoneyToBuildLeftChanged;
         }
@@ -74,13 +74,15 @@ namespace View.Game.BuildPoint
         private void Unsubscribe()
         {
             _eventBus.Unsubscribe<TriggerSpendMoneyOnBuildPointAnimationEvent>(OnTriggerSpendMoneyOnBuildPointAnimation);
-            _playerModel.LevelChanged -= OnLevelChanged;
+            _eventBus.Unsubscribe<ExpandPointShownEvent>(OnExpandPointShownEvent);
             
             TargetModel.MoneyToBuildLeftChanged -= OnMoneyToBuildLeftChanged;
         }
 
-        private void OnLevelChanged(int newLevel)
+        private void OnExpandPointShownEvent(ExpandPointShownEvent e)
         {
+            if (e.CellPosition != TargetModel.CellCoords) return;
+            
             DisplayTooltip();
         }
 
