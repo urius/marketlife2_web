@@ -287,8 +287,17 @@ namespace Systems
         private void SetMoveToRandomShelfState(CustomerCharModel model)
         {
             var allShelfs = _shopModel.Shelfs;
-            var targetShelf = allShelfs.FirstOrDefault(s => s.HasProducts())
-                              ?? allShelfs[Random.Range(0, allShelfs.Count)];
+            ShelfModel targetShelf = null;
+            foreach (var shelfModel in allShelfs)
+            {
+                if (shelfModel.HasProducts() 
+                    && (targetShelf == null || Random.value < 0.2f))
+                {
+                    targetShelf = shelfModel;
+                }
+            }
+
+            targetShelf ??= allShelfs[Random.Range(0, allShelfs.Count)];
             
             var targetProduct = targetShelf.GetRandomNotEmptyProductOrDefault();
 
