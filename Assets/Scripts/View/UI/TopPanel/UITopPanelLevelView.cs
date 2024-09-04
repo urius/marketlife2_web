@@ -9,6 +9,9 @@ namespace View.UI.TopPanel
         [SerializeField] private TMP_Text _progressText;
         [SerializeField] private TMP_Text _levelStatusText;
         [SerializeField] private RectTransform _progressBarTransform;
+        [SerializeField] private RectTransform _starTransform;
+
+        public RectTransform StarTransform => _starTransform;
         
         private Vector2 _defaultProgressBarSizeDelta;
 

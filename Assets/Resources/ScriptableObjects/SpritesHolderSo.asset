@@ -181,3 +181,7 @@ MonoBehaviour:
     Sprite: {fileID: 21300000, guid: 1a5cefcfd1d224e1ab9b3a64efe27d0c, type: 3}
   - Key: 2
     Sprite: {fileID: 21300000, guid: 84802c54b58814aa8ba8f73f919584d8, type: 3}
+  - Key: 3
+    Sprite: {fileID: 21300000, guid: 4238e70b001554e509658d00576e5564, type: 3}
+  - Key: 4
+    Sprite: {fileID: 21300000, guid: 0ae5cfd724b1f4ed0bf530ebbb0ad768, type: 3}

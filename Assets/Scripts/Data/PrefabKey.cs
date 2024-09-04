@@ -29,5 +29,6 @@ namespace Data
         VFXSmoke,
         VFXBigSmoke,
         ManClockIcon,
+        VFXStars,
     }
 }
