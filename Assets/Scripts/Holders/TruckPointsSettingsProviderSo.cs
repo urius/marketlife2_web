@@ -13,7 +13,7 @@ namespace Holders
 
         public bool TryGetSettingByTruckPointIndex(int index, out TruckPointSetting setting)
         {
-            if (index < _truckPointsSettings.Length)
+            if (HaveSettings(index))
             {
                 setting = _truckPointsSettings[index];
                 return true;
@@ -21,6 +21,11 @@ namespace Holders
 
             setting = default;
             return false;
+        }
+
+        public bool HaveSettings(int truckGatesIndex)
+        {
+            return truckGatesIndex < _truckPointsSettings.Length;
         }
 
         public int TruckPointSettingsCount => _truckPointsSettings.Length;

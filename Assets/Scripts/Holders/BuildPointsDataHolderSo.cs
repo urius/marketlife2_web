@@ -1,6 +1,7 @@
 using Data;
 using Data.Dto.ShopObjects;
 using Data.Internal;
+using Infra.Instance;
 using Other;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -106,19 +107,35 @@ namespace Holders
         public bool TryGetTruckGateBuildPointData(int truckGateIndex, out BuildPointDto result)
         {
             result = default;
+
+            var truckPointSettingsProvider = Instance.Get<TruckPointsSettingsProviderSo>();
+
+            var haveSettings = truckPointSettingsProvider.HaveSettings(truckGateIndex);
             
-            var haveData = truckGateIndex < _truckGates.Length;
-            
-            if (haveData)
+            if (haveSettings)
             {
-                var data = _truckGates[truckGateIndex];
                 var cellCoords = GetTruckPointCoordsByIndex(truckGateIndex);
+                var buildCost = GetTruckGatesBuildCost(truckGateIndex);
 
                 result = new BuildPointDto(
-                    BuildPointType.BuildShopObject, ShopObjectType.TruckPoint, cellCoords, data.BuildCost);
+                    BuildPointType.BuildShopObject, ShopObjectType.TruckPoint, cellCoords, buildCost);
             }
 
-            return haveData;
+            return haveSettings;
+        }
+
+        private int GetTruckGatesBuildCost(int truckGateIndex)
+        {
+            if (truckGateIndex < _truckGates.Length)
+            {
+                return _truckGates[truckGateIndex].BuildCost;
+            }
+            else
+            {
+                return InterpolateBuildCostFor(truckGateIndex, _truckGates.Length - 1,
+                    _truckGates[^1].BuildCost,
+                    _truckGates[^2].BuildCost);
+            }
         }
 
         public Vector2Int GetTruckPointCoordsByIndex(int truckPointIndex)
