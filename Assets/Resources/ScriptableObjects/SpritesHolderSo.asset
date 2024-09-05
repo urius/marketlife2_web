@@ -185,3 +185,9 @@ MonoBehaviour:
     Sprite: {fileID: 21300000, guid: 4238e70b001554e509658d00576e5564, type: 3}
   - Key: 4
     Sprite: {fileID: 21300000, guid: 0ae5cfd724b1f4ed0bf530ebbb0ad768, type: 3}
+  - Key: 5
+    Sprite: {fileID: 21300000, guid: 4f1e17c861a30413fbc43eb5646a5c17, type: 3}
+  - Key: 6
+    Sprite: {fileID: 21300000, guid: 9589203ad95454cdcb8f166e69a8e59e, type: 3}
+  - Key: 7
+    Sprite: {fileID: 21300000, guid: f7f6c08b6fd744611afccce4e561d08b, type: 3}

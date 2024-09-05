@@ -4,7 +4,6 @@ using Events;
 using Holders;
 using Infra.EventBus;
 using Infra.Instance;
-using Model;
 using Model.SpendPoints;
 using UnityEngine;
 using Utils;
@@ -27,20 +26,18 @@ namespace View.Game.BuildPoint
         private readonly Queue<SpendAnimationContext> _contextsQueue = new();
         
         private BuildPointView _view;
-        private PlayerModel _playerModel;
 
         private bool IsSpendLocked => TargetModel.BuildPointType == BuildPointType.Expand &&
                                       ExpandShopHelper.IsExpandUnlocked(TargetModel) == false;
 
         protected override void MediateInternal()
         {
-            _playerModel = _playerModelHolder.PlayerModel;
-            
             _view = InstantiatePrefab<BuildPointView>(PrefabKey.BuildPoint);
             
             _view.transform.position = _gridCalculator.GetCellCenterWorld(TargetModel.CellCoords);
             DisplayTooltip();
 
+            DisplayFloorSquare();
             DisplayFloorIcon();
 
             Subscribe();
@@ -84,12 +81,25 @@ namespace View.Game.BuildPoint
             if (e.CellPosition != TargetModel.CellCoords) return;
             
             DisplayTooltip();
+            DisplayFloorSquare();
         }
 
         private void DisplayTooltip()
         {
             DisplayTooltipIcon();
             DisplayTooltipText();
+        }
+
+        private void DisplayFloorSquare()
+        {
+            if (IsSpendLocked)
+            {
+                _view.SetSquareLockedColor();
+            }
+            else
+            {
+                _view.SetSquareActiveColor();
+            }
         }
 
         private void DisplayTooltipText()
@@ -127,6 +137,25 @@ namespace View.Game.BuildPoint
             {
                 var isExpandX = ExpandShopHelper.IsExpandX(TargetModel.CellCoords);
                 var sprite = _spritesHolderSo.GetCommonSpriteByKey(isExpandX ? SpriteKey.ExpandX : SpriteKey.ExpandY);
+                _view.SetIconOnSquareSprite(sprite);
+            }
+
+            if (TargetModel.BuildPointType == BuildPointType.BuildShopObject)
+            {
+                Sprite sprite;
+                
+                if (TargetModel.ShopObjectType.IsShelf())
+                {
+                    sprite = _spritesHolderSo.GetCommonSpriteByKey(SpriteKey.GUIShelf);
+                }
+                else
+                    sprite = TargetModel.ShopObjectType switch
+                    {
+                        ShopObjectType.CashDesk => _spritesHolderSo.GetCommonSpriteByKey(SpriteKey.GUICashDesk),
+                        ShopObjectType.TruckPoint => _spritesHolderSo.GetCommonSpriteByKey(SpriteKey.GUITruck),
+                        _ => null
+                    };
+
                 _view.SetIconOnSquareSprite(sprite);
             }
         }

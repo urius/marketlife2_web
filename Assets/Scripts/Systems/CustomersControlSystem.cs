@@ -233,7 +233,6 @@ namespace Systems
                 if (customerIndex != 0)
                 {
                     Debug.LogWarning($"{nameof(RemoveFromCashDeskQueue)}: Requested remove not first customer in queue");
-                    Debug.Break();
                 }
                 
                 queue.RemoveAt(customerIndex);

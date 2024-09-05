@@ -7,5 +7,8 @@ namespace Data
         ExpandY,
         GUIMoney50,
         GUIStar,
+        GUIShelf,
+        GUICashDesk,
+        GUITruck,
     }
 }

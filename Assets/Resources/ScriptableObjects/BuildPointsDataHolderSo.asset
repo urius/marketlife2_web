@@ -21,26 +21,26 @@ MonoBehaviour:
   - YCellCoord: 4
     Shelfs:
     - ShopObjectType: 102
-      XCellCoord: 5
+      XCellCoord: 6
       Cost: 3
     - ShopObjectType: 102
-      XCellCoord: 9
+      XCellCoord: 10
       Cost: 8
   - YCellCoord: 7
     Shelfs:
     - ShopObjectType: 104
-      XCellCoord: 5
+      XCellCoord: 6
       Cost: 10
     - ShopObjectType: 104
-      XCellCoord: 9
+      XCellCoord: 10
       Cost: 15
   - YCellCoord: 10
     Shelfs:
     - ShopObjectType: 103
-      XCellCoord: 5
+      XCellCoord: 6
       Cost: 10
     - ShopObjectType: 103
-      XCellCoord: 9
+      XCellCoord: 10
       Cost: 15
   - YCellCoord: 13
     Shelfs:
