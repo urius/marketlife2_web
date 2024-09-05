@@ -70,6 +70,8 @@ namespace View.UI.BottomPanel
 
         private void ProcessNewTargetShelfModel(ShelfModel shelfModel)
         {
+            ResetTargetShelfModel();
+            
             _targetShelfModel = shelfModel;
             
             var canUpgrade = CanUpgradeShelfModel(shelfModel);

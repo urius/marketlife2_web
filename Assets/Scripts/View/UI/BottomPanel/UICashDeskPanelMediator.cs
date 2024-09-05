@@ -96,6 +96,8 @@ namespace View.UI.BottomPanel
 
         private void ProcessNewTargetCashDesk(CashDeskModel cashDeskModel)
         {
+            ResetTargetCashDesk();
+            
             _targetCashDeskModel = cashDeskModel;
 
             UpdateView();

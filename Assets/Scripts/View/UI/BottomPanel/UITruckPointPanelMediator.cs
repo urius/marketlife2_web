@@ -109,6 +109,8 @@ namespace View.UI.BottomPanel
         
         private void ProcessNewTargetTruckPoint(TruckPointModel truckPointModel)
         {
+            ResetTargetTruckPoint();
+            
             _targetTruckPoint = truckPointModel;
             
             UpdateUpgradeBlockView();
