@@ -397,18 +397,7 @@ namespace Systems
 
         private void UpdateMaxCustomersAmount()
         {
-            var amount = 1;
-            
-            foreach (var kvp in _shopModel.ShopObjects)
-            {
-                var shopObjectType = kvp.Value.ShopObjectType;
-                if (shopObjectType.IsShelf()
-                    || shopObjectType == ShopObjectType.CashDesk)
-                {
-                    amount++;
-                }
-            }
-
+            var amount = _shopModel.CashDesks.Count * _shopModel.Size.y;
             _customersModel.MaxCustomersAmount = amount;
         }
 
