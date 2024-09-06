@@ -100,7 +100,7 @@ namespace View.Game.Floors
                 }
             }
 
-            var grassGapCells = 5;
+            var grassGapCells = 10;
             
             for (var x = shopModel.Size.x; x < shopModel.Size.x + grassGapCells; x++)
             {
@@ -144,7 +144,7 @@ namespace View.Game.Floors
             
             var roadTile = _spritesHolder.GetFloorTileByKey(FloorType.Road1);
             
-            for (var i = 0; i < 5; i++)
+            for (var i = 0; i < 10; i++)
             {
                 var cellCoords = new Vector3Int(truckPointCoords.x - i, truckPointCoords.y, 0);
                 _tilemap.SetTile(cellCoords, roadTile);

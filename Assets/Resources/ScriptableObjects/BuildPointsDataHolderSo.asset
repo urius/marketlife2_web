@@ -78,9 +78,5 @@ MonoBehaviour:
     FirstGateOffset: 5
     DefaultGateOffset: 4
   _truckGates:
+  - BuildCost: 5
   - BuildCost: 7
-  - BuildCost: 10
-  - BuildCost: 15
-  - BuildCost: 25
-  - BuildCost: 50
-  - BuildCost: 100
