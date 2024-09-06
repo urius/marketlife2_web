@@ -51,7 +51,7 @@ namespace Utils
             var defaultPlayerDataHolder = Instance.Get<DefaultPlayerDataHolderSo>();
             var initialXShopSize = defaultPlayerDataHolder.DefaultPlayerData.ShopData.Size.x;
 
-            return GetExpandLevel(currentXShopSize, initialXShopSize);
+            return 2 * GetTotalExpandsCount(currentXShopSize, initialXShopSize) - 1 + Constants.MinLevelForShopExpand - 1;
         }
 
         public static int GetYExpandLevel(int currentXShopSize)
@@ -59,16 +59,16 @@ namespace Utils
             var defaultPlayerDataHolder = Instance.Get<DefaultPlayerDataHolderSo>();
             var initialXShopSize = defaultPlayerDataHolder.DefaultPlayerData.ShopData.Size.x;
 
-            return GetExpandLevel(currentXShopSize, initialXShopSize);
+            return 2 * GetTotalExpandsCount(currentXShopSize, initialXShopSize) + Constants.MinLevelForShopExpand - 1;
         }
         
-        private static int GetExpandLevel(int currentShopSize, int initialShopSize)
+        private static int GetTotalExpandsCount(int currentShopSize, int initialShopSize)
         {
             var sizeAfterExpand = currentShopSize + Constants.ExpandCellsAmount;
             var deltaSizeAfterExpand = sizeAfterExpand - initialShopSize;
             var deltaLevelsToExpand = deltaSizeAfterExpand / Constants.ExpandCellsAmount;
-            
-            return deltaLevelsToExpand + Constants.MinLevelForShopExpand - 1;
+
+            return deltaLevelsToExpand;
         }
 
         public static bool IsExpandX(Vector2Int buildPointCellCoords)
