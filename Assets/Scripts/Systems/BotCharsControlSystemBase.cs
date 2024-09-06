@@ -1,3 +1,4 @@
+using System;
 using Data;
 using Holders;
 using Infra.Instance;
@@ -38,7 +39,8 @@ namespace Systems
             {
                 var nearCell = charModel.CellCoords + nearCellOffset;
                 
-                if (nearCell == charModel.PreviousCellPosition
+                if (nearCell == charModel.PreviousCellPosition 
+                    || nearCell == charModel.Previous3CellPosition
                     || CanMakeStepTo(nearCell) == false)
                 {
                     continue;
@@ -53,10 +55,19 @@ namespace Systems
                 }
             }
 
-            if (minDistanceToTarget < 0 && CanMakeStepTo(charModel.PreviousCellPosition))
+            if (minDistanceToTarget < 0)
             {
-                stepCell = charModel.PreviousCellPosition;
-                minDistanceToTarget = (targetPoint - stepCell).magnitude;
+                if (CanMakeStepTo(charModel.PreviousCellPosition))
+                {
+                    stepCell = charModel.PreviousCellPosition;
+                    minDistanceToTarget = (targetPoint - stepCell).magnitude;
+                }
+                else if (IsOneStepAway(charModel.CellCoords, charModel.Previous3CellPosition) 
+                         && CanMakeStepTo(charModel.Previous3CellPosition))
+                {
+                    stepCell = charModel.Previous3CellPosition;
+                    minDistanceToTarget = (targetPoint - stepCell).magnitude;
+                }
             }
 
             if (minDistanceToTarget >= 0)
@@ -75,6 +86,12 @@ namespace Systems
         protected virtual bool CanMakeStepTo(Vector2Int cell)
         {
             return IsWalkable(cell);
+        }
+
+        private static bool IsOneStepAway(Vector2Int coordsA, Vector2Int coordsB)
+        {
+            return coordsA.x == coordsB.x && Math.Abs(coordsA.y - coordsB.y) == 1
+                   || coordsA.y == coordsB.y && Math.Abs(coordsA.x - coordsB.x) == 1;
         }
 
         private bool IsWalkable(Vector2Int cell)

@@ -19,12 +19,16 @@ namespace Model.People
         
         public BotCharStateBase State { get; private set; }
         public Vector2Int PreviousCellPosition { get; private set; }
+        public Vector2Int Previous2CellPosition { get; private set; }
+        public Vector2Int Previous3CellPosition { get; private set; }
 
         public Vector2Int CellCoords
         {
             get => _cellCoords;
             private set
             {
+                Previous3CellPosition = Previous2CellPosition;
+                Previous2CellPosition = PreviousCellPosition;
                 PreviousCellPosition = _cellCoords;
                 _cellCoords = value;
                 CellPositionChanged?.Invoke(value);
