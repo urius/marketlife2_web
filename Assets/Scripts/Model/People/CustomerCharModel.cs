@@ -13,6 +13,7 @@ namespace Model.People
         private const int MaxProductsAmount = 4;
         
         public event Action<int> ProductAdded;
+        public event Action BagStatusUpdated;
         
         private readonly List<ProductType> _products = new(MaxProductsAmount);
 
@@ -21,6 +22,7 @@ namespace Model.People
         {
         }
 
+        public bool HasBag { get; private set; }
         public int ProductsCount => _products.Count;
         public bool HasProducts => ProductsCount > 0;
 
@@ -79,6 +81,12 @@ namespace Model.People
             }
 
             return ProductType.None;
+        }
+
+        public void EnableBag()
+        {
+            HasBag = true;
+            BagStatusUpdated?.Invoke();
         }
     }
 }

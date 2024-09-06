@@ -25,6 +25,8 @@ namespace View.Game.People
         
         private int _flyingProductFromBasketAnimationIndex = 0;
 
+        private bool HasShoppingBasket => TargetModel.HasProducts && !TargetModel.HasBag;
+
         protected override void MediateInternal()
         {
             base.MediateInternal();
@@ -45,12 +47,12 @@ namespace View.Game.People
         
         protected override void ToWalkingState()
         {
-            ManView.ToWalkState(TargetModel.HasProducts);
+            ManView.ToWalkState(HasShoppingBasket);
         }
-        
+
         protected override void ToIdleState()
         {
-            ManView.ToIdleState(TargetModel.HasProducts);
+            ManView.ToIdleState(HasShoppingBasket);
         }
 
         protected override void StepFinishedHandler()
@@ -62,12 +64,14 @@ namespace View.Game.People
         {
             TargetModel.StateChanged += OnStateChanged;
             TargetModel.ProductAdded += OnProductAdded;
+            TargetModel.BagStatusUpdated += OnBagStatusUpdated;
         }
 
         private void Unsubscribe()
         {
             TargetModel.StateChanged -= OnStateChanged;
             TargetModel.ProductAdded -= OnProductAdded;
+            TargetModel.BagStatusUpdated -= OnBagStatusUpdated;
         }
 
         private void OnStateChanged(BotCharStateBase state)
@@ -144,10 +148,14 @@ namespace View.Game.People
             }
             else
             {
-                ManView.SetProductsBasketVisibility(false);
-
                 DispatchAnimationFinishedWithDelay();
             }
+        }
+
+        private void OnBagStatusUpdated()
+        {
+            ManView.SetProductsBasketVisibility(HasShoppingBasket);
+            ManView.SetBagVisibility(TargetModel.HasBag);
         }
 
         private async void DispatchAnimationFinishedWithDelay()

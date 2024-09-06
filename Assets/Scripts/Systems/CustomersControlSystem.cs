@@ -200,6 +200,7 @@ namespace Systems
                 case ShopCharStateName.CustomerPaying:
                     var targetCashDesk = ((CustomerPayingState)model.State).TargetCashDesk;
                     AddMoneyToCashDesk(targetCashDesk, model);
+                    model.EnableBag();
                     SetMoveToExitState(model);
                     RemoveFromCashDeskQueue(targetCashDesk, model);
                     if (targetCashDesk.CashDeskStaffModel != null)

@@ -18,6 +18,7 @@ namespace View.Game.People
         [SerializeField] private GameObject _productsBasketPrefab;
         [SerializeField] private SpriteRenderer _hand2SpriteRenderer;
         [SerializeField] private Transform _bodyTransform;
+        [SerializeField] private Transform _bagTransform;
         [SerializeField] private SpriteRenderer _hairSpriteRenderer;
         [SerializeField] private SpriteRenderer _bodyClothesSpriteRenderer;
         [SerializeField] private SpriteRenderer _hand1ClothesSpriteRenderer;
@@ -80,6 +81,11 @@ namespace View.Game.People
                 _productsBoxPlaceholderTransform.gameObject.SetActive(isVisible);
                 _productsBasketView.SetVisible(isVisible);
             }
+        }
+
+        public void SetBagVisibility(bool isVisible)
+        {
+            _bagTransform.gameObject.SetActive(isVisible);
         }
 
         public void SetProductInBoxSprite(int productIndex, Sprite sprite)
