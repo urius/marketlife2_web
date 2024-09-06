@@ -45,23 +45,31 @@ namespace Holders
 
         public bool TryGetShelfBuildPointData(int rowIndex, int index, out BuildPointDto buildPointDto)
         {
+            var xCoordDefault = Interpolate(_shelfsByRow[0].Shelfs[0].XCellCoord, _shelfsByRow[0].Shelfs[1].XCellCoord,
+                index);
+            var yCoordDefault = Interpolate(_shelfsByRow[0].YCellCoord, _shelfsByRow[1].YCellCoord, rowIndex);
+            
             if (rowIndex < _shelfsByRow.Length)
             {
                 var shelfsInRow = _shelfsByRow[rowIndex].Shelfs;
                 var yCoord = _shelfsByRow[rowIndex].YCellCoord;
+                yCoord = yCoord <= 0 ? yCoordDefault : yCoord;
                 
                 if (index < shelfsInRow.Length)
                 {
-                    buildPointDto = ToBuildPointDto(yCoord, shelfsInRow[index]);
+                    buildPointDto = ToBuildPointDto(yCoord, shelfsInRow[index], xCoordDefault);
                 }
                 else
                 {
                     var buildCost = InterpolateBuildCostFor(index, shelfsInRow.Length - 1,
                         shelfsInRow[^1].Cost,
                         shelfsInRow[^2].Cost);
-                    var coords = InterpolateCellCoordsFor(index, shelfsInRow.Length - 1,
-                        new Vector2Int(shelfsInRow[^1].XCellCoord, yCoord),
-                        new Vector2Int(shelfsInRow[^2].XCellCoord, yCoord));
+                    
+                    var coords = shelfsInRow[^1].XCellCoord <= 0
+                        ? new Vector2Int(xCoordDefault, yCoord)
+                        : InterpolateCellCoordsFor(index, shelfsInRow.Length - 1,
+                            new Vector2Int(shelfsInRow[^1].XCellCoord, yCoord),
+                            new Vector2Int(shelfsInRow[^2].XCellCoord, yCoord));
 
                     buildPointDto = new BuildPointDto(
                         BuildPointType.BuildShopObject, shelfsInRow[0].ShopObjectType, coords, buildCost);
@@ -73,6 +81,11 @@ namespace Holders
             buildPointDto = default;
             
             return false;
+        }
+
+        private static int Interpolate(int firstValue, int secondValue, int targetIndex)
+        {
+            return firstValue + (secondValue - firstValue) * targetIndex;
         }
 
         public int RowIndexToYCoord(int rowIndex)
@@ -183,12 +196,15 @@ namespace Holders
             return deltaIndex * deltaCoords + lastItemCellCoords;
         }
 
-        private static BuildPointDto ToBuildPointDto(int yCoord, ShelfBuildPointData shelfBuildPointData)
+        private static BuildPointDto ToBuildPointDto(int yCoord, ShelfBuildPointData shelfBuildPointData,
+            int xCoordDefault)
         {
+            var xCoord = shelfBuildPointData.XCellCoord <= 0 ? xCoordDefault : shelfBuildPointData.XCellCoord;
+            
             return new BuildPointDto(
                 BuildPointType.BuildShopObject,
                 shelfBuildPointData.ShopObjectType,
-                new Vector2Int(shelfBuildPointData.XCellCoord, yCoord),
+                new Vector2Int(xCoord, yCoord),
                 shelfBuildPointData.Cost);
         }
     }

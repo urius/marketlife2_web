@@ -21,59 +21,163 @@ MonoBehaviour:
   - YCellCoord: 4
     Shelfs:
     - ShopObjectType: 102
-      XCellCoord: 6
+      XCellCoord: 5
       Cost: 3
     - ShopObjectType: 102
-      XCellCoord: 10
+      XCellCoord: 9
       Cost: 8
   - YCellCoord: 7
     Shelfs:
     - ShopObjectType: 104
-      XCellCoord: 6
+      XCellCoord: 0
       Cost: 10
     - ShopObjectType: 104
-      XCellCoord: 10
+      XCellCoord: 0
       Cost: 15
-  - YCellCoord: 10
+  - YCellCoord: -1
     Shelfs:
     - ShopObjectType: 103
-      XCellCoord: 6
+      XCellCoord: 0
       Cost: 10
     - ShopObjectType: 103
-      XCellCoord: 10
+      XCellCoord: 0
       Cost: 15
-  - YCellCoord: 13
+  - YCellCoord: -1
     Shelfs:
     - ShopObjectType: 101
-      XCellCoord: 5
+      XCellCoord: 0
       Cost: 10
     - ShopObjectType: 101
-      XCellCoord: 9
+      XCellCoord: 0
       Cost: 15
-  - YCellCoord: 16
+  - YCellCoord: -1
     Shelfs:
     - ShopObjectType: 102
-      XCellCoord: 5
+      XCellCoord: 0
       Cost: 10
     - ShopObjectType: 102
-      XCellCoord: 9
+      XCellCoord: 0
       Cost: 15
-  - YCellCoord: 19
+  - YCellCoord: -1
     Shelfs:
     - ShopObjectType: 104
-      XCellCoord: 5
+      XCellCoord: 0
       Cost: 10
     - ShopObjectType: 104
-      XCellCoord: 9
+      XCellCoord: 0
       Cost: 15
-  - YCellCoord: 22
+  - YCellCoord: -1
     Shelfs:
     - ShopObjectType: 103
-      XCellCoord: 5
+      XCellCoord: 0
       Cost: 10
     - ShopObjectType: 103
-      XCellCoord: 9
+      XCellCoord: 0
       Cost: 15
+  - YCellCoord: -1
+    Shelfs:
+    - ShopObjectType: 101
+      XCellCoord: 0
+      Cost: 15
+    - ShopObjectType: 101
+      XCellCoord: 0
+      Cost: 20
+  - YCellCoord: -1
+    Shelfs:
+    - ShopObjectType: 102
+      XCellCoord: 0
+      Cost: 25
+    - ShopObjectType: 102
+      XCellCoord: 0
+      Cost: 30
+  - YCellCoord: -1
+    Shelfs:
+    - ShopObjectType: 104
+      XCellCoord: 0
+      Cost: 25
+    - ShopObjectType: 104
+      XCellCoord: 0
+      Cost: 30
+  - YCellCoord: -1
+    Shelfs:
+    - ShopObjectType: 103
+      XCellCoord: 0
+      Cost: 25
+    - ShopObjectType: 103
+      XCellCoord: 0
+      Cost: 30
+  - YCellCoord: -1
+    Shelfs:
+    - ShopObjectType: 101
+      XCellCoord: 0
+      Cost: 25
+    - ShopObjectType: 101
+      XCellCoord: 0
+      Cost: 30
+  - YCellCoord: -1
+    Shelfs:
+    - ShopObjectType: 102
+      XCellCoord: 0
+      Cost: 30
+    - ShopObjectType: 102
+      XCellCoord: 0
+      Cost: 35
+  - YCellCoord: -1
+    Shelfs:
+    - ShopObjectType: 104
+      XCellCoord: 0
+      Cost: 30
+    - ShopObjectType: 104
+      XCellCoord: 0
+      Cost: 35
+  - YCellCoord: -1
+    Shelfs:
+    - ShopObjectType: 103
+      XCellCoord: 0
+      Cost: 30
+    - ShopObjectType: 103
+      XCellCoord: 0
+      Cost: 35
+  - YCellCoord: -1
+    Shelfs:
+    - ShopObjectType: 101
+      XCellCoord: 0
+      Cost: 30
+    - ShopObjectType: 101
+      XCellCoord: 0
+      Cost: 35
+  - YCellCoord: -1
+    Shelfs:
+    - ShopObjectType: 102
+      XCellCoord: 0
+      Cost: 50
+    - ShopObjectType: 102
+      XCellCoord: 0
+      Cost: 60
+  - YCellCoord: -1
+    Shelfs:
+    - ShopObjectType: 104
+      XCellCoord: 0
+      Cost: 50
+    - ShopObjectType: 104
+      XCellCoord: 0
+      Cost: 60
+  - YCellCoord: -1
+    Shelfs:
+    - ShopObjectType: 103
+      XCellCoord: 0
+      Cost: 50
+    - ShopObjectType: 103
+      XCellCoord: 0
+      Cost: 60
+  - YCellCoord: -1
+    Shelfs:
+    - ShopObjectType: 101
+      XCellCoord: 0
+      Cost: 50
+    - ShopObjectType: 101
+      XCellCoord: 0
+      Cost: 60
   _truckGatePositionSettings:
     FirstGateOffset: 5
     DefaultGateOffset: 4

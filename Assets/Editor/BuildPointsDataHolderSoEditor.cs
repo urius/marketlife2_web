@@ -26,9 +26,8 @@ namespace Editor
 
         private void DrawGizmos(SceneView sceneView)
         {
-
             var shopObjectOffset = Constants.ShopObjectRelativeToBuildPointOffset;
-            for (var i = 0; i < 5; i++)
+            for (var i = 0; i < 15; i++)
             {
                 var buildPointData = _targetSo.GetCashDeskBuildPointData(i);
 
@@ -41,7 +40,7 @@ namespace Editor
                 DrawGizmoSolidDisc(truckPointCoords + shopObjectOffset);
                 DrawGizmoSolidDisc(truckPointCoords + shopObjectOffset + Vector2Int.down);
 
-                for (var row = 0; row < 15; row++)
+                for (var row = 0; row < 20; row++)
                 {
                     if (_targetSo.TryGetShelfBuildPointData(row, i, out buildPointData))
                     {

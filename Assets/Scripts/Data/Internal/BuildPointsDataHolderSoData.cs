@@ -1,5 +1,4 @@
 using System;
-using Data.Dto.ShopObjects;
 using Other;
 using UnityEngine;
 
@@ -17,7 +16,7 @@ namespace Data.Internal
     {
         public int YCellCoord;
         
-        [LabeledArray(nameof(ShopObjectDto.CellCoords))]
+        [LabeledArray(nameof(ShelfBuildPointData.ShopObjectType))]
         public ShelfBuildPointData[] Shelfs;
     }
     
