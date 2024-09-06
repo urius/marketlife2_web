@@ -31,18 +31,16 @@ namespace Editor
             for (var i = 0; i < 5; i++)
             {
                 var buildPointData = _targetSo.GetCashDeskBuildPointData(i);
-                
+
                 DrawGizmoDisc(buildPointData.CellCoords);
                 DrawGizmoSolidDisc(buildPointData.CellCoords + shopObjectOffset);
                 DrawGizmoSolidDisc(buildPointData.CellCoords + shopObjectOffset + Vector2Int.down);
 
-                if (_targetSo.TryGetTruckGateBuildPointData(i, out buildPointData))
-                {
-                    DrawGizmoDisc(buildPointData.CellCoords);
-                    DrawGizmoSolidDisc(buildPointData.CellCoords + shopObjectOffset);
-                    DrawGizmoSolidDisc(buildPointData.CellCoords + shopObjectOffset + Vector2Int.down);
-                }
-                
+                var truckPointCoords = _targetSo.GetTruckPointCoordsByIndex(i);
+                DrawGizmoDisc(truckPointCoords);
+                DrawGizmoSolidDisc(truckPointCoords + shopObjectOffset);
+                DrawGizmoSolidDisc(truckPointCoords + shopObjectOffset + Vector2Int.down);
+
                 for (var row = 0; row < 15; row++)
                 {
                     if (_targetSo.TryGetShelfBuildPointData(row, i, out buildPointData))
@@ -52,7 +50,6 @@ namespace Editor
                         DrawGizmoSolidDisc(buildPointData.CellCoords + shopObjectOffset + Vector2Int.left);
                     }
                 }
-
             }
         }
 
