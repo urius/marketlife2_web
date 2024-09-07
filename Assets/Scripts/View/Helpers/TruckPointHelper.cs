@@ -26,14 +26,9 @@ namespace View.Helpers
             return targetCellCoords == interactionCell1 || targetCellCoords == interactionCell2;
         }
         
-        public static Vector2Int GetTruckPointWaitingPoint(Vector2Int truckPointPosition, int staffIndex)
+        public static Vector2Int GetTruckPointWaitingPoint(Vector2Int truckPointPosition)
         {
-            return staffIndex switch
-            {
-                0 => truckPointPosition + SecondaryInteractionCellOffset + Vector2Int.down,
-                1 => truckPointPosition + PrimaryInteractionCellOffset + Vector2Int.up,
-                _ => truckPointPosition
-            };
+            return truckPointPosition + SecondaryInteractionCellOffset + Vector2Int.down;
         }
     }
 }

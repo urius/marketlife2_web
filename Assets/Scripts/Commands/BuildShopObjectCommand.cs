@@ -4,7 +4,6 @@ using Data;
 using Holders;
 using Infra.CommandExecutor;
 using Infra.Instance;
-using Model.People;
 using Model.ShopObjects;
 using Model.SpendPoints;
 using UnityEngine;
@@ -48,8 +47,7 @@ namespace Commands
                         result = new TruckPointModel(buildCoords, truckPointsSettings,
                             truckPointsSettings.Products.Take(TruckPointModel.DefaultProductBoxesAmount).ToArray(),
                             upgradesCount: 0,
-                            Constants.TruckArrivingDuration + 1,
-                            Array.Empty<TruckPointStaffCharModel>());
+                            Constants.TruckArrivingDuration + 1);
                     }
                     else
                     {

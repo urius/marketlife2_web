@@ -7,6 +7,7 @@ namespace Data.Dto
     {
         public int Money;
         public int Level;
+        public int StaffWorkTimeSeconds;
         public ShopDataDto ShopData;
         public PlayerCharDataDto PlayerCharData;
     }

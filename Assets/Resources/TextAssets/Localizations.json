@@ -121,6 +121,11 @@
 			"ru": "нанять"
 		},
 		{
+			"key": "prolong_button",
+			"en": "prolong",
+			"ru": "продлить"
+		},
+		{
 			"key": "upgrade_button",
 			"en": "upgrade",
 			"ru": "улучшить"
@@ -144,6 +149,11 @@
 			"key": "hired",
 			"en": "hired",
 			"ru": "нанято"
+		},
+		{
+			"key": "prolonged",
+			"en": "prolonged",
+			"ru": "продлено"
 		},
 		{
 			"key": "upgrade_shelf",

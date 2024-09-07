@@ -1,4 +1,5 @@
 using Infra.Instance;
+using Model.People;
 using Model.ShopObjects;
 
 namespace Holders
@@ -10,30 +11,33 @@ namespace Holders
 
         public int GetTruckPointHireStaffCost(TruckPointModel truckPointModel)
         {
-            return truckPointModel.GetHiredStaffAmount() switch
-            {
-                <= 0 => DefaultHireStaffMoneyCost,
-                <= 1 => HireStaffWatchAdsCost,
-                _ => -1
-            };
+            return GetHireStaffCost(truckPointModel.StaffCharModel);
         }
 
-        public int GetCashDeskHireStaffCost()
+        public int GetCashDeskHireStaffCost(CashDeskModel cashDeskModel)
+        {
+            return GetHireStaffCost(cashDeskModel.CashDeskStaffModel);
+        }
+
+        private static int GetHireStaffCost(StaffCharModelBase staffCharModel)
         {
             var playerModelHolder = Instance.Get<IPlayerModelHolder>();
             var playerModel = playerModelHolder.PlayerModel;
-
-            //var cashDesksAmount = playerModel.ShopModel.GetCashDeskModelsAmount();
-
-            var cost = DefaultHireStaffMoneyCost;
-
-            return cost <= playerModel.MoneyAmount ? cost : HireStaffWatchAdsCost;
+            
+            if (staffCharModel == null || staffCharModel.WorkSecondsLeft <= playerModel.StaffWorkTimeSeconds)
+            {
+                return DefaultHireStaffMoneyCost;
+            }
+            else
+            {
+                return HireStaffWatchAdsCost;
+            }
         }
     }
 
     public interface IHireStaffCostProvider
     {
         public int GetTruckPointHireStaffCost(TruckPointModel truckPointModel);
-        public int GetCashDeskHireStaffCost();
+        public int GetCashDeskHireStaffCost(CashDeskModel cashDeskModel);
     }
 }

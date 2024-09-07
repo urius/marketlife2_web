@@ -1,7 +1,9 @@
 using Data;
 using Events;
+using Holders;
 using Infra.EventBus;
 using Infra.Instance;
+using Model;
 using Model.People;
 using UnityEngine;
 using Utils;
@@ -13,11 +15,15 @@ namespace View.Game.People
     {
         private readonly IGridCalculator _gridCalculator = Instance.Get<IGridCalculator>();
         private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
+        private readonly IPlayerModelHolder _playerModelHolder = Instance.Get<IPlayerModelHolder>();
         
         private ManClockView _clockView;
+        private PlayerModel _playerModel;
 
         protected override void MediateInternal()
         {
+            _playerModel = _playerModelHolder.PlayerModel;
+            
             base.MediateInternal();
 
             ManView.transform.position = 0.5f *
@@ -84,7 +90,7 @@ namespace View.Game.People
 
         private void UpdateClockIconColor()
         {
-            var color = StaffCharHelper.GetClockColorByPercent((float)TargetModel.WorkSecondsLeft / TargetModel.WorkSecondsSetting);
+            var color = StaffCharHelper.GetClockColorByPercent((float)TargetModel.WorkSecondsLeft / _playerModel.StaffWorkTimeSeconds);
             _clockView.SetIconColor(color);
         }
 

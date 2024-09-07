@@ -18,9 +18,6 @@ namespace Systems
 {
     public class StaffControlSystem : BotCharsControlSystemBase
     {
-        private const int StaffWorkTimeForHiringByMoney = 60;
-        private const int StaffWorkTimeForHiringByAds = 5 * StaffWorkTimeForHiringByMoney;
-
         private readonly IPlayerModelHolder _playerModelHolder = Instance.Get<IPlayerModelHolder>();
         private readonly IUpdatesProvider _updatesProvider = Instance.Get<IUpdatesProvider>();
         private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
@@ -29,11 +26,7 @@ namespace Systems
         private readonly IGridCalculator _gridCalculator = Instance.Get<IGridCalculator>();
 
         private readonly Dictionary<TruckPointStaffCharModel, TruckPointModel> _truckPointByStaffModel = new();
-        private readonly Vector2Int[] _staffInitialPointOffsets =
-        {
-            Vector2Int.right + 2 * Vector2Int.down,
-            Vector2Int.right + Vector2Int.up,
-        };
+        private readonly Vector2Int _staffInitialPointOffset = Vector2Int.right + 2 * Vector2Int.down;
         
         private ShopModel _shopModel;
         private BotCharsOwnedCellModel _truckPointStaffOwnedCellModel;
@@ -89,21 +82,20 @@ namespace Systems
         {
             foreach (var truckPointModel in _shopModel.TruckPoints)
             {
-                foreach (var staffCharModel in truckPointModel.StaffCharModels)
+                var staffCharModel = truckPointModel.StaffCharModel;
+                
+                if (staffCharModel != null
+                    && staffCharModel.ProductsBox == e.ProductBoxModel)
                 {
-                    if (staffCharModel != null 
-                        && staffCharModel.ProductsBox == e.ProductBoxModel)
+                    var state = (TruckPointStaffPutProductsOnShelfState)staffCharModel.State;
+                    var triggerPutNextProductResult = TryPutNextProductOnShelf(staffCharModel, state.TargetShelf);
+
+                    if (triggerPutNextProductResult == false)
                     {
-                        var state = (TruckPointStaffPutProductsOnShelfState)staffCharModel.State;
-                        var triggerPutNextProductResult = TryPutNextProductOnShelf(staffCharModel, state.TargetShelf);
-
-                        if (triggerPutNextProductResult == false)
-                        {
-                            ProcessNextState(staffCharModel);
-                        }
-
-                        return;
+                        ProcessNextState(staffCharModel);
                     }
+
+                    return;
                 }
             }
         }
@@ -128,14 +120,12 @@ namespace Systems
 
         private void ProcessTruckPointStaff(TruckPointModel truckPointModel)
         {
-            foreach (var staffCharModel in truckPointModel.StaffCharModels)
+            var staffCharModel = truckPointModel.StaffCharModel;
+            if (staffCharModel != null)
             {
-                if (staffCharModel != null)
-                {
-                    ProcessIdleStaffIfNeeded(staffCharModel);
-                    
-                    ProcessStaffTimeLogic(truckPointModel, staffCharModel);
-                }
+                ProcessIdleStaffIfNeeded(staffCharModel);
+
+                ProcessStaffTimeLogic(truckPointModel, staffCharModel);
             }
         }
 
@@ -153,7 +143,7 @@ namespace Systems
             {
                 if (staffCharModel.HasProducts == false)
                 {
-                    truckPointModel.RemoveStaff(staffCharModel);
+                    truckPointModel.RemoveStaff();
                     ConsiderStaffRemoved(staffCharModel);
                 }
             }
@@ -189,11 +179,9 @@ namespace Systems
         {
             foreach (var truckPointModel in _shopModel.TruckPoints)
             {
-                foreach (var staffCharModel in truckPointModel.StaffCharModels)
+                if (truckPointModel.HasStaff)
                 {
-                    if (staffCharModel == null) continue;
-
-                    ConsiderNewStaff(staffCharModel, truckPointModel);
+                    ConsiderNewStaff(truckPointModel.StaffCharModel, truckPointModel);
                 }
             }
         }
@@ -396,28 +384,11 @@ namespace Systems
         
         private void SetMoveToTruckPointWaitingCellState(TruckPointStaffCharModel charModel, TruckPointModel refTruckPointModel)
         {
-            var index = GetStaffIndexInTruckPointModel(charModel);
-            if (index >= 0)
-            {
-                var targetPoint = TruckPointHelper.GetTruckPointWaitingPoint(refTruckPointModel.CellCoords, index);
+                var targetPoint = TruckPointHelper.GetTruckPointWaitingPoint(refTruckPointModel.CellCoords);
             
                 charModel.SetMoveToTruckPointWaitingCellState(refTruckPointModel, targetPoint);
 
                 MakeNextStep(charModel, targetPoint);
-            }
-        }
-
-        private int GetStaffIndexInTruckPointModel(TruckPointStaffCharModel charModel)
-        {
-            foreach (var truckPoint in _shopModel.TruckPoints)
-            {
-                for (var i = 0; i < truckPoint.StaffCharModels.Count; i++)
-                {
-                    if (truckPoint.StaffCharModels[i] == charModel) return i;
-                }
-            }
-
-            return -1;
         }
 
         private void OnTruckPointHireStaffButtonClickedEvent(TruckPointHireStaffButtonClickedEvent e)
@@ -425,13 +396,11 @@ namespace Systems
             var truckPointModel = e.TruckPointModel;
             var hireCost = _hireStaffCostProvider.GetTruckPointHireStaffCost(truckPointModel);
             
-            if (truckPointModel.CanAddStaff() == false) return;
-            
             if (hireCost > 0)
             {
                 if (_playerModel.TrySpendMoney(hireCost))
                 {
-                    HireNewStaffTo(truckPointModel, StaffWorkTimeForHiringByMoney);
+                    HireOrProlongStaffTo(truckPointModel);
                 }
             }
             else if (hireCost == HireStaffCostProvider.HireStaffWatchAdsCost)
@@ -444,13 +413,13 @@ namespace Systems
         private void OnCashDeskHireStaffButtonClickedEvent(CashDeskHireStaffButtonClickedEvent e)
         {
             var cashDeskModel = e.CashDeskModel;
-            var hireCost = e.HireStaffCost;
+            var hireCost = _hireStaffCostProvider.GetCashDeskHireStaffCost(cashDeskModel);
             
             if (hireCost > 0)
             {
                 if (_playerModel.TrySpendMoney(hireCost))
                 {
-                    HireNewStaffTo(cashDeskModel, StaffWorkTimeForHiringByMoney);
+                    HireOrProlongStaffTo(cashDeskModel);
                 }
             }
             else if (hireCost == HireStaffCostProvider.HireStaffWatchAdsCost)
@@ -460,27 +429,38 @@ namespace Systems
             }
         }
 
-        private void HireNewStaffTo(TruckPointModel truckPointModel, int workTime)
+        private void HireOrProlongStaffTo(TruckPointModel truckPointModel)
         {
-            var slotIndex = truckPointModel.GetReadyToHireStaffSlotIndex();
-            var offset = slotIndex < _staffInitialPointOffsets.Length
-                ? _staffInitialPointOffsets[slotIndex]
-                : _staffInitialPointOffsets[0];
-            var staffInitialPosition = truckPointModel.CellCoords + offset;
+            var workTime = _playerModel.StaffWorkTimeSeconds;
 
-            var staffModel = new TruckPointStaffCharModel(staffInitialPosition, workTime);
-
-            ConsiderNewStaff(staffModel, truckPointModel);
-            
-            truckPointModel.AddStaffToFreeSlot(staffModel);
+            if (truckPointModel.HasStaff)
+            {
+                truckPointModel.StaffCharModel.ProlongWorkTime(workTime);
+            }
+            else
+            {
+                var staffInitialPosition = truckPointModel.CellCoords + _staffInitialPointOffset;
+                
+                var staffModel = new TruckPointStaffCharModel(staffInitialPosition, workTime);
+                ConsiderNewStaff(staffModel, truckPointModel);
+                truckPointModel.AddStaff(staffModel);
+            }
         }
 
-        private static void HireNewStaffTo(CashDeskModel cashDeskModel, int workingTime)
+        private void HireOrProlongStaffTo(CashDeskModel cashDeskModel)
         {
-            var staffModel = new CashDeskStaffModel(
-                cashDeskModel.CellCoords + Constants.CashDeskStaffPositionOffset, workingTime, workingTime);
+            if (cashDeskModel.HasCashMan)
+            {
+                cashDeskModel.CashDeskStaffModel.ProlongWorkTime(_playerModel.StaffWorkTimeSeconds);
+            }
+            else
+            {
+                var staffModel = new CashDeskStaffModel(
+                    cashDeskModel.CellCoords + Constants.CashDeskStaffPositionOffset, 
+                    _playerModel.StaffWorkTimeSeconds);
             
-            cashDeskModel.AddStaff(staffModel);
+                cashDeskModel.AddStaff(staffModel);
+            }
         }
 
         private bool IsNearToShelf(Vector2Int cellCoords, ShelfModel shelfModel)

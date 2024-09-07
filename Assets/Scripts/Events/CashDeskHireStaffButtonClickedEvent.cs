@@ -5,12 +5,10 @@ namespace Events
     public struct CashDeskHireStaffButtonClickedEvent
     {
         public readonly CashDeskModel CashDeskModel;
-        public readonly int HireStaffCost;
 
-        public CashDeskHireStaffButtonClickedEvent(CashDeskModel cashDeskModel, int hireStaffCost)
+        public CashDeskHireStaffButtonClickedEvent(CashDeskModel cashDeskModel)
         {
             CashDeskModel = cashDeskModel;
-            HireStaffCost = hireStaffCost;
         }
     }
 }

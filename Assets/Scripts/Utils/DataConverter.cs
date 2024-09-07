@@ -17,7 +17,7 @@ namespace Utils
             var shopModel = ToShopModel(dataDto.ShopData);
             var playerCharData = ToPlayerCharModel(dataDto.PlayerCharData);
 
-            var result = new PlayerModel(shopModel, dataDto.Money, dataDto.Level, playerCharData);
+            var result = new PlayerModel(shopModel, dataDto.Money, dataDto.Level, dataDto.StaffWorkTimeSeconds, playerCharData);
 
             return result;
         }

@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace View.Game.People
@@ -9,8 +10,10 @@ namespace View.Game.People
         public static Color GetClockColorByPercent(float percent)
         {
             var colorIndex = percent * (TimeProgressColors.Length - 1);
-            var index = (int)(colorIndex);
+            var index = (int)colorIndex;
         
+            index = Math.Clamp(index, 0, TimeProgressColors.Length - 1);
+            
             return TimeProgressColors[index];
         }
     }

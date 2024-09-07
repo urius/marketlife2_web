@@ -12,10 +12,12 @@ namespace Model
         public readonly ShopModel ShopModel;
         public readonly PlayerCharModel PlayerCharModel;
 
-        public PlayerModel(ShopModel shopModel, int moneyAmount, int level, PlayerCharModel playerCharModel)
+        public PlayerModel(ShopModel shopModel, int moneyAmount, int level, int staffWorkTimeSeconds,
+            PlayerCharModel playerCharModel)
         {
             ShopModel = shopModel;
             MoneyAmount = moneyAmount;
+            StaffWorkTimeSeconds = staffWorkTimeSeconds;
             Level = level <= 0 ? 1 : level;
             PlayerCharModel = playerCharModel;
         }
@@ -24,6 +26,7 @@ namespace Model
         public bool IsLevelProcessingActive { get; private set; }
         public int MoneyAmount { get; private set; }
         public int Level { get; private set; }
+        public int StaffWorkTimeSeconds { get; private set; }
         public int LevelIndex => Level - 1;
 
         public void ChangeMoney(int deltaMoney)

@@ -92,12 +92,9 @@ namespace View.Game.People
 
         private void HandleTruckPointStaffMediators(TruckPointModel truckPointModel)
         {
-            foreach (var staffCharModel in truckPointModel.StaffCharModels)
+            if (truckPointModel.HasStaff)
             {
-                if (staffCharModel != null)
-                {
-                    MediateTruckPointStaff(staffCharModel);
-                }
+                MediateTruckPointStaff(truckPointModel.StaffCharModel);
             }
         }
 

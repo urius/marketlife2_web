@@ -15,6 +15,7 @@ MonoBehaviour:
   _defaultPlayerData:
     Money: 20
     Level: 1
+    StaffWorkTimeSeconds: 60
     ShopData:
       Size: {x: 8, y: 8}
       WallType: 1

@@ -7,6 +7,7 @@ using Model;
 using Model.People;
 using Model.ShopObjects;
 using Utils;
+using View.Helpers;
 
 namespace View.UI.BottomPanel
 {
@@ -23,6 +24,7 @@ namespace View.UI.BottomPanel
         private PlayerCharModel _playerCharModel;
         private TruckPointModel _targetTruckPoint;
         private string _secondsPostfix;
+        private int _workSecondsLeftTemp;
 
         protected override void MediateInternal()
         {
@@ -43,7 +45,7 @@ namespace View.UI.BottomPanel
             _playerCharModel.NearShopObjectsUpdated += OnNearShopObjectsUpdated;
             PanelView.UpgradeButtonClicked += OnUpgradeButtonClicked;
             PanelView.HireStaffButtonClicked += OnHireStaffButtonClicked;
-            _updatesProvider.SecondPassed += OnSecondPassed;
+            _updatesProvider.GameplayFixedUpdate += OnGameplayFixedUpdate;
         }
 
         private void Unsubscribe()
@@ -51,7 +53,7 @@ namespace View.UI.BottomPanel
             _playerCharModel.NearShopObjectsUpdated -= OnNearShopObjectsUpdated;
             PanelView.UpgradeButtonClicked -= OnUpgradeButtonClicked;
             PanelView.HireStaffButtonClicked -= OnHireStaffButtonClicked;
-            _updatesProvider.SecondPassed -= OnSecondPassed;
+            _updatesProvider.GameplayFixedUpdate -= OnGameplayFixedUpdate;
             
             UnsubscribeFromTruckPoint(_targetTruckPoint);
         }
@@ -172,10 +174,7 @@ namespace View.UI.BottomPanel
         {
             UpdateHireBlockView();
             
-            _eventBus.Dispatch(
-                new UIRequestFlyingTextEvent(
-                    _localizationProvider.GetLocale(Constants.LocalizationHired),
-                    PanelView.HireStaffButtonView.transform.position));
+            RequestFlyingText(Constants.LocalizationHired, PanelView.HireStaffButtonView.transform);
         }
 
         private void OnStaffRemoved(TruckPointStaffCharModel __)
@@ -189,12 +188,20 @@ namespace View.UI.BottomPanel
             SetupHireButton(_targetTruckPoint);
         }
 
-        private void OnSecondPassed()
+        private void OnGameplayFixedUpdate()
         {
-            if (_targetTruckPoint != null)
+            if (_targetTruckPoint == null) return;
+            
+            var workSecondsLeft = _targetTruckPoint.HasStaff ? _targetTruckPoint.StaffCharModel.WorkSecondsLeft : -1;
+            if (workSecondsLeft == _workSecondsLeftTemp) return;
+            
+            if (_workSecondsLeftTemp > 0 && workSecondsLeft > _workSecondsLeftTemp)
             {
-                UpdateHireBlockView();
+                RequestFlyingText(Constants.LocalizationProlonged, PanelView.HireStaffButtonView.transform);
             }
+
+            _workSecondsLeftTemp = workSecondsLeft;
+            UpdateHireBlockView();
         }
 
         private void SetupUpgradeButton(TruckPointModel targetTruckPoint)
@@ -220,50 +227,21 @@ namespace View.UI.BottomPanel
 
         private void DisplayStaff(TruckPointModel truckPointModel)
         {
-            for (var i = 0; i < truckPointModel.StaffCharModels.Count; i++)
+            var staffModel = truckPointModel.StaffCharModel;
+            
+            PanelView.SetStaffEnabled(truckPointModel.HasStaff);
+            
+            if (staffModel != null)
             {
-                var staffModel = truckPointModel.StaffCharModels[i];
-                var isStaffExists = staffModel != null;
-                PanelView.SetStaffEnabled(i, isStaffExists);
-                if (staffModel != null)
-                {
-                    PanelView.SetStaffWorkTimerText(i, $"{staffModel.WorkSecondsLeft}{_secondsPostfix}");
-                    PanelView.SetStaffWorkTimeProgress(i, (float)staffModel.WorkSecondsLeft / staffModel.WorkSecondsSetting);
-                }
+                PanelView.SetStaffWorkTimerText($"{staffModel.WorkSecondsLeft}{_secondsPostfix}");
             }
         }
 
         private void SetupHireButton(TruckPointModel truckPointModel)
         {
             var hireStaffCost = _hireStaffCostProvider.GetTruckPointHireStaffCost(truckPointModel);
-
-            PanelView.SetHireStaffButtonInteractable(hireStaffCost >= 0);
             
-            switch (hireStaffCost)
-            {
-                case > 0:
-                {
-                    var hireText =
-                        $"{_localizationProvider.GetLocale(Constants.LocalizationHireButton)}\n{FormattingHelper.ToMoneyWithIconTextFormat(hireStaffCost)}";
-                    PanelView.SetHireStaffButtonText(hireText);
-                
-                    PanelView.HireStaffButtonView.SetOrangeSkinData();
-                    break;
-                }
-                case 0:
-                {
-                    var hireText =
-                        $"{Constants.TextIconAds}\n{_localizationProvider.GetLocale(Constants.LocalizationHireButton)}";
-                    PanelView.SetHireStaffButtonText(hireText);
-                
-                    PanelView.HireStaffButtonView.SetCrimsonSkinData();
-                    break;
-                }
-                default:
-                    PanelView.SetHireStaffButtonText(_localizationProvider.GetLocale(Constants.LocalizationHireButton));
-                    PanelView.HireStaffButtonView.SetOrangeSkinData();
-                    break;
-            }
+            ButtonsHelper.SetupHireButtonText(PanelView.HireStaffButtonView, truckPointModel.StaffCharModel, hireStaffCost);
         }
     }
 }

@@ -6,7 +6,7 @@ using Infra.Instance;
 using Model;
 using Model.People;
 using Model.ShopObjects;
-using Utils;
+using View.Helpers;
 
 namespace View.UI.BottomPanel
 {
@@ -21,7 +21,7 @@ namespace View.UI.BottomPanel
         private PlayerCharModel _playerCharModel;
         private string _secondsPostfix;
         private CashDeskModel _targetCashDeskModel;
-        private int _currentHireStaffCost;
+        private int _workSecondsLeftTemp;
 
         protected override void MediateInternal()
         {
@@ -41,18 +41,29 @@ namespace View.UI.BottomPanel
         {
             _playerCharModel.NearShopObjectsUpdated += OnNearShopObjectsUpdated;
             PanelView.HireStaffButtonClicked += OnHireStaffButtonClicked;
-            _updatesProvider.SecondPassed += OnSecondPassed;
+            _updatesProvider.GameplayFixedUpdate += OnGameplayFixedUpdate;
         }
 
         private void Unsubscribe()
         {
             _playerCharModel.NearShopObjectsUpdated -= OnNearShopObjectsUpdated;
             PanelView.HireStaffButtonClicked -= OnHireStaffButtonClicked;
-            _updatesProvider.SecondPassed -= OnSecondPassed;
+            _updatesProvider.GameplayFixedUpdate -= OnGameplayFixedUpdate;
         }
 
-        private void OnSecondPassed()
+        private void OnGameplayFixedUpdate()
         {
+            if (_targetCashDeskModel == null) return;
+            
+            var workSecondsLeft = _targetCashDeskModel.HasCashMan ? _targetCashDeskModel.CashDeskStaffModel.WorkSecondsLeft : -1;
+            if (workSecondsLeft == _workSecondsLeftTemp) return;
+
+            if (_workSecondsLeftTemp > 0 && workSecondsLeft > _workSecondsLeftTemp)
+            {
+                RequestFlyingText(Constants.LocalizationProlonged, PanelView.HireStaffButtonView.transform);
+            }
+            
+            _workSecondsLeftTemp = workSecondsLeft;
             UpdateView();
         }
 
@@ -60,7 +71,7 @@ namespace View.UI.BottomPanel
         {
             if (_targetCashDeskModel != null)
             {
-                _eventBus.Dispatch(new CashDeskHireStaffButtonClickedEvent(_targetCashDeskModel, _currentHireStaffCost));
+                _eventBus.Dispatch(new CashDeskHireStaffButtonClickedEvent(_targetCashDeskModel));
             }
         }
 
@@ -120,11 +131,8 @@ namespace View.UI.BottomPanel
         private void OnStaffAdded(CashDeskStaffModel cashDeskStaffModel)
         {
             UpdateView();
-            
-            _eventBus.Dispatch(
-                new UIRequestFlyingTextEvent(
-                    _localizationProvider.GetLocale(Constants.LocalizationHired),
-                    PanelView.HireStaffButtonView.transform.position));
+
+            RequestFlyingText(Constants.LocalizationHired, PanelView.HireStaffButtonView.transform);
         }
 
         private void OnStaffRemoved(CashDeskStaffModel cashDeskStaffModel)
@@ -137,7 +145,9 @@ namespace View.UI.BottomPanel
             if (_targetCashDeskModel != null)
             {
                 DisplayStaff(_targetCashDeskModel);
-                SetupHireButton(_targetCashDeskModel);
+                
+                var hireCost = _hireStaffCostProvider.GetCashDeskHireStaffCost(_targetCashDeskModel);
+                ButtonsHelper.SetupHireButtonText(PanelView.HireStaffButtonView, _targetCashDeskModel.CashDeskStaffModel, hireCost);
             }
         }
 
@@ -151,43 +161,7 @@ namespace View.UI.BottomPanel
             if (staffModel != null)
             {
                 PanelView.SetStaffWorkTimerText($"{staffModel.WorkSecondsLeft}{_secondsPostfix}");
-                PanelView.SetStaffWorkTimeProgress((float)staffModel.WorkSecondsLeft / staffModel.WorkSecondsSetting);
             }
-        }
-
-        private void SetupHireButton(CashDeskModel cashDeskModel)
-        {
-            var hireStaffCost = _hireStaffCostProvider.GetCashDeskHireStaffCost();
-            _currentHireStaffCost = hireStaffCost;
-
-            PanelView.SetHireStaffButtonInteractable(cashDeskModel.CashDeskStaffModel == null);
-            
-            switch (hireStaffCost)
-            {
-                case > 0:
-                {
-                    var hireText =
-                        $"{_localizationProvider.GetLocale(Constants.LocalizationHireButton)}\n{FormattingHelper.ToMoneyWithIconTextFormat(hireStaffCost)}";
-                    PanelView.SetHireStaffButtonText(hireText);
-                
-                    PanelView.HireStaffButtonView.SetOrangeSkinData();
-                    break;
-                }
-                case 0:
-                {
-                    var hireText =
-                        $"{Constants.TextIconAds}\n{_localizationProvider.GetLocale(Constants.LocalizationHireButton)}";
-                    PanelView.SetHireStaffButtonText(hireText);
-                
-                    PanelView.HireStaffButtonView.SetCrimsonSkinData();
-                    break;
-                }
-                default:
-                    PanelView.SetHireStaffButtonText(_localizationProvider.GetLocale(Constants.LocalizationHireButton));
-                    PanelView.HireStaffButtonView.SetOrangeSkinData();
-                    break;
-            }
-            
         }
     }
 }

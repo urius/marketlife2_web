@@ -1,4 +1,6 @@
+using Events;
 using Holders;
+using Infra.EventBus;
 using Infra.Instance;
 using UnityEngine;
 
@@ -8,7 +10,9 @@ namespace View.UI.BottomPanel
         where TView : UIBottomPanelViewBase
     {
         private readonly IUpdatesProvider _updatesProvider = Instance.Get<IUpdatesProvider>();
-
+        private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
+        private readonly ILocalizationProvider _localizationProvider = Instance.Get<ILocalizationProvider>();
+        
         private float _slideUpPositionPercent = 0;
         private int _slideDirection = 0;
         
@@ -41,7 +45,15 @@ namespace View.UI.BottomPanel
             
             ResubscribeOnSlideUpdate();
         }
-        
+
+        protected void RequestFlyingText(string localeKey, Transform targetTransform)
+        {
+            _eventBus.Dispatch(
+                new UIRequestFlyingTextEvent(
+                    _localizationProvider.GetLocale(localeKey),
+                    targetTransform.position));
+        }
+
         private void ResubscribeOnSlideUpdate()
         {
             _updatesProvider.GameplayFixedUpdate -= OnSlideGameplayFixedUpdate;

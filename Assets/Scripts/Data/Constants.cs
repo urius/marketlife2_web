@@ -18,17 +18,20 @@ namespace Data
         public const int MinLevelForShopExpand = 2;
         public const int ExpandCellsAmount = 3;
         public const int ExpandPointFreeCoord = 3;
+        public const int HireByAdvertWorkTimeMultiplier = 3;
 
         public const string LocalizationKeyMarketLevelPrefix = "market_level_";
         public const string LocalizationBottomPanelDeliveryTitle = "bottom_panel_delivery_title";
         public const string LocalizationBottomPanelStaffTitle = "bottom_panel_staff_title";
         public const string LocalizationBottomPanelCashDeskStaffTitle = "bottom_panel_cash_desk_staff_title";
         public const string LocalizationHireButton = "hire_button";
+        public const string LocalizationProlongButton = "prolong_button";
         public const string LocalizationUpgradeButton = "upgrade_button";
         public const string LocalizationMaxUpgrade = "max_upgrade";
         public const string LocalizationSecondsShortPostfix = "seconds_short_postfix";
         public const string LocalizationUpgraded = "upgraded";
         public const string LocalizationHired = "hired";
+        public const string LocalizationProlonged = "prolonged";
         public const string LocalizationUpgradeShelf = "upgrade_shelf";
         public const string LocalizationKeyLevel = "level";
         

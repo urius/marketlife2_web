@@ -23,9 +23,8 @@ namespace Model.People
         public TruckPointStaffCharModel(
             Vector2Int cellCoords, 
             int workSecondsLeft, 
-            int workSecondsLeftSetting, 
             IReadOnlyList<ProductType> products) 
-            : base(cellCoords, workSecondsLeft, workSecondsLeftSetting)
+            : base(cellCoords, workSecondsLeft)
         {
 
             for (var i = 0; i < ProductsBox.ProductsInBox.Length; i++)
@@ -39,11 +38,10 @@ namespace Model.People
 
         public TruckPointStaffCharModel(
             Vector2Int cellCoords,
-            int workSecondsLeftSetting)
+            int workSecondsLeft)
             : this(
                 cellCoords,
-                workSecondsLeftSetting,
-                workSecondsLeftSetting,
+                workSecondsLeft,
                 Array.Empty<ProductType>())
         {
         }
