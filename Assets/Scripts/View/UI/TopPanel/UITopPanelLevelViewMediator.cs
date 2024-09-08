@@ -4,6 +4,7 @@ using Data;
 using Holders;
 using Infra.Instance;
 using Model;
+using UnityEngine;
 using Utils;
 
 namespace View.UI.TopPanel
@@ -63,10 +64,24 @@ namespace View.UI.TopPanel
         private void OnIsLevelProcessingActiveFlagUpdated(bool isActive)
         {
             UpdateVisibility();
+
+            if (isActive)
+            {
+                AnimateLevelViewAppearing();
+            }
             
             UpdateNextLevelMoney();
             DisplayLevel();
             DisplayLevelProgress(forceProgressBar: true);
+        }
+
+        private void AnimateLevelViewAppearing()
+        {
+            _levelView.RectTransform.anchoredPosition = new Vector2(_levelView.RectTransform.anchoredPosition.x, 100);
+            
+            LeanTween.moveY(_levelView.RectTransform, 0, 1f)
+                .setDelay(3.5f)
+                .setEaseOutBounce();
         }
 
         private void UpdateVisibility()

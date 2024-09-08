@@ -12,6 +12,7 @@ namespace View.UI.TopPanel
         [SerializeField] private RectTransform _starTransform;
 
         public RectTransform StarTransform => _starTransform;
+        public RectTransform RectTransform => transform as RectTransform;
         
         private Vector2 _defaultProgressBarSizeDelta;
 
