@@ -7,8 +7,8 @@ namespace View.Game.ShopObjects.CashDesk
     [SelectionBase]
     public class CashDeskView : ShopObjectViewBase, ICashDeskMoneyPositionProvider
     {
-        private const int MaxMoneyItemsAmountX = 5;
-        private const int MaxMoneyItemsAmountY = 3;
+        private const int MaxMoneyItemsAmountX = 3;
+        private const int MaxMoneyItemsAmountY = 2;
         private const int MaxMoneyItemsOnPlane = MaxMoneyItemsAmountX * MaxMoneyItemsAmountY;
         
         [SerializeField] private Transform _moneyPlaceholderInitial;

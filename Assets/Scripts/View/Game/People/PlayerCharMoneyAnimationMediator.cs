@@ -65,6 +65,7 @@ namespace View.Game.People
             {
                 var moneyView = GetFromCache<MoneyView>(PrefabKey.MoneyCashDesk);
                 moneyView.SetSortingOrder(100);
+                moneyView.SetAlpha(1);
                 var pos = moneyPositionProvider.GetMoneySlotWorldPosition(i);
                 moneyViews[i] = moneyView;
                 startPositions[i] = pos;
@@ -104,6 +105,7 @@ namespace View.Game.People
                     _takeMoneyAnimationContext.StartPositions[i],
                     _takeMoneyAnimationContext.TargetTransform.position,
                     progress);
+                tempMoneyView.SetAlpha(1.1f - progress);
 
                 if (progress < 1)
                 {
