@@ -51,7 +51,7 @@ namespace Utils
             var defaultPlayerDataHolder = Instance.Get<DefaultPlayerDataHolderSo>();
             var initialXShopSize = defaultPlayerDataHolder.DefaultPlayerData.ShopData.Size.x;
 
-            return 2 * GetTotalExpandsCount(currentXShopSize, initialXShopSize) - 1 + Constants.MinLevelForShopExpand - 1;
+            return 2 * GetTotalExpandsCount(currentXShopSize, initialXShopSize) + Constants.MinLevelForShopExpand - 1;
         }
 
         public static int GetYExpandLevel(int currentXShopSize)
@@ -59,7 +59,7 @@ namespace Utils
             var defaultPlayerDataHolder = Instance.Get<DefaultPlayerDataHolderSo>();
             var initialXShopSize = defaultPlayerDataHolder.DefaultPlayerData.ShopData.Size.x;
 
-            return 2 * GetTotalExpandsCount(currentXShopSize, initialXShopSize) + Constants.MinLevelForShopExpand - 1;
+            return 2 * GetTotalExpandsCount(currentXShopSize, initialXShopSize) - 1 + Constants.MinLevelForShopExpand - 1;
         }
         
         private static int GetTotalExpandsCount(int currentShopSize, int initialShopSize)
