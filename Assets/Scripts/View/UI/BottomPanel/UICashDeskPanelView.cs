@@ -12,6 +12,7 @@ namespace View.UI.BottomPanel
         
         [SerializeField] private TMP_Text _staffTitleText;
         [SerializeField] private Image _staffIcon;
+        [SerializeField] private Image _clockIcon;
         [SerializeField] private TMP_Text _staffWorkTimerText;
         [SerializeField] private UITextButtonView _hireStaffButtonView;
 
@@ -37,7 +38,13 @@ namespace View.UI.BottomPanel
         public void SetStaffEnabled(bool isEnabled)
         {
             _staffIcon.enabled = isEnabled;
+            _clockIcon.enabled = isEnabled;
             _staffWorkTimerText.enabled = isEnabled;
+        }
+
+        public void SetClockColor(Color color)
+        {
+            _clockIcon.color = color;
         }
         
         public void SetHireStaffButtonInteractable(bool isInteractable)

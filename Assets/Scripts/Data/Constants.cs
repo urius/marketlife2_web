@@ -18,7 +18,7 @@ namespace Data
         public const int MinLevelForShopExpand = 2;
         public const int ExpandCellsAmount = 3;
         public const int ExpandPointFreeCoord = 3;
-        public const int HireByAdvertWorkTimeMultiplier = 3;
+        public const int HireByAdvertWorkTimeMultiplier = 5;
 
         public const string LocalizationKeyMarketLevelPrefix = "market_level_";
         public const string LocalizationBottomPanelDeliveryTitle = "bottom_panel_delivery_title";

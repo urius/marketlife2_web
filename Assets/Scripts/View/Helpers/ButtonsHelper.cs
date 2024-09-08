@@ -42,7 +42,7 @@ namespace View.Helpers
                 case 0:
                 {
                     var hireText =
-                        $"{Constants.TextIconAds}\n{localizationProvider.GetLocale(Constants.LocalizationHireButton)} x{Constants.HireByAdvertWorkTimeMultiplier}";
+                        $"{Constants.TextIconAds}\n{localizationProvider.GetLocale(Constants.LocalizationProlongButton)} x{Constants.HireByAdvertWorkTimeMultiplier}";
                     
                     buttonView.SetText(hireText);
                     buttonView.SetCrimsonSkinData();

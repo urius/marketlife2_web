@@ -7,6 +7,7 @@ using Model;
 using Model.People;
 using Model.ShopObjects;
 using Utils;
+using View.Game.People;
 using View.Helpers;
 
 namespace View.UI.BottomPanel
@@ -20,7 +21,8 @@ namespace View.UI.BottomPanel
         private readonly IUpgradeCostProvider _upgradeCostProvider = Instance.Get<IUpgradeCostProvider>();
         private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
         private readonly IHireStaffCostProvider _hireStaffCostProvider = Instance.Get<IHireStaffCostProvider>();
-        
+
+        private PlayerModel _playerModel;
         private PlayerCharModel _playerCharModel;
         private TruckPointModel _targetTruckPoint;
         private string _secondsPostfix;
@@ -30,6 +32,7 @@ namespace View.UI.BottomPanel
         {
             base.MediateInternal();
             
+            _playerModel = _playerModelHolder.PlayerModel;
             _playerCharModel = _playerModelHolder.PlayerCharModel;
 
             Subscribe();
@@ -234,6 +237,12 @@ namespace View.UI.BottomPanel
             if (staffModel != null)
             {
                 PanelView.SetStaffWorkTimerText($"{staffModel.WorkSecondsLeft}{_secondsPostfix}");
+                
+                var clockColor = StaffCharHelper.GetClockColorByPercent(
+                        (float)staffModel.WorkSecondsLeft /
+                        _playerModel.StaffWorkTimeSeconds);
+                    
+                    PanelView.SetClockColor(clockColor);
             }
         }
 

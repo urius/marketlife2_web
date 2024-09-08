@@ -6,6 +6,7 @@ using Infra.Instance;
 using Model;
 using Model.People;
 using Model.ShopObjects;
+using View.Game.People;
 using View.Helpers;
 
 namespace View.UI.BottomPanel
@@ -22,11 +23,13 @@ namespace View.UI.BottomPanel
         private string _secondsPostfix;
         private CashDeskModel _targetCashDeskModel;
         private int _workSecondsLeftTemp;
+        private PlayerModel _playerModel;
 
         protected override void MediateInternal()
         {
             base.MediateInternal();
             
+            _playerModel = _playerModelHolder.PlayerModel;
             _playerCharModel = _playerModelHolder.PlayerCharModel;
 
             Subscribe();
@@ -39,6 +42,7 @@ namespace View.UI.BottomPanel
 
         private void Subscribe()
         {
+            _playerModel.LevelChanged += OnLevelChanged;
             _playerCharModel.NearShopObjectsUpdated += OnNearShopObjectsUpdated;
             PanelView.HireStaffButtonClicked += OnHireStaffButtonClicked;
             _updatesProvider.GameplayFixedUpdate += OnGameplayFixedUpdate;
@@ -46,6 +50,7 @@ namespace View.UI.BottomPanel
 
         private void Unsubscribe()
         {
+            _playerModel.LevelChanged -= OnLevelChanged;
             _playerCharModel.NearShopObjectsUpdated -= OnNearShopObjectsUpdated;
             PanelView.HireStaffButtonClicked -= OnHireStaffButtonClicked;
             _updatesProvider.GameplayFixedUpdate -= OnGameplayFixedUpdate;
@@ -77,21 +82,32 @@ namespace View.UI.BottomPanel
 
         private void OnNearShopObjectsUpdated()
         {
-            if (_playerCharModel.NearCashDesk != null 
+            ProcessShowPanel();
+        }
+
+        private void OnLevelChanged(int level)
+        {
+            ProcessShowPanel();
+        }
+
+        private void ProcessShowPanel()
+        {
+            if (_playerCharModel.NearCashDesk != null
                 && _playerModelHolder.PlayerModel.Level >= Constants.MinLevelForCashDeskUpgrades)
             {
                 _secondsPostfix = _localizationProvider.GetLocale(Constants.LocalizationSecondsShortPostfix);
-                
-                PanelView.SetStaffTitleText(_localizationProvider.GetLocale(Constants.LocalizationBottomPanelCashDeskStaffTitle));
-                
+
+                PanelView.SetStaffTitleText(
+                    _localizationProvider.GetLocale(Constants.LocalizationBottomPanelCashDeskStaffTitle));
+
                 ProcessNewTargetCashDesk(_playerCharModel.NearCashDesk);
-                
+
                 SlideUp();
             }
             else
             {
                 ResetTargetCashDesk();
-                    
+
                 SlideDown();
             }
         }
@@ -157,10 +173,16 @@ namespace View.UI.BottomPanel
             
             var isStaffExists = staffModel != null;
             PanelView.SetStaffEnabled(isStaffExists);
-            
+
             if (staffModel != null)
             {
                 PanelView.SetStaffWorkTimerText($"{staffModel.WorkSecondsLeft}{_secondsPostfix}");
+
+                var clockColor = StaffCharHelper.GetClockColorByPercent(
+                    (float)_targetCashDeskModel.CashDeskStaffModel.WorkSecondsLeft /
+                    _playerModel.StaffWorkTimeSeconds);
+
+                PanelView.SetClockColor(clockColor);
             }
         }
     }
