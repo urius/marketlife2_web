@@ -4,6 +4,7 @@ using View.UI.BottomPanel;
 using View.UI.Common;
 using View.UI.GameOverlayPanel;
 using View.UI.TopPanel;
+using View.UI.Tutorial;
 
 namespace View.UI
 {
@@ -25,6 +26,7 @@ namespace View.UI
             MediateChild<UICashDeskPanelMediator>(view.UICashDeskPanelView.transform);
             MediateChild<UIShelfPanelMediator>(view.UIShelfPanelView.transform);
             MediateChild<UIFlyingTextsMediator>(TargetTransform);
+            MediateChild<UITutorialMediator>(view.TutorialRootCanvasView.transform);
         }
 
         protected override void UnmediateInternal()

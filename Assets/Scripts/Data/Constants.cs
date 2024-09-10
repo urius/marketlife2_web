@@ -34,7 +34,11 @@ namespace Data
         public const string LocalizationProlonged = "prolonged";
         public const string LocalizationUpgradeShelf = "upgrade_shelf";
         public const string LocalizationKeyLevel = "level";
-        
+
+
+        private const string ColdPrefabsFolderPath = "Prefabs/Cold Prefabs";
+        public static readonly string TutorialHowToMoveColdPrefabPath = $"{ColdPrefabsFolderPath}/TutorialHowToMove";
+
         public const string TextIconMoney = "<sprite name=\"money\">";
         public const string TextIconAds = "<sprite name=\"ads\">";
 

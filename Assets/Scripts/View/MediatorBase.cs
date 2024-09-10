@@ -96,7 +96,7 @@ namespace View
             return false;
         }
 
-        private void AddChildMediator(MediatorBase mediator)
+        protected void AddChildMediator(MediatorBase mediator)
         {
             _children ??= new LinkedList<MediatorBase>();
             _children.AddLast(mediator);
@@ -125,7 +125,12 @@ namespace View
         {
             _prefabsHolder ??= Instance.Get<PrefabsHolderSo>();
 
-            return Object.Instantiate(_prefabsHolder.GetPrefabByKey(prefabKey), transform);
+            return Instantiate(_prefabsHolder.GetPrefabByKey(prefabKey), transform);
+        }
+
+        protected static GameObject Instantiate(GameObject prefab, Transform transform)
+        {
+            return Object.Instantiate(prefab, transform);
         }
         
         protected void Destroy(MonoBehaviour monoBehaviour)
@@ -172,6 +177,31 @@ namespace View
         {
             _gameObjectsCache ??= Instance.Get<IGameObjectsCache>();
             _gameObjectsCache.Put(instance);
+        }
+
+        protected GameObject InstantiateColdPrefab(string path)
+        {
+            _prefabsHolder ??= Instance.Get<PrefabsHolderSo>();
+            
+            var prefab = _prefabsHolder.GetColdPrefab(path);
+            if (prefab != null)
+            {
+                return Instantiate(prefab, TargetTransform);
+            }
+
+            return null;
+        }
+        
+        protected TView InstantiateColdPrefab<TView>(string path) where TView : MonoBehaviour
+        {
+            var go = InstantiateColdPrefab(path);
+
+            if (go != null)
+            {
+                return go.GetComponent<TView>();
+            }
+
+            return null;
         }
     }
 }

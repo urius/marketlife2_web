@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Holders;
 using Infra.Instance;
+using Systems.Tutorial;
 
 namespace Systems
 {
@@ -22,6 +23,7 @@ namespace Systems
             StartSystem<TruckPointsLogicSystem>();
             StartSystem<CustomersControlSystem>();
             StartSystem<StaffControlSystem>();
+            StartSystem<TutorialSystem>();
         }
 
         public void Stop()
