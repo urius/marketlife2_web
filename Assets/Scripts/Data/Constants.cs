@@ -34,10 +34,13 @@ namespace Data
         public const string LocalizationProlonged = "prolonged";
         public const string LocalizationUpgradeShelf = "upgrade_shelf";
         public const string LocalizationKeyLevel = "level";
+        public const string LocalizationTutorialHowToMoveMessageKey = "tutorial_how_to_move_text";
+        public const string LocalizationTutorialBuildCashDeskMessageKey = "tutorial_build_cash_desk_text";
 
 
         private const string ColdPrefabsFolderPath = "Prefabs/Cold Prefabs";
         public static readonly string TutorialHowToMoveColdPrefabPath = $"{ColdPrefabsFolderPath}/TutorialHowToMove";
+        public static readonly string TutorialDefaultStepWithTextPath = $"{ColdPrefabsFolderPath}/TutorialDefaultStep";
 
         public const string TextIconMoney = "<sprite name=\"money\">";
         public const string TextIconAds = "<sprite name=\"ads\">";

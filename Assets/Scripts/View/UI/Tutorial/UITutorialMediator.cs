@@ -14,15 +14,12 @@ namespace View.UI.Tutorial
 
         private readonly Dictionary<TutorialStep, UITutorialStepMediatorBase> _tutorialStepMediators = new();
         
-        private UITutorialRootCanvasView _tutorialCanvasView;
         private PlayerModel _playerModel;
 
         protected override void MediateInternal()
         {
             _playerModel = _playerModelHolder.PlayerModel;
             
-            _tutorialCanvasView = TargetTransform.GetComponent<UITutorialRootCanvasView>();
-
             InitStepMediators();
 
             Subscribe();
@@ -31,8 +28,6 @@ namespace View.UI.Tutorial
         protected override void UnmediateInternal()
         {
             Unsubscribe();
-            
-            _tutorialCanvasView = null;
         }
 
         private void Subscribe()
@@ -71,6 +66,9 @@ namespace View.UI.Tutorial
             {
                 case TutorialStep.HowToMove:
                     MediateStepInternal<UITutorialHowToMoveStepMediator>(tutorialStep);
+                    break;
+                case TutorialStep.BuildCashDesk:
+                    MediateStepInternal<UITutorialStepBuildCashDeskMediator>(tutorialStep);
                     break;
                 default:
                     Debug.LogError($"tutorial step {tutorialStep} not implemented");

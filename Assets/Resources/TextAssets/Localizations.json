@@ -164,6 +164,16 @@
 			"key": "level",
 			"en": "Level",
 			"ru": "Уровень"
+		},
+		{
+			"key": "tutorial_how_to_move_text",
+			"en": "Hold to move",
+			"ru": "Удерживайте для передвижения"
+		},
+		{
+			"key": "tutorial_build_cash_desk_text",
+			"en": "Build your first cash desk",
+			"ru": "Купи первую кассу"
 		}
 	]
 }

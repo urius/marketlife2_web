@@ -56,7 +56,7 @@ namespace Holders
         
         public int GetExpandYCost(int currentYSize)
         {
-            var expandLevelIndex = ExpandShopHelper.GetXExpandLevel(currentYSize) - 1;
+            var expandLevelIndex = ExpandShopHelper.GetYExpandLevel(currentYSize) - 1;
             
             var levelTargetMoney = _commonGameSettings.GetLevelTargetMoney(expandLevelIndex + 1);
             
