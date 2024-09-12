@@ -13,8 +13,6 @@ namespace Systems
         
         public async void Start()
         {
-            StartSystem<ProcessCommandsSystem>();
-            
             await _playerModelHolder.PlayerModelSetTask;
 
             StartSystem<PlayerLevelSystem>();
