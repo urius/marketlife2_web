@@ -3,7 +3,6 @@ using Holders;
 using Infra.CommandExecutor;
 using Infra.EventBus;
 using Infra.Instance;
-using Model.ViewModel;
 using Systems;
 using Tools.GameObjectsCache;
 using UnityEngine;
