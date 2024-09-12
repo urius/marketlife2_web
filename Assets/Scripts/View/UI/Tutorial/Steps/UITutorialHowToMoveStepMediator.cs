@@ -16,6 +16,10 @@ namespace View.UI.Tutorial.Steps
         private UITutorialHowToMoveStepView _stepView;
         private int _playerPositionChangesCounter;
 
+        protected override void MediateInternal()
+        {
+        }
+
         protected override void ActivateStep()
         {
             _stepView = InstantiateColdPrefab<UITutorialHowToMoveStepView>(ColdPrefabPath);

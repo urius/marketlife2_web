@@ -45,6 +45,7 @@ namespace View.Camera
             PointCameraToWorldPos(_playerCharPos);
 
             _fixedUpdateAction = FollowMainChar;
+            _playerFocusSetter.SetPlayerFocusedFlag(true);
 
             Subscribe();
         }
@@ -132,7 +133,12 @@ namespace View.Camera
 
         private void FollowMainChar()
         {
-            MoveCameraToPosition(_playerCharPos);
+            var followCameraResult = MoveCameraToPosition(_playerCharPos);
+            
+            if (followCameraResult == false)
+            {
+                _playerFocusSetter.SetPlayerFocusedFlag(true);
+            }
         }
 
         private void ShowRequestedPositionsDelay()
@@ -179,11 +185,6 @@ namespace View.Camera
             var cameraMoveOffset = deltaPos * 0.1f;
             var newCameraPos = cameraPos + cameraMoveOffset;
             PointCameraToWorldPos(newCameraPos);
-
-            if ((targetWorldPosition - newCameraPos).sqrMagnitude <= cameraDeltaPosThreshold)
-            {
-                _playerFocusSetter.SetPlayerFocusedFlag(true);
-            }
 
             return true;
         }

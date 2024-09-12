@@ -36,6 +36,8 @@ namespace Data
         public const string LocalizationKeyLevel = "level";
         public const string LocalizationTutorialHowToMoveMessageKey = "tutorial_how_to_move_text";
         public const string LocalizationTutorialBuildCashDeskMessageKey = "tutorial_build_cash_desk_text";
+        public const string LocalizationTutorialBuildShelfMessageKey = "tutorial_build_shelf_text";
+        public const string LocalizationTutorialBuildTruckPointMessageKey = "tutorial_build_truck_point_text";
 
 
         private const string ColdPrefabsFolderPath = "Prefabs/Cold Prefabs";

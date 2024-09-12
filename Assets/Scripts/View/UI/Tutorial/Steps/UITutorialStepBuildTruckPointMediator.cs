@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace View.UI.Tutorial.Steps
 {
-    public class UITutorialStepBuildCashDeskMediator : UITutorialStepMoveToMediatorBase
+    public class UITutorialStepBuildTruckPointMediator : UITutorialStepMoveToMediatorBase
     {
         private readonly IShopModelHolder _shopModelHolder = Instance.Get<IShopModelHolder>();
         private readonly ILocalizationProvider _localizationProvider = Instance.Get<ILocalizationProvider>();
@@ -29,7 +29,7 @@ namespace View.UI.Tutorial.Steps
         }
 
         protected override string MessageText =>
-            _localizationProvider.GetLocale(Constants.LocalizationTutorialBuildCashDeskMessageKey);
+            _localizationProvider.GetLocale(Constants.LocalizationTutorialBuildTruckPointMessageKey);
 
         protected override Vector2Int GetTargetMoveToCell()
         {
@@ -61,7 +61,7 @@ namespace View.UI.Tutorial.Steps
             
             foreach (var buildPoint in _shopModel.BuildPoints.Values)
             {
-                if (buildPoint.ShopObjectType == ShopObjectType.CashDesk)
+                if (buildPoint.ShopObjectType == ShopObjectType.TruckPoint)
                 {
                     result = buildPoint;
                     break;

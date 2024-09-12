@@ -11,6 +11,11 @@ namespace View.UI.Tutorial.Steps
         [SerializeField] private RectTransform _arrowRectTransform;
 
         private float _updateTimer;
+
+        public void SetVisibility(bool isVisible)
+        {
+            gameObject.SetActive(isVisible);
+        }
         
         public void SetText(string text)
         {
@@ -22,6 +27,11 @@ namespace View.UI.Tutorial.Steps
             var localEulerAngles = _arrowRectTransform.localEulerAngles;
             localEulerAngles.z = angle;
             _arrowRectTransform.localEulerAngles = localEulerAngles;
+        }
+
+        public void SetArrowVisibility(bool isVisible)
+        {
+            _arrowRectTransform.gameObject.SetActive(isVisible);
         }
 
         private void FixedUpdate()

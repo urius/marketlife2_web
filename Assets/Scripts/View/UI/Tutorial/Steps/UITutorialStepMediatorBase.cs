@@ -13,13 +13,13 @@ namespace View.UI.Tutorial.Steps
         private readonly IUpdatesProvider _updatesProvider = Instance.Get<IUpdatesProvider>();
 
         private bool _stepFinishedIsDispatched;
-        
+
         public TutorialStep TutorialStep { get; private set; }
-        
+
         public void Mediate(Transform transform, TutorialStep tutorialStep)
         {
             TutorialStep = tutorialStep;
-            
+
             base.Mediate(transform);
 
             if (TryActivateStep() == false)
@@ -28,15 +28,10 @@ namespace View.UI.Tutorial.Steps
             }
         }
 
-        protected override void MediateInternal()
-        {
-            //empty
-        }
-
         public override void Unmediate()
         {
             _updatesProvider.QuarterSecondPassed -= OnQuarterSecondPassed;
-            
+
             base.Unmediate();
         }
 
@@ -50,12 +45,12 @@ namespace View.UI.Tutorial.Steps
 
         protected abstract bool CheckStepConditions();
         protected abstract void ActivateStep();
-        
+
 
         protected void DispatchStepFinished()
         {
             if (_stepFinishedIsDispatched) return;
-            
+
             _stepFinishedIsDispatched = true;
             _eventBus.Dispatch(new TutorialStepFinishedEvent(TutorialStep));
         }
@@ -63,8 +58,8 @@ namespace View.UI.Tutorial.Steps
         private bool TryActivateStep()
         {
             var checkConditionsResult = CheckStepConditions();
-            
-            if (CheckStepConditions())
+
+            if (checkConditionsResult)
             {
                 ActivateStep();
             }

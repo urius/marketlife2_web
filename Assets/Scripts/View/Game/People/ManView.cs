@@ -34,6 +34,7 @@ namespace View.Game.People
 
         public Transform ProductsBoxPlaceholderTransform => _productsBoxPlaceholderTransform;
         public Transform CenterPointTransform => _bodyTransform;
+        public Transform RootTransform => transform;
 
         public Vector3 GetProductInBoxPosition(int productIndex)
         {

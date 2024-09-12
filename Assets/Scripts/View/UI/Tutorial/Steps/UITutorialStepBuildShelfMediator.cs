@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace View.UI.Tutorial.Steps
 {
-    public class UITutorialStepBuildCashDeskMediator : UITutorialStepMoveToMediatorBase
+    public class UITutorialStepBuildShelfMediator : UITutorialStepMoveToMediatorBase
     {
         private readonly IShopModelHolder _shopModelHolder = Instance.Get<IShopModelHolder>();
         private readonly ILocalizationProvider _localizationProvider = Instance.Get<ILocalizationProvider>();
@@ -29,7 +29,7 @@ namespace View.UI.Tutorial.Steps
         }
 
         protected override string MessageText =>
-            _localizationProvider.GetLocale(Constants.LocalizationTutorialBuildCashDeskMessageKey);
+            _localizationProvider.GetLocale(Constants.LocalizationTutorialBuildShelfMessageKey);
 
         protected override Vector2Int GetTargetMoveToCell()
         {
@@ -39,6 +39,7 @@ namespace View.UI.Tutorial.Steps
             }
 
             throw new InvalidOperationException($"{nameof(GetTargetMoveToCell)}: Failed to get build point model");
+
         }
 
         protected override void Subscribe()
@@ -61,7 +62,7 @@ namespace View.UI.Tutorial.Steps
             
             foreach (var buildPoint in _shopModel.BuildPoints.Values)
             {
-                if (buildPoint.ShopObjectType == ShopObjectType.CashDesk)
+                if (buildPoint.ShopObjectType.IsShelf())
                 {
                     result = buildPoint;
                     break;
