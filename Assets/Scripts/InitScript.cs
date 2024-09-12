@@ -1,4 +1,5 @@
 using Commands;
+using Events;
 using Holders;
 using Infra.CommandExecutor;
 using Infra.EventBus;
@@ -33,6 +34,7 @@ public class InitScript : MonoBehaviour
     private UIRootMediator _uiRootMediator;
     private RootSystem _rootSystem;
     private MainCameraMediator _mainCameraMediator;
+    private EventCommandMapper _eventCommandMapper;
 
     private void Awake()
     {
@@ -72,7 +74,10 @@ public class InitScript : MonoBehaviour
 
     private void SetupInstances()
     {
-        SetupInstance.From(new MainCameraHolder(_mainCamera)).As<IMainCameraHolder>();
+        SetupInstance.From(new MainCameraHolder(_mainCamera))
+            .As<IMainCameraHolder>()
+            .As<IPlayerFocusProvider>()
+            .As<IPlayerFocusSetter>();
         SetupInstance.From(new GridCalculator(_floorGrid)).As<IGridCalculator>();
         SetupInstance.From(_updatesProvider).As<IUpdatesProvider>();
         SetupInstance.From(_defaultPlayerDataHolder).AsSelf();
@@ -86,8 +91,9 @@ public class InitScript : MonoBehaviour
         
         var commandExecutor = SetupNewInstance<CommandExecutor, ICommandExecutor>();
         var eventBus = SetupNewInstance<EventBus, IEventBus>();
+        _eventCommandMapper = new EventCommandMapper(eventBus, commandExecutor);
 
-        MapEventsToCommands(new EventCommandMapper(eventBus, commandExecutor));
+        MapEventsToCommands();
         
         SetupNewInstance<ScreenCalculator, IScreenCalculator>();
         SetupNewInstance<ShopModelHolder, IShopModelHolder>();
@@ -95,7 +101,6 @@ public class InitScript : MonoBehaviour
         SetupNewInstance<ShelfUpgradeSettingsProvider, IShelfUpgradeSettingsProvider>();
         SetupNewInstance<PlayerCharViewSharedDataHolder, IPlayerCharViewSharedDataHolder>();
         SetupNewInstance<SharedViewsDataHolder, ISharedViewsDataHolder>();
-        SetupNewInstance<MainViewModel, IMainViewModel>();
         SetupNewInstance<UpgradeCostProvider, IUpgradeCostProvider>();
         SetupNewInstance<HireStaffCostProvider, IHireStaffCostProvider>();
         
@@ -104,9 +109,15 @@ public class InitScript : MonoBehaviour
         SetupInstance.AllSetupsDone();
     }
 
-    private void MapEventsToCommands(EventCommandMapper eventToCommandMapper)
+    private void MapEventsToCommands()
     {
-        //eventToCommandMapper.Map<>();
+        Map<UIShelfUpgradeClickedEvent, UpgradeShelfCommand>();
+    }
+
+    private void Map<TEvent, TCommand>()
+        where TCommand : ICommand<TEvent>, new()
+    {
+        _eventCommandMapper.Map<TEvent, TCommand>();
     }
 
     private static TInstance SetupNewInstance<TInstance, TInterface>()

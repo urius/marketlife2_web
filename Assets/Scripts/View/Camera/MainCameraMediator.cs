@@ -21,6 +21,7 @@ namespace View.Camera
         private readonly IGridCalculator _gridCalculator = Instance.Get<IGridCalculator>();
         private readonly IUpdatesProvider _updatesProvider = Instance.Get<IUpdatesProvider>();
         private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
+        private readonly IPlayerFocusSetter _playerFocusSetter = Instance.Get<IPlayerFocusSetter>();
 
         private readonly Queue<ShowPositionItemData> _showPositionsQueue = new();
         
@@ -139,6 +140,11 @@ namespace View.Camera
             if (_showPositionsDelayFramesLeft > 0)
             {
                 _showPositionsDelayFramesLeft--;
+                
+                if (_showPositionsQueue.Count > 0)
+                {
+                    _playerFocusSetter.SetPlayerFocusedFlag(false);
+                }
             }
             else
             {
@@ -166,11 +172,19 @@ namespace View.Camera
             var cameraPos = GetCameraOnPlanePosition();
             var deltaPos = targetWorldPosition - cameraPos;
 
-            if (deltaPos.sqrMagnitude <= 0.01f) return false;
+            const float cameraDeltaPosThreshold = 0.01f;
+            
+            if (deltaPos.sqrMagnitude <= cameraDeltaPosThreshold) return false;
             
             var cameraMoveOffset = deltaPos * 0.1f;
-            PointCameraToWorldPos(cameraPos + cameraMoveOffset);
-                
+            var newCameraPos = cameraPos + cameraMoveOffset;
+            PointCameraToWorldPos(newCameraPos);
+
+            if ((targetWorldPosition - newCameraPos).sqrMagnitude <= cameraDeltaPosThreshold)
+            {
+                _playerFocusSetter.SetPlayerFocusedFlag(true);
+            }
+
             return true;
         }
 
