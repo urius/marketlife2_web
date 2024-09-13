@@ -23,6 +23,8 @@ namespace Model
 
         public event Action NearShopObjectsUpdated;
 
+        public readonly ProductBoxModel ProductsBox = new();
+        
         public PlayerCharModel(Vector2Int cellPosition)
         {
             CellPosition = cellPosition;
@@ -31,7 +33,6 @@ namespace Model
         public Vector2Int CellPosition { get; private set; }
         public bool HasProducts => ProductsBox.HasProducts();
         public IReadOnlyList<ProductType> ProductsInBox => ProductsBox.ProductsInBox;
-        public ProductBoxModel ProductsBox { get; } = new();
 
         public CashDeskModel NearCashDesk { get; private set; }
         public ShelfModel NearShelf { get; private set; }

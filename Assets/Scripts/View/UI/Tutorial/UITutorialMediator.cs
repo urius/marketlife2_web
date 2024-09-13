@@ -76,6 +76,18 @@ namespace View.UI.Tutorial
                 case TutorialStep.BuildTruckPoint:
                     MediateStepInternal<UITutorialStepBuildTruckPointMediator>(tutorialStep);
                     break;
+                case TutorialStep.TakeProductFromTruckPoint:
+                    MediateStepInternal<UITutorialStepTakeProductsFromTruckPointMediator>(tutorialStep);
+                    break;
+                case TutorialStep.PutProductToShelf:
+                    MediateStepInternal<UITutorialStepPutProductsOnShelfMediator>(tutorialStep);
+                    break;
+                case TutorialStep.TakeProductFromTruckPoint2:
+                    MediateStepInternal<UITutorialStepTakeProductsFromTruckPointSecondTimeMediator>(tutorialStep);
+                    break;
+                case TutorialStep.PutProductToShelf2:
+                    MediateStepInternal<UITutorialStepPutProductsOnShelfSecondTimeMediator>(tutorialStep);
+                    break;
                 default:
                     Debug.LogError($"tutorial step {tutorialStep} not implemented");
                     break;

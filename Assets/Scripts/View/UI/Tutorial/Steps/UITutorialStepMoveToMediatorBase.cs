@@ -40,6 +40,7 @@ namespace View.UI.Tutorial.Steps
             _stepView = InstantiateColdPrefab<UITutorialTextStepView>(Constants.TutorialDefaultStepWithTextPath);
             
             _stepView.SetText(MessageText);
+            UpdateArrowRotation();
             
             Subscribe();
 
@@ -75,8 +76,13 @@ namespace View.UI.Tutorial.Steps
 
         private void OnGameplayFixedUpdate()
         {
+            UpdateArrowRotation();
+        }
+
+        private void UpdateArrowRotation()
+        {
             var playerPosition = (Vector2)_playerCharPositionsProvider.RootTransform.position;
-            
+
             var angle = Vector2.SignedAngle(_targetMoveToWorldPosition - playerPosition, new Vector2(0, -1));
 
             _stepView.SetArrowAngle(angle);
