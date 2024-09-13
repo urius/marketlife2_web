@@ -24,6 +24,7 @@ namespace View.Game.People
         private readonly IGridCalculator _gridCalculator = Instance.Get<IGridCalculator>();
         private readonly IOwnedCellsDataHolder _ownedCellsDataHolder = Instance.Get<IOwnedCellsDataHolder>();
         private readonly IPlayerModelHolder _playerModelHolder = Instance.Get<IPlayerModelHolder>();
+        private readonly IPlayerFocusProvider _playerFocusProvider = Instance.Get<IPlayerFocusProvider>();
 
         private Dictionary<Vector2Int, (Vector3 worldDirection, Vector3 worldDirectionToProject)> _detectorWorldDirections;
 
@@ -35,6 +36,9 @@ namespace View.Game.People
         private Vector2 _prevMoveDirection;
         private PlayerCharModel _playerCharModel;
         private ShopModel _shopModel;
+
+        private bool ShouldPlayerNotMove => _moveDirection == Vector2.zero 
+                                            || _playerFocusProvider.IsPlayerFocused == false;
 
         protected override void MediateInternal()
         {
@@ -104,6 +108,7 @@ namespace View.Game.People
             _updatesProvider.GameplayFixedUpdate += OnGameplayFixedUpdate;
             _playerCharModel.ProductsBoxAdded += OnProductsBoxAdded;
             _playerCharModel.ProductRemoved += OnProductRemoved;
+            _playerFocusProvider.OnPlayerFocusChanged += OnOnPlayerFocusChanged;
 
             DebugDrawGizmosDispatcher.DrawGizmosHappened += OnDrawGizmosHappened;
         }
@@ -115,8 +120,14 @@ namespace View.Game.People
             _updatesProvider.GameplayFixedUpdate -= OnGameplayFixedUpdate;
             _playerCharModel.ProductsBoxAdded -= OnProductsBoxAdded;
             _playerCharModel.ProductRemoved -= OnProductRemoved;
+            _playerFocusProvider.OnPlayerFocusChanged -= OnOnPlayerFocusChanged;
             
             DebugDrawGizmosDispatcher.DrawGizmosHappened -= OnDrawGizmosHappened;
+        }
+
+        private void OnOnPlayerFocusChanged(bool isFocused)
+        {
+            UpdateAnimation();
         }
 
         private void OnShopObjectCellsRegisteredEvent(ShopObjectCellsRegisteredEvent e)
@@ -166,7 +177,7 @@ namespace View.Game.People
 
         private void CheckCellCoords()
         {
-            if (_moveDirection == Vector2.zero) return;
+            if (ShouldPlayerNotMove) return;
             
             var newCellCoords = _gridCalculator.WorldToCell(_playerWorldPosition);
             
@@ -187,7 +198,7 @@ namespace View.Game.People
 
         private void ProcessMove()
         {
-            if (_moveDirection == Vector2.zero) return;
+            if (ShouldPlayerNotMove) return;
             
             const float speed = 0.04f;
 
@@ -220,7 +231,7 @@ namespace View.Game.People
                     break;
             }
 
-            if (_moveDirection == Vector2.zero)
+            if (ShouldPlayerNotMove)
             {
                 _playerCharView.ToIdleState(_playerCharModel.HasProducts);
             }
