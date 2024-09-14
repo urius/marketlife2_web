@@ -204,6 +204,11 @@
 			"key": "tutorial_put_products_on_shelf_2_text",
 			"en": "Put them on the shelf and lets wait customers",
 			"ru": "Положи их на полку и жди клиентов"
+		},
+		{
+			"key": "tutorial_move_to_cash_desk_text",
+			"en": "Get near the cash desk to serve customers",
+			"ru": "Подойди к кассе чтобы обслужить клиентов"
 		}
 	]
 }

@@ -88,6 +88,9 @@ namespace View.UI.Tutorial
                 case TutorialStep.PutProductToShelf2:
                     MediateStepInternal<UITutorialStepPutProductsOnShelfSecondTimeMediator>(tutorialStep);
                     break;
+                case TutorialStep.MoveToCashDesk:
+                    MediateStepInternal<UITutorialStepMoveToCashDeskMediator>(tutorialStep);
+                    break;
                 default:
                     Debug.LogError($"tutorial step {tutorialStep} not implemented");
                     break;
