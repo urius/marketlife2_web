@@ -1,4 +1,5 @@
 using System.IO;
+using Cysharp.Threading.Tasks;
 using Data;
 using Holders;
 using Infra.Instance;
@@ -29,6 +30,18 @@ namespace View.UI.Tutorial.Steps
         protected override bool CheckStepConditions()
         {
             return _playerCharModel.HasProducts;
+        }
+
+        protected override void ActivateStep()
+        {
+            ActivateStepWithDelay().Forget();
+        }
+
+        private async UniTaskVoid ActivateStepWithDelay()
+        {
+            await UniTask.Delay(1000);
+            
+            base.ActivateStep();
         }
 
         protected override void Subscribe()
