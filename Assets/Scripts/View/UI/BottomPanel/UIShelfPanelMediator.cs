@@ -16,6 +16,7 @@ namespace View.UI.BottomPanel
         private readonly ILocalizationProvider _loc = Instance.Get<ILocalizationProvider>();
         private readonly IUpgradeCostProvider _upgradeCostProvider = Instance.Get<IUpgradeCostProvider>();
         private readonly IShelfUpgradeSettingsProvider _shelfUpgradeSettingsProvider = Instance.Get<IShelfUpgradeSettingsProvider>();
+        private readonly IPlayerFocusProvider _playerFocusProvider = Instance.Get<IPlayerFocusProvider>();
         
         private PlayerCharModel _playerCharModel;
         private ShelfModel _targetShelfModel;
@@ -40,21 +41,34 @@ namespace View.UI.BottomPanel
         {
             _playerCharModel.NearShopObjectsUpdated += OnNearShopObjectsUpdated;
             PanelView.UpgradeButtonClicked += OnUpgradeButtonClicked;
+            _playerFocusProvider.PlayerFocusChanged += OnPlayerFocusChanged;
         }
 
         private void Unsubscribe()
         {
             _playerCharModel.NearShopObjectsUpdated -= OnNearShopObjectsUpdated;
             PanelView.UpgradeButtonClicked -= OnUpgradeButtonClicked;
+            _playerFocusProvider.PlayerFocusChanged -= OnPlayerFocusChanged;
             
             UnsubscribeFromTargetShelf();
         }
 
+        private void OnPlayerFocusChanged(bool isFocused)
+        {
+            UpdatePanelViewState();
+        }
+
         private void OnNearShopObjectsUpdated()
         {
-            if (_playerCharModel.NearShelf != null 
+            UpdatePanelViewState();
+        }
+
+        private void UpdatePanelViewState()
+        {
+            if (_playerCharModel.NearShelf != null
                 && _playerCharModel.IsMultipleShopObjectsNear == false
-                && _playerModelHolder.PlayerModel.Level >= Constants.MinLevelForShelfUpgrades)
+                && _playerModelHolder.PlayerModel.Level >= Constants.MinLevelForShelfUpgrades
+                && _playerFocusProvider.IsPlayerFocused)
             {
                 ProcessNewTargetShelfModel(_playerCharModel.NearShelf);
 

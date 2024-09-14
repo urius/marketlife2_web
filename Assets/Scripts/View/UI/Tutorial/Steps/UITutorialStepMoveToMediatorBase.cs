@@ -61,14 +61,14 @@ namespace View.UI.Tutorial.Steps
         protected virtual void Subscribe()
         {
             _updatesProvider.GameplayFixedUpdate += OnGameplayFixedUpdate;
-            _playerFocusProvider.OnPlayerFocusChanged += OnPlayerFocusChanged;
+            _playerFocusProvider.PlayerFocusChanged += OnPlayerFocusChanged;
             _playerCharModel.CellPositionChanged += OnCellPositionChanged;
         }
 
         protected virtual void Unsubscribe()
         {
             _updatesProvider.GameplayFixedUpdate -= OnGameplayFixedUpdate;
-            _playerFocusProvider.OnPlayerFocusChanged -= OnPlayerFocusChanged;
+            _playerFocusProvider.PlayerFocusChanged -= OnPlayerFocusChanged;
             _playerCharModel.CellPositionChanged -= OnCellPositionChanged;
         }
 

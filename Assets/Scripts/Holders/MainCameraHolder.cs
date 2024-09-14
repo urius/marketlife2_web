@@ -5,7 +5,7 @@ namespace Holders
 {
     public class MainCameraHolder : IMainCameraHolder, IPlayerFocusProvider, IPlayerFocusSetter
     {
-        public event Action<bool> OnPlayerFocusChanged; 
+        public event Action<bool> PlayerFocusChanged; 
         
         public Camera MainCamera { get; }
         public bool IsPlayerFocused { get; private set; }
@@ -20,7 +20,7 @@ namespace Holders
             if (IsPlayerFocused == isFocused) return;
             
             IsPlayerFocused = isFocused;
-            OnPlayerFocusChanged?.Invoke(isFocused);
+            PlayerFocusChanged?.Invoke(isFocused);
         }
     }
 
@@ -32,7 +32,7 @@ namespace Holders
     public interface IPlayerFocusProvider
     {
         bool IsPlayerFocused { get; }
-        event Action<bool> OnPlayerFocusChanged;
+        event Action<bool> PlayerFocusChanged;
     }
     
     public interface IPlayerFocusSetter

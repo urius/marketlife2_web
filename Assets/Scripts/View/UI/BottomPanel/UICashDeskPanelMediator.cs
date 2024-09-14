@@ -17,6 +17,7 @@ namespace View.UI.BottomPanel
         private readonly IUpdatesProvider _updatesProvider = Instance.Get<IUpdatesProvider>();
         private readonly ILocalizationProvider _localizationProvider = Instance.Get<ILocalizationProvider>();
         private readonly IHireStaffCostProvider _hireStaffCostProvider = Instance.Get<IHireStaffCostProvider>();
+        private readonly IPlayerFocusProvider _playerFocusProvider = Instance.Get<IPlayerFocusProvider>();
         private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
         
         private PlayerCharModel _playerCharModel;
@@ -46,6 +47,7 @@ namespace View.UI.BottomPanel
             _playerCharModel.NearShopObjectsUpdated += OnNearShopObjectsUpdated;
             PanelView.HireStaffButtonClicked += OnHireStaffButtonClicked;
             _updatesProvider.GameplayFixedUpdate += OnGameplayFixedUpdate;
+            _playerFocusProvider.PlayerFocusChanged += OnPlayerFocusChanged;
         }
 
         private void Unsubscribe()
@@ -54,6 +56,7 @@ namespace View.UI.BottomPanel
             _playerCharModel.NearShopObjectsUpdated -= OnNearShopObjectsUpdated;
             PanelView.HireStaffButtonClicked -= OnHireStaffButtonClicked;
             _updatesProvider.GameplayFixedUpdate -= OnGameplayFixedUpdate;
+            _playerFocusProvider.PlayerFocusChanged -= OnPlayerFocusChanged;
         }
 
         private void OnGameplayFixedUpdate()
@@ -80,20 +83,26 @@ namespace View.UI.BottomPanel
             }
         }
 
+        private void OnPlayerFocusChanged(bool isFocused)
+        {
+            UpdatePanelViewState();
+        }
+
         private void OnNearShopObjectsUpdated()
         {
-            ProcessShowPanel();
+            UpdatePanelViewState();
         }
 
         private void OnLevelChanged(int level)
         {
-            ProcessShowPanel();
+            UpdatePanelViewState();
         }
 
-        private void ProcessShowPanel()
+        private void UpdatePanelViewState()
         {
             if (_playerCharModel.NearCashDesk != null
-                && _playerModelHolder.PlayerModel.Level >= Constants.MinLevelForCashDeskUpgrades)
+                && _playerModelHolder.PlayerModel.Level >= Constants.MinLevelForCashDeskUpgrades
+                && _playerFocusProvider.IsPlayerFocused)
             {
                 _secondsPostfix = _localizationProvider.GetLocale(Constants.LocalizationSecondsShortPostfix);
 

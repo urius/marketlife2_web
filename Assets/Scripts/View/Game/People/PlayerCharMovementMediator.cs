@@ -108,7 +108,7 @@ namespace View.Game.People
             _updatesProvider.GameplayFixedUpdate += OnGameplayFixedUpdate;
             _playerCharModel.ProductsBoxAdded += OnProductsBoxAdded;
             _playerCharModel.ProductRemoved += OnProductRemoved;
-            _playerFocusProvider.OnPlayerFocusChanged += OnOnPlayerFocusChanged;
+            _playerFocusProvider.PlayerFocusChanged += OnOnPlayerFocusChanged;
 
             DebugDrawGizmosDispatcher.DrawGizmosHappened += OnDrawGizmosHappened;
         }
@@ -120,7 +120,7 @@ namespace View.Game.People
             _updatesProvider.GameplayFixedUpdate -= OnGameplayFixedUpdate;
             _playerCharModel.ProductsBoxAdded -= OnProductsBoxAdded;
             _playerCharModel.ProductRemoved -= OnProductRemoved;
-            _playerFocusProvider.OnPlayerFocusChanged -= OnOnPlayerFocusChanged;
+            _playerFocusProvider.PlayerFocusChanged -= OnOnPlayerFocusChanged;
             
             DebugDrawGizmosDispatcher.DrawGizmosHappened -= OnDrawGizmosHappened;
         }

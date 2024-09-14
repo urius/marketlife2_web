@@ -21,6 +21,7 @@ namespace View.UI.BottomPanel
         private readonly IUpgradeCostProvider _upgradeCostProvider = Instance.Get<IUpgradeCostProvider>();
         private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
         private readonly IHireStaffCostProvider _hireStaffCostProvider = Instance.Get<IHireStaffCostProvider>();
+        private readonly IPlayerFocusProvider _playerFocusProvider = Instance.Get<IPlayerFocusProvider>();
 
         private PlayerModel _playerModel;
         private PlayerCharModel _playerCharModel;
@@ -49,6 +50,7 @@ namespace View.UI.BottomPanel
             PanelView.UpgradeButtonClicked += OnUpgradeButtonClicked;
             PanelView.HireStaffButtonClicked += OnHireStaffButtonClicked;
             _updatesProvider.GameplayFixedUpdate += OnGameplayFixedUpdate;
+            _playerFocusProvider.PlayerFocusChanged += OnPlayerFocusChanged;
         }
 
         private void Unsubscribe()
@@ -57,6 +59,7 @@ namespace View.UI.BottomPanel
             PanelView.UpgradeButtonClicked -= OnUpgradeButtonClicked;
             PanelView.HireStaffButtonClicked -= OnHireStaffButtonClicked;
             _updatesProvider.GameplayFixedUpdate -= OnGameplayFixedUpdate;
+            _playerFocusProvider.PlayerFocusChanged -= OnPlayerFocusChanged;
             
             UnsubscribeFromTruckPoint(_targetTruckPoint);
         }
@@ -79,20 +82,31 @@ namespace View.UI.BottomPanel
 
         private void OnNearShopObjectsUpdated()
         {
-            if (_playerCharModel.NearTruckPoint != null 
+            UpdatePanelViewState();
+        }
+
+        private void OnPlayerFocusChanged(bool isFocused)
+        {
+            UpdatePanelViewState();
+        }
+
+        private void UpdatePanelViewState()
+        {
+            if (_playerCharModel.NearTruckPoint != null
                 && _playerCharModel.IsMultipleShopObjectsNear == false
-                && _playerModelHolder.PlayerModel.Level >= Constants.MinLevelForTruckPointUpgrades)
+                && _playerModelHolder.PlayerModel.Level >= Constants.MinLevelForTruckPointUpgrades
+                && _playerFocusProvider.IsPlayerFocused)
             {
                 _secondsPostfix = _localizationProvider.GetLocale(Constants.LocalizationSecondsShortPostfix);
-                
+
                 ProcessNewTargetTruckPoint(_playerCharModel.NearTruckPoint);
-                
+
                 SlideUp();
             }
             else
             {
                 ResetTargetTruckPoint();
-                    
+
                 SlideDown();
             }
         }
