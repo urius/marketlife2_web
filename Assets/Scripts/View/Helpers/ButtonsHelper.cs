@@ -36,7 +36,14 @@ namespace View.Helpers
                         $"{localizationProvider.GetLocale(textKey)}\n{FormattingHelper.ToMoneyWithIconTextFormat(hireStaffCost)}";
                     
                     buttonView.SetText(hireText);
-                    buttonView.SetOrangeSkinData();
+                    if (staffCharModel == null)
+                    {
+                        buttonView.SetGreenSkinData();
+                    }
+                    else
+                    {
+                        buttonView.SetOrangeSkinData();
+                    }
                     break;
                 }
                 case 0:
@@ -50,7 +57,7 @@ namespace View.Helpers
                 }
                 default:
                     buttonView.SetText(localizationProvider.GetLocale(Constants.LocalizationHireButton));
-                    buttonView.SetOrangeSkinData();
+                    buttonView.SetGreenSkinData();
                     break;
             }
         }

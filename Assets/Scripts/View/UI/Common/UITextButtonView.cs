@@ -12,6 +12,7 @@ namespace View.UI.Common
         [SerializeField] private Button _button;
         [SerializeField] private SkinData _orangeSkinData;
         [SerializeField] private SkinData _crimsonSkinData;
+        [SerializeField] private SkinData _greenSkinData;
 
         public Button Button => _button;
         public TMP_Text Text => _text;
@@ -24,6 +25,11 @@ namespace View.UI.Common
         public void SetCrimsonSkinData()
         {
             ApplySkinData(_crimsonSkinData);
+        }
+        
+        public void SetGreenSkinData()
+        {
+            ApplySkinData(_greenSkinData);
         }
 
         public void SetText(string text)
