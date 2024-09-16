@@ -178,7 +178,7 @@ namespace View.Camera
             var cameraPos = GetCameraOnPlanePosition();
             var deltaPos = targetWorldPosition - cameraPos;
 
-            const float cameraDeltaPosThreshold = 0.01f;
+            const float cameraDeltaPosThreshold = 0.005f;
             
             if (deltaPos.sqrMagnitude <= cameraDeltaPosThreshold) return false;
             
