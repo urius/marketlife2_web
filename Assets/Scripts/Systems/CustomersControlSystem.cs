@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Data;
@@ -11,6 +12,7 @@ using Model.People.States;
 using Model.People.States.Customer;
 using Model.ShopObjects;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Systems
 {
@@ -182,16 +184,33 @@ namespace Systems
                             setStateSuccess = TrySetMoveToShelfWithExactProductState(model, targetProduct);
                             if (setStateSuccess == false)
                             {
-                                SetMoveToExitState(model);
+                                SetMoveToCashDeskOrExitState(model);
                             }
                         }
                     }
                     else
                     {
-                        SetMoveToExitState(model);
+                        SetMoveToCashDeskOrExitState(model);
                     }
                     break;
                 case ShopCharStateName.CustomerTakingProduct:
+                    if (model.ProductsCount < Math.Min(_shopModel.CashDesks.Count, CustomerCharModel.MaxProductsAmount))
+                    {
+                        var rnd = Random.value;
+                        if (rnd <= 0.6f)
+                        {
+                            if (TrySetTakeProductState(model))
+                            {
+                                break;
+                            }
+                        }
+                        else if (rnd <= 0.8f)
+                        {
+                            SetMoveToRandomShelfState(model);
+                            break;
+                        }
+                    }
+
                     SetMoveToCashDeskState(model);
                     break;
                 case ShopCharStateName.CustomerMovingToCashDesk:
@@ -217,6 +236,18 @@ namespace Systems
                 case ShopCharStateName.CustomerMovingToDespawn:
                     _customersModel.RemoveCustomer(model);
                     break;
+            }
+        }
+
+        private void SetMoveToCashDeskOrExitState(CustomerCharModel model)
+        {
+            if (model.HasProducts)
+            {
+                SetMoveToCashDeskState(model);
+            }
+            else
+            {
+                SetMoveToExitState(model);
             }
         }
 
@@ -329,11 +360,28 @@ namespace Systems
 
         private bool TrySetTakeProductState(CustomerCharModel model)
         {
-            var currentMoveToShelfState = (CustomerMovingToShelfState)model.State;
-            var targetShelfModel = currentMoveToShelfState.TargetShelf;
-            var targetProduct = currentMoveToShelfState.TargetProduct;
+            ShelfModel targetShelfModel = null;
+            ProductType targetProduct = ProductType.None;
+            
+            switch (model.State.StateName)
+            {
+                case ShopCharStateName.CustomerTakingProduct:
+                {
+                    var currentMoveToShelfState = (CustomerTakeProductFromShelfState)model.State;
+                    targetShelfModel = currentMoveToShelfState.TargetShelfModel;
+                    targetProduct = currentMoveToShelfState.ProductType;
+                    break;
+                }
+                case ShopCharStateName.CustomerMovingToShelf:
+                {
+                    var currentMoveToShelfState = (CustomerMovingToShelfState)model.State;
+                    targetShelfModel = currentMoveToShelfState.TargetShelf;
+                    targetProduct = currentMoveToShelfState.TargetProduct;
+                    break;
+                }
+            }
 
-            if (targetProduct == ProductType.None) return false;
+            if (targetProduct == ProductType.None || targetShelfModel == null) return false;
             
             var slotIndex = targetShelfModel.GetProductSlotIndex(targetProduct);
 

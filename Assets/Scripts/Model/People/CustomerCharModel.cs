@@ -10,7 +10,7 @@ namespace Model.People
 {
     public class CustomerCharModel : BotCharModelBase
     {
-        private const int MaxProductsAmount = 4;
+        public const int MaxProductsAmount = 4;
         
         public event Action<int> ProductAdded;
         public event Action BagStatusUpdated;
