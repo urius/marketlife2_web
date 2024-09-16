@@ -34,6 +34,7 @@ namespace Data
         public const string LocalizationProlonged = "prolonged";
         public const string LocalizationUpgradeShelf = "upgrade_shelf";
         public const string LocalizationKeyLevel = "level";
+        public const string LocalizationKeyNewLevelReached = "new_level_reached";
         public const string LocalizationTutorialHowToMoveMessageKey = "tutorial_how_to_move_text";
         public const string LocalizationTutorialBuildCashDeskMessageKey = "tutorial_build_cash_desk_text";
         public const string LocalizationTutorialBuildShelfMessageKey = "tutorial_build_shelf_text";

@@ -166,6 +166,11 @@
 			"ru": "Уровень"
 		},
 		{
+			"key": "new_level_reached",
+			"en": "New level reached!",
+			"ru": "Достигнут новый уровень!"
+		},
+		{
 			"key": "tutorial_how_to_move_text",
 			"en": "Hold to move",
 			"ru": "Удерживайте для передвижения"
@@ -191,19 +196,19 @@
 			"ru": "Возьми продукты из грузовика"
 		},
 		{
-			"key": "tutorial_take_products_from_truck_point_2_text",
-			"en": "Take the rest products from the truck",
-			"ru": "Возьми оставшиеся продукты из грузовика"
+			"key": "tutorial_put_products_on_shelf_text",
+			"en": "Put the products",
+			"ru": "Разложи продукты"
 		},
 		{
-			"key": "tutorial_put_products_on_shelf_text",
-			"en": "Get near the shelf to put the products",
-			"ru": "Подойди к полке чтобы разложить продукты"
+			"key": "tutorial_take_products_from_truck_point_2_text",
+			"en": "Take the rest products from the truck",
+			"ru": "Возьми оставшиеся продукты"
 		},
 		{
 			"key": "tutorial_put_products_on_shelf_2_text",
-			"en": "Put them on the shelf and lets wait customers",
-			"ru": "Положи их на полку и жди клиентов"
+			"en": "Put the products and lets wait customers",
+			"ru": "Разложи продукты и жди клиентов"
 		},
 		{
 			"key": "tutorial_move_to_cash_desk_text",

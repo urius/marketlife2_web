@@ -67,8 +67,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Drag on sceen to move
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: d0fad61d195f04359934ba92343cd6ee, type: 2}
-  m_sharedMaterial: {fileID: -6584527577928129692, guid: d0fad61d195f04359934ba92343cd6ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 5e163a974c4ec49879a283a403577972, type: 2}
+  m_sharedMaterial: {fileID: -6584527577928129692, guid: 5e163a974c4ec49879a283a403577972, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -239,7 +239,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6434508016780649764}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 

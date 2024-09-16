@@ -106,7 +106,27 @@ namespace View.UI.TopPanel
             SetLevelProgressBarRatio(0f);
             DisplayLevelProgress(forceProgressBar: false);
 
+            DisplayNewLevelText();
+
             await AnimateNewLevelStar();
+
+            DisableNewLevelTextVisibilityAfterDelay().Forget();
+        }
+
+        private async UniTaskVoid DisableNewLevelTextVisibilityAfterDelay()
+        {
+            await UniTask.Delay(2000);
+            
+            _levelView.AnimateNewLevelTextFadingOut();
+        }
+
+        private void DisplayNewLevelText()
+        {
+            var newLevelText = _localizationProvider.GetLocale(Constants.LocalizationKeyNewLevelReached);
+            
+            _levelView.SetNewLevelText(newLevelText);
+
+            _levelView.SetNewLevelTextVisibility(true);
         }
 
         private async UniTask AnimateNewLevelStar()
