@@ -319,10 +319,14 @@ namespace Systems
         {
             var allShelfs = _shopModel.Shelfs;
             ShelfModel targetShelf = null;
+            var rndInt = Random.Range(0, _shopModel.Shelfs.Count);
+            var tempInt = 0;
             foreach (var shelfModel in allShelfs)
             {
-                if (shelfModel.HasProducts() 
-                    && (targetShelf == null || Random.value < 0.2f))
+                tempInt++;
+                if (tempInt > rndInt
+                    && shelfModel.HasProducts() 
+                    && (targetShelf == null || Random.value < 0.5f))
                 {
                     targetShelf = shelfModel;
                 }
