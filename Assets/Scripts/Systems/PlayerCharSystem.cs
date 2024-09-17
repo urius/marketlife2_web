@@ -128,7 +128,13 @@ namespace Systems
                 {
                     nearShelf = shelfModel;
                 }
-                else if (_ownedCellsDataHolder.TryGetTruckPoint(nearCell, out var truckPoint))
+            }
+            
+            foreach (var cellOffset in Constants.NearCells4)
+            {
+                var nearCell = cellPosition + cellOffset;
+                
+                if (_ownedCellsDataHolder.TryGetTruckPoint(nearCell, out var truckPoint))
                 {
                     nearTruckPoint = truckPoint;
                 }
