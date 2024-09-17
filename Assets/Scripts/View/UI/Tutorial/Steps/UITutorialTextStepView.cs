@@ -5,7 +5,7 @@ namespace View.UI.Tutorial.Steps
 {
     public class UITutorialTextStepView : MonoBehaviour
     {
-        private const float TextAlphaDuration = 0.75f; // Duration for the alpha transition
+        //private const float TextAlphaDuration = 1f; // Duration for the alpha transition
         
         [SerializeField] private TMP_Text _text;
         [SerializeField] private RectTransform _arrowRectTransform;
@@ -34,14 +34,14 @@ namespace View.UI.Tutorial.Steps
             _arrowRectTransform.gameObject.SetActive(isVisible);
         }
 
-        private void FixedUpdate()
-        {
-            _updateTimer += Time.fixedDeltaTime;
-            var pingPongValue = Mathf.PingPong(_updateTimer / TextAlphaDuration, 1f); // PingPong between 0 and 1
-            var alpha = Mathf.Lerp(0.5f, 1f, pingPongValue); // Lerp between 0.5 and 1 based on lerp value
-            
-            SetTextAlpha(alpha);
-        }
+        // private void FixedUpdate()
+        // {
+        //     _updateTimer += Time.fixedDeltaTime;
+        //     var pingPongValue = Mathf.PingPong(_updateTimer, 1f); // PingPong between 0 and 1
+        //     var alpha = Mathf.Lerp(0.75f, 1f, pingPongValue); // Lerp between 0.5 and 1 based on lerp value
+        //     
+        //     SetTextAlpha(alpha);
+        // }
 
         private void SetTextAlpha(float alpha)
         {

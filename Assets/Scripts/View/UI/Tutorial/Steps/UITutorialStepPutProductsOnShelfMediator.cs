@@ -39,7 +39,7 @@ namespace View.UI.Tutorial.Steps
 
         private async UniTaskVoid ActivateStepWithDelay()
         {
-            await UniTask.Delay(1000);
+            await UniTask.Delay(500);
             
             base.ActivateStep();
         }
