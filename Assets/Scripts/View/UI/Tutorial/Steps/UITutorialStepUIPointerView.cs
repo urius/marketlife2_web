@@ -7,6 +7,32 @@ namespace View.UI.Tutorial.Steps
     {
         [SerializeField] private TMP_Text _text;
         [SerializeField] private RectTransform _pointerRectTransform;
+        [SerializeField] private RectTransform _arrowRectTransform;
+        
+        public void ToLeftSideState()
+        {
+            SetTextXPivot(1);
+            SetArrowZAngle(190);
+        }
+
+        public void ToRightSideState()
+        {
+            SetTextXPivot(0);
+            SetArrowZAngle(170);
+        }
+
+        private void SetArrowZAngle(float angle)
+        {
+            var localEulerAngles = _arrowRectTransform.localEulerAngles;
+            localEulerAngles.z = angle;
+            _arrowRectTransform.localEulerAngles = localEulerAngles;
+        }
+
+        private void SetTextXPivot(float xPivot)
+        {
+            var textRectTransform = _text.transform as RectTransform;
+            textRectTransform.pivot = new Vector2(xPivot, textRectTransform.pivot.y);
+        }
 
         public void SetText(string newText)
         {

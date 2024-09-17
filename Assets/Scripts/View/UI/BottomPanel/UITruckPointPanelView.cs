@@ -6,7 +6,7 @@ using View.UI.Common;
 
 namespace View.UI.BottomPanel
 {
-    public class UITruckPointPanelView : UIBottomPanelViewBase
+    public class UITruckPointPanelView : UIBottomPanelViewBase, IUITruckPointPanelTransformsProvider
     {
         public event Action UpgradeButtonClicked;
         public event Action HireStaffButtonClicked;
@@ -25,7 +25,7 @@ namespace View.UI.BottomPanel
         [SerializeField] private UITextButtonView _hireStaffButtonView;
 
         public int ProductIconsAmount => _productIcons.Length;
-        public Transform UpgradeButtonTransform => _upgradeButton.transform;
+        public RectTransform UpgradeButtonTransform => _upgradeButton.transform as RectTransform;
         public UITextButtonView HireStaffButtonView => _hireStaffButtonView;
         
         private Button HireStaffButton => _hireStaffButtonView.Button;
@@ -107,5 +107,10 @@ namespace View.UI.BottomPanel
         {
             HireStaffButtonClicked?.Invoke();
         }
+    }
+
+    public interface IUITruckPointPanelTransformsProvider
+    {
+        public RectTransform UpgradeButtonTransform { get; }
     }
 }

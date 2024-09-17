@@ -94,6 +94,9 @@ namespace View.UI.Tutorial
                 case TutorialStep.HireCashDeskStaff:
                     MediateStepInternal<UITutorialStepHireCashDeskStaffMediator>(tutorialStep);
                     break;
+                case TutorialStep.UpgradeTruckPoint:
+                    MediateStepInternal<UITutorialStepIUpgradeTruckPointMediator>(tutorialStep);
+                    break;
                 default:
                     Debug.LogError($"tutorial step {tutorialStep} not implemented");
                     break;

@@ -22,6 +22,7 @@ namespace View.UI.BottomPanel
         private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
         private readonly IHireStaffCostProvider _hireStaffCostProvider = Instance.Get<IHireStaffCostProvider>();
         private readonly IPlayerFocusProvider _playerFocusProvider = Instance.Get<IPlayerFocusProvider>();
+        private readonly ISharedViewsDataHolder _sharedViewsDataHolder = Instance.Get<ISharedViewsDataHolder>();
 
         private PlayerModel _playerModel;
         private PlayerCharModel _playerCharModel;
@@ -32,6 +33,8 @@ namespace View.UI.BottomPanel
         protected override void MediateInternal()
         {
             base.MediateInternal();
+
+            _sharedViewsDataHolder.RegisterTruckPointPanelTransformsProvider(PanelView);
             
             _playerModel = _playerModelHolder.PlayerModel;
             _playerCharModel = _playerModelHolder.PlayerCharModel;
@@ -41,11 +44,16 @@ namespace View.UI.BottomPanel
 
         protected override void UnmediateInternal()
         {
+            _sharedViewsDataHolder.UnregisterTruckPointPanelTransformsProvider();
+            
             Unsubscribe();
         }
 
         private void Subscribe()
         {
+            SlideUpFinished += OnSlideUpFinished;
+            SlideDownFinished += OnSlideDownFinished;
+            
             _playerCharModel.NearShopObjectsUpdated += OnNearShopObjectsUpdated;
             PanelView.UpgradeButtonClicked += OnUpgradeButtonClicked;
             PanelView.HireStaffButtonClicked += OnHireStaffButtonClicked;
@@ -55,6 +63,9 @@ namespace View.UI.BottomPanel
 
         private void Unsubscribe()
         {
+            SlideUpFinished -= OnSlideUpFinished;
+            SlideDownFinished -= OnSlideDownFinished;
+            
             _playerCharModel.NearShopObjectsUpdated -= OnNearShopObjectsUpdated;
             PanelView.UpgradeButtonClicked -= OnUpgradeButtonClicked;
             PanelView.HireStaffButtonClicked -= OnHireStaffButtonClicked;
@@ -62,6 +73,16 @@ namespace View.UI.BottomPanel
             _playerFocusProvider.PlayerFocusChanged -= OnPlayerFocusChanged;
             
             UnsubscribeFromTruckPoint(_targetTruckPoint);
+        }
+
+        private void OnSlideUpFinished()
+        {
+            _eventBus.Dispatch(new UITruckPointBottomPanelSlideAnimationFinishedEvent(isSlideUp: true));
+        }
+
+        private void OnSlideDownFinished()
+        {            
+            _eventBus.Dispatch(new UITruckPointBottomPanelSlideAnimationFinishedEvent(isSlideUp: false));
         }
 
         private void OnUpgradeButtonClicked()

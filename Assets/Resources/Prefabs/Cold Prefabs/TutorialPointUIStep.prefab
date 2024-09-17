@@ -185,6 +185,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _text: {fileID: 6973360036107258098}
   _pointerRectTransform: {fileID: 189236614225575572}
+  _arrowRectTransform: {fileID: 9096043942334747999}
 --- !u!1 &6434508016780649764
 GameObject:
   m_ObjectHideFlags: 0

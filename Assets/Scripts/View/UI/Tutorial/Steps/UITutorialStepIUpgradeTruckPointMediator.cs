@@ -7,7 +7,7 @@ using View.UI.BottomPanel;
 
 namespace View.UI.Tutorial.Steps
 {
-    public class UITutorialStepHireCashDeskStaffMediator : UITutorialStepMediatorBase
+    public class UITutorialStepIUpgradeTruckPointMediator : UITutorialStepMediatorBase
     {
         private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
         private readonly ISharedViewsDataHolder _sharedViewsDataHolder = Instance.Get<ISharedViewsDataHolder>();
@@ -15,12 +15,12 @@ namespace View.UI.Tutorial.Steps
         
         private bool _panelSlideUpFinishedFlag = false;
         private int _showsCounter = 0;
+        private IUITruckPointPanelTransformsProvider _panelTransformsProvider;
         private UITutorialStepUIPointerView _view;
-        private IUICashDeskPanelTransformsProvider _panelTransformsProvider;
 
         protected override void MediateInternal()
         {
-            _panelTransformsProvider = _sharedViewsDataHolder.GetCashDeskPanelTransformsProvider();
+            _panelTransformsProvider = _sharedViewsDataHolder.GetTruckPointPanelTransformsProvider();
             
             Subscribe();
         }
@@ -34,13 +34,13 @@ namespace View.UI.Tutorial.Steps
         {
             _view = InstantiateColdPrefab<UITutorialStepUIPointerView>(Constants.TutorialStepPointUIPath);
             
-            _view.ToLeftSideState();
+            _view.ToRightSideState();
 
-            var hireButtonTransform = _panelTransformsProvider.HireButtonTransform;
+            var upgradeButtonTransform = _panelTransformsProvider.UpgradeButtonTransform;
             
-            _view.SetText(_localizationProvider.GetLocale(Constants.LocalizationTutorialHireCashDeskStaffMessageKey));
+            _view.SetText(_localizationProvider.GetLocale(Constants.LocalizationTutorialUpgradeTruckPointMessageKey));
             
-            _view.SetPointerToPosition(hireButtonTransform.position);
+            _view.SetPointerToPosition(upgradeButtonTransform.position);
 
             _showsCounter++;
 
@@ -60,30 +60,30 @@ namespace View.UI.Tutorial.Steps
 
         private void Subscribe()
         {
-            _eventBus.Subscribe<UICashDeskBottomPanelSlideAnimationFinishedEvent>(OnUICashDeskBottomPanelSlideUpFinished);
+            _eventBus.Subscribe<UITruckPointBottomPanelSlideAnimationFinishedEvent>(OnUITruckPointBottomPanelSlideAnimationFinished);
         }
 
         private void SubscribeOnActivation()
         {
-            _eventBus.Subscribe<CashDeskHireStaffButtonClickedEvent>(OnCashDeskHireStaffButtonClicked);
+            _eventBus.Subscribe<UpgradeTruckPointButtonClickedEvent>(OnUpgradeTruckPointButtonClickedEvent);
         }
 
-        private void OnCashDeskHireStaffButtonClicked(CashDeskHireStaffButtonClickedEvent e)
+        private void Unsubscribe()
+        {            
+            _eventBus.Unsubscribe<UITruckPointBottomPanelSlideAnimationFinishedEvent>(OnUITruckPointBottomPanelSlideAnimationFinished);
+            _eventBus.Unsubscribe<UpgradeTruckPointButtonClickedEvent>(OnUpgradeTruckPointButtonClickedEvent);
+        }
+
+        private void OnUpgradeTruckPointButtonClickedEvent(UpgradeTruckPointButtonClickedEvent e)
         {
             DispatchStepFinished();
         }
 
-        private void Unsubscribe()
-        {
-            _eventBus.Unsubscribe<UICashDeskBottomPanelSlideAnimationFinishedEvent>(OnUICashDeskBottomPanelSlideUpFinished);
-            _eventBus.Unsubscribe<CashDeskHireStaffButtonClickedEvent>(OnCashDeskHireStaffButtonClicked);
-        }
-
-        private void OnUICashDeskBottomPanelSlideUpFinished(UICashDeskBottomPanelSlideAnimationFinishedEvent e)
+        private void OnUITruckPointBottomPanelSlideAnimationFinished(UITruckPointBottomPanelSlideAnimationFinishedEvent e)
         {
             var isSlideUp = e.IsSlideUp;
             _panelSlideUpFinishedFlag = isSlideUp;
-
+            
             if (_view != null)
             {
                 _view.gameObject.SetActive(_panelSlideUpFinishedFlag);

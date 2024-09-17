@@ -45,6 +45,7 @@ namespace Data
         public const string LocalizationTutorialPutProductsOnShelfSecondTimeMessageKey = "tutorial_put_products_on_shelf_2_text";
         public const string LocalizationTutorialMoveToCashDeskMessageKey = "tutorial_move_to_cash_desk_text";
         public const string LocalizationTutorialHireCashDeskStaffMessageKey = "tutorial_hire_cash_desk_staff_text";
+        public const string LocalizationTutorialUpgradeTruckPointMessageKey = "tutorial_upgrade_truck_point_text";
 
         private const string ColdPrefabsFolderPath = "Prefabs/Cold Prefabs";
         public static readonly string TutorialHowToMovePath = $"{ColdPrefabsFolderPath}/TutorialHowToMove";

@@ -219,6 +219,11 @@
 			"key": "tutorial_hire_cash_desk_staff_text",
 			"en": "Now you can hire workers!",
 			"ru": "Теперь можно нанимать сотрудников!"
+		},
+		{
+			"key": "tutorial_upgrade_truck_point_text",
+			"en": "Here you can upgrade your truck point",
+			"ru": "Здесь можно улучшать точку доставки"
 		}
 	]
 }

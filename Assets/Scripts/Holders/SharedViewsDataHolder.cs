@@ -18,6 +18,7 @@ namespace Holders
         private readonly Dictionary<ProductBoxModel, ICharProductsInBoxPositionsProvider> _productsInBoxPositionsProviders = new();
         
         private IUICashDeskPanelTransformsProvider _uiCashDeskPanelTransformsProvider;
+        private IUITruckPointPanelTransformsProvider _uiTruckPointPanelTransformsProvider;
 
         private IPlayerCharPositionsProvider _playerCharPositionsProvider;
 
@@ -117,6 +118,21 @@ namespace Holders
         {
             _uiCashDeskPanelTransformsProvider = null;
         }
+        
+        public void RegisterTruckPointPanelTransformsProvider(IUITruckPointPanelTransformsProvider provider)
+        {
+            _uiTruckPointPanelTransformsProvider = provider;
+        }
+
+        public IUITruckPointPanelTransformsProvider GetTruckPointPanelTransformsProvider()
+        {
+            return _uiTruckPointPanelTransformsProvider;
+        }
+
+        public void UnregisterTruckPointPanelTransformsProvider()
+        {
+            _uiTruckPointPanelTransformsProvider = null;
+        }
     }
 
     public interface ISharedViewsDataHolder
@@ -145,5 +161,9 @@ namespace Holders
         public void RegisterCashDeskPanelTransformsProvider(IUICashDeskPanelTransformsProvider provider);
         public IUICashDeskPanelTransformsProvider GetCashDeskPanelTransformsProvider();
         public void UnregisterCashDeskPanelTransformsProvider();
+        
+        public void RegisterTruckPointPanelTransformsProvider(IUITruckPointPanelTransformsProvider provider);
+        public IUITruckPointPanelTransformsProvider GetTruckPointPanelTransformsProvider();
+        public void UnregisterTruckPointPanelTransformsProvider();
     }
 }
