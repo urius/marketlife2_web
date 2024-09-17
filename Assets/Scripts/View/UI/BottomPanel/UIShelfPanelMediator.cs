@@ -65,7 +65,7 @@ namespace View.UI.BottomPanel
 
         private void UpdatePanelViewState()
         {
-            if (_playerCharModel.NearShelf != null
+            if (CanUpgradeShelfModel(_playerCharModel.NearShelf)
                 && _playerCharModel.IsMultipleShopObjectsNear == false
                 && _playerModelHolder.PlayerModel.Level >= Constants.MinLevelForShelfUpgrades
                 && _playerFocusProvider.IsPlayerFocused)
