@@ -6,6 +6,7 @@ using View.Game.People;
 using View.Game.ShopObjects.CashDesk;
 using View.Game.ShopObjects.Shelf;
 using View.Game.ShopObjects.TruckPoint;
+using View.UI.BottomPanel;
 
 namespace Holders
 {
@@ -15,6 +16,8 @@ namespace Holders
         private readonly Dictionary<ShelfModel, IShelfProductSlotPositionProvider> _shelfSlotsDictionary = new();
         private readonly Dictionary<CashDeskModel, ICashDeskMoneyPositionProvider> _cashDeskProvidersDictionary = new();
         private readonly Dictionary<ProductBoxModel, ICharProductsInBoxPositionsProvider> _productsInBoxPositionsProviders = new();
+        
+        private IUICashDeskPanelTransformsProvider _uiCashDeskPanelTransformsProvider;
 
         private IPlayerCharPositionsProvider _playerCharPositionsProvider;
 
@@ -99,6 +102,21 @@ namespace Holders
         {
             _cashDeskProvidersDictionary.Remove(model);
         }
+
+        public void RegisterCashDeskPanelTransformsProvider(IUICashDeskPanelTransformsProvider provider)
+        {
+            _uiCashDeskPanelTransformsProvider = provider;
+        }
+
+        public IUICashDeskPanelTransformsProvider GetCashDeskPanelTransformsProvider()
+        {
+            return _uiCashDeskPanelTransformsProvider;
+        }
+
+        public void UnregisterCashDeskPanelTransformsProvider()
+        {
+            _uiCashDeskPanelTransformsProvider = null;
+        }
     }
 
     public interface ISharedViewsDataHolder
@@ -123,5 +141,9 @@ namespace Holders
         public void RegisterCashDeskMoneyPositionProvider(CashDeskModel model, ICashDeskMoneyPositionProvider provider);
         public ICashDeskMoneyPositionProvider GetCashDeskMoneyPositionProvider(CashDeskModel model);
         public void UnregisterCashDeskMoneyPositionProvider(CashDeskModel model);
+
+        public void RegisterCashDeskPanelTransformsProvider(IUICashDeskPanelTransformsProvider provider);
+        public IUICashDeskPanelTransformsProvider GetCashDeskPanelTransformsProvider();
+        public void UnregisterCashDeskPanelTransformsProvider();
     }
 }

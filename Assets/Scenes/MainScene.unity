@@ -7449,6 +7449,7 @@ MonoBehaviour:
   _newLevelText: {fileID: 81847638}
   _progressBarTransform: {fileID: 915976610}
   _starTransform: {fileID: 1987661942}
+  _isNewLevelTextVisible: 0
 --- !u!1 &1786740322
 GameObject:
   m_ObjectHideFlags: 0

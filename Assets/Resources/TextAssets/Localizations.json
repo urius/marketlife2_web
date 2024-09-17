@@ -214,6 +214,11 @@
 			"key": "tutorial_move_to_cash_desk_text",
 			"en": "Get near the cash desk to serve customers",
 			"ru": "Подойди к кассе чтобы обслужить клиентов"
+		},
+		{
+			"key": "tutorial_hire_cash_desk_staff_text",
+			"en": "Now you can hire workers!",
+			"ru": "Теперь можно нанимать сотрудников!"
 		}
 	]
 }

@@ -1,3 +1,4 @@
+using System;
 using Events;
 using Holders;
 using Infra.EventBus;
@@ -9,6 +10,9 @@ namespace View.UI.BottomPanel
     public abstract class UIBottomPanelMediatorBase<TView> : MediatorBase
         where TView : UIBottomPanelViewBase
     {
+        protected event Action SlideUpFinished;
+        protected event Action SlideDownFinished;
+        
         private readonly IUpdatesProvider _updatesProvider = Instance.Get<IUpdatesProvider>();
         private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
         private readonly ILocalizationProvider _localizationProvider = Instance.Get<ILocalizationProvider>();
@@ -68,6 +72,8 @@ namespace View.UI.BottomPanel
             {
                 _slideUpPositionPercent = 1;
                 _updatesProvider.GameplayFixedUpdate -= OnSlideGameplayFixedUpdate;
+                
+                SlideUpFinished?.Invoke();
             }
 
             if (_slideUpPositionPercent <= 0)
@@ -76,6 +82,8 @@ namespace View.UI.BottomPanel
                 _updatesProvider.GameplayFixedUpdate -= OnSlideGameplayFixedUpdate;
                 
                 PanelView.SetActive(false);
+                
+                SlideDownFinished?.Invoke();
             }
             
             PanelView.SetSlideUpPositionPercent(_slideUpPositionPercent);

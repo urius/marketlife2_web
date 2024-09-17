@@ -11,7 +11,7 @@ namespace View.UI.Tutorial.Steps
         private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
         private readonly ILocalizationProvider _localizationProvider = Instance.Get<ILocalizationProvider>();
         
-        private static readonly string ColdPrefabPath = Constants.TutorialHowToMoveColdPrefabPath;
+        private static readonly string ColdPrefabPath = Constants.TutorialHowToMovePath;
         
         private UITutorialHowToMoveStepView _stepView;
         private int _playerPositionChangesCounter;

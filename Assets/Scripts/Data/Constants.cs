@@ -44,10 +44,12 @@ namespace Data
         public const string LocalizationTutorialPutProductsOnShelfMessageKey = "tutorial_put_products_on_shelf_text";
         public const string LocalizationTutorialPutProductsOnShelfSecondTimeMessageKey = "tutorial_put_products_on_shelf_2_text";
         public const string LocalizationTutorialMoveToCashDeskMessageKey = "tutorial_move_to_cash_desk_text";
+        public const string LocalizationTutorialHireCashDeskStaffMessageKey = "tutorial_hire_cash_desk_staff_text";
 
         private const string ColdPrefabsFolderPath = "Prefabs/Cold Prefabs";
-        public static readonly string TutorialHowToMoveColdPrefabPath = $"{ColdPrefabsFolderPath}/TutorialHowToMove";
+        public static readonly string TutorialHowToMovePath = $"{ColdPrefabsFolderPath}/TutorialHowToMove";
         public static readonly string TutorialDefaultStepWithTextPath = $"{ColdPrefabsFolderPath}/TutorialDefaultStep";
+        public static readonly string TutorialStepPointUIPath = $"{ColdPrefabsFolderPath}/TutorialPointUIStep";
 
         public const string TextIconMoney = "<sprite name=\"money\">";
         public const string TextIconAds = "<sprite name=\"ads\">";

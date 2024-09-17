@@ -6,7 +6,7 @@ using View.UI.Common;
 
 namespace View.UI.BottomPanel
 {
-    public class UICashDeskPanelView : UIBottomPanelViewBase
+    public class UICashDeskPanelView : UIBottomPanelViewBase, IUICashDeskPanelTransformsProvider
     {
         public event Action HireStaffButtonClicked;
         
@@ -17,6 +17,8 @@ namespace View.UI.BottomPanel
         [SerializeField] private UITextButtonView _hireStaffButtonView;
 
         public UITextButtonView HireStaffButtonView => _hireStaffButtonView;
+
+        public RectTransform HireButtonTransform => _hireStaffButtonView.transform as RectTransform;
 
         protected override void Awake()
         {
@@ -61,5 +63,10 @@ namespace View.UI.BottomPanel
         {
             HireStaffButtonClicked?.Invoke();
         }
+    }
+
+    public interface IUICashDeskPanelTransformsProvider
+    {
+        public RectTransform HireButtonTransform { get; }
     }
 }

@@ -19,6 +19,7 @@ namespace View.UI.BottomPanel
         private readonly IHireStaffCostProvider _hireStaffCostProvider = Instance.Get<IHireStaffCostProvider>();
         private readonly IPlayerFocusProvider _playerFocusProvider = Instance.Get<IPlayerFocusProvider>();
         private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
+        private readonly ISharedViewsDataHolder _sharedViewsDataHolder = Instance.Get<ISharedViewsDataHolder>();
         
         private PlayerCharModel _playerCharModel;
         private string _secondsPostfix;
@@ -30,6 +31,8 @@ namespace View.UI.BottomPanel
         {
             base.MediateInternal();
             
+            _sharedViewsDataHolder.RegisterCashDeskPanelTransformsProvider(PanelView);
+            
             _playerModel = _playerModelHolder.PlayerModel;
             _playerCharModel = _playerModelHolder.PlayerCharModel;
 
@@ -39,10 +42,15 @@ namespace View.UI.BottomPanel
         protected override void UnmediateInternal()
         {
             Unsubscribe();
+
+            _sharedViewsDataHolder.UnregisterCashDeskPanelTransformsProvider();
         }
 
         private void Subscribe()
         {
+            SlideUpFinished += OnSlideUpFinished;
+            SlideDownFinished += OnSlideDownFinished;
+            
             _playerModel.LevelChanged += OnLevelChanged;
             _playerCharModel.NearShopObjectsUpdated += OnNearShopObjectsUpdated;
             PanelView.HireStaffButtonClicked += OnHireStaffButtonClicked;
@@ -52,11 +60,24 @@ namespace View.UI.BottomPanel
 
         private void Unsubscribe()
         {
+            SlideUpFinished -= OnSlideUpFinished;
+            SlideDownFinished -= OnSlideDownFinished;
+            
             _playerModel.LevelChanged -= OnLevelChanged;
             _playerCharModel.NearShopObjectsUpdated -= OnNearShopObjectsUpdated;
             PanelView.HireStaffButtonClicked -= OnHireStaffButtonClicked;
             _updatesProvider.GameplayFixedUpdate -= OnGameplayFixedUpdate;
             _playerFocusProvider.PlayerFocusChanged -= OnPlayerFocusChanged;
+        }
+
+        private void OnSlideUpFinished()
+        {
+            _eventBus.Dispatch(new UICashDeskBottomPanelSlideAnimationFinishedEvent(isSlideUp: true));
+        }
+
+        private void OnSlideDownFinished()
+        {
+            _eventBus.Dispatch(new UICashDeskBottomPanelSlideAnimationFinishedEvent(isSlideUp: false));
         }
 
         private void OnGameplayFixedUpdate()

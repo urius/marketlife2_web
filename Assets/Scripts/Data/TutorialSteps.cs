@@ -14,6 +14,7 @@ namespace Data
                 TutorialStep.TakeProductFromTruckPoint2,
                 TutorialStep.PutProductToShelf2,
                 TutorialStep.MoveToCashDesk,
+                TutorialStep.HireCashDeskStaff,
             },
             new TutorialStep[]{
                // TutorialStep.UpgradeShelf
