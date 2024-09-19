@@ -26,6 +26,7 @@ public class InitScript : MonoBehaviour
     [SerializeField] private SpritesHolderSo _spritesHolder;
     [SerializeField] private BuildPointsDataHolderSo _buildPointsDataHolder;
     [SerializeField] private TruckPointsSettingsProviderSo _truckPointsSettingsProvider;
+    [SerializeField] private InteriorDataProviderSo _interiorDataProviderSo;
     [SerializeField] private UpdatesProvider _updatesProvider;
     [SerializeField] private GameObjectsCache _gameObjectsCache;
 
@@ -85,6 +86,7 @@ public class InitScript : MonoBehaviour
         SetupInstance.From(_spritesHolder).AsSelf();
         SetupInstance.From(_buildPointsDataHolder).AsSelf();
         SetupInstance.From(_truckPointsSettingsProvider).AsSelf();
+        SetupInstance.From(_interiorDataProviderSo).As<IInteriorDataProvider>();
         SetupInstance.From(_gameObjectsCache).As<IGameObjectsCache>();
         SetupInstance.From(_commonGameSettings).As<ICommonGameSettings>();
         SetupInstance.From(_localizationsHolder).As<ILocalizationProvider>();
@@ -103,6 +105,7 @@ public class InitScript : MonoBehaviour
         SetupNewInstance<SharedViewsDataHolder, ISharedViewsDataHolder>();
         SetupNewInstance<UpgradeCostProvider, IUpgradeCostProvider>();
         SetupNewInstance<HireStaffCostProvider, IHireStaffCostProvider>();
+        SetupNewInstance<PopupViewModelsHolder, IPopupViewModelsHolder>();
         
         _playerModelHolder = SetupNewInstance<PlayerModelHolder, IPlayerModelHolder>();
         
@@ -112,6 +115,7 @@ public class InitScript : MonoBehaviour
     private void MapEventsToCommands()
     {
         Map<UIShelfUpgradeClickedEvent, UpgradeShelfCommand>();
+        Map<UIInteriorButtonClickedEvent, ShowInteriorPopupCommand>();
     }
 
     private void Map<TEvent, TCommand>()

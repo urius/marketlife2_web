@@ -5,7 +5,7 @@ namespace Holders
 {
     public class PlayerModelHolder : IPlayerModelHolder
     {
-        private readonly UniTaskCompletionSource _playerModelSetTcs = new UniTaskCompletionSource();
+        private readonly UniTaskCompletionSource _playerModelSetTcs = new();
         
         public PlayerModel PlayerModel { get; private set; }
         public PlayerCharModel PlayerCharModel => PlayerModel.PlayerCharModel;

@@ -30,5 +30,7 @@ namespace Data
         VFXBigSmoke,
         ManClockIcon,
         VFXStars,
+        UITabbedContentPopup,
+        UIInteriorPopupItem,
     }
 }

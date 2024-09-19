@@ -2,6 +2,7 @@ namespace Data
 {
     public enum WallType
     {
+        Undefined = 0,
         Wall1 = 1,
         Wall2 = 2,
         Wall3 = 3,

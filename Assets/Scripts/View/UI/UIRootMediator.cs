@@ -3,6 +3,7 @@ using Infra.Instance;
 using View.UI.BottomPanel;
 using View.UI.Common;
 using View.UI.GameOverlayPanel;
+using View.UI.Popups;
 using View.UI.TopPanel;
 using View.UI.Tutorial;
 
@@ -22,11 +23,15 @@ namespace View.UI
             
             MediateChild<UITopPanelMoneyViewMediator>(view.UITopPanelMoneyView.transform);
             MediateChild<UITopPanelLevelViewMediator>(view.UITopPanelLevelView.transform);
+            MediateChild<UITopPanelButtonsViewMediator>(view.UITopPanelButtonsView.transform);
+            
             MediateChild<UITruckPointPanelMediator>(view.UIBottomPanelTruckPointPanelView.transform);
             MediateChild<UICashDeskPanelMediator>(view.UICashDeskPanelView.transform);
             MediateChild<UIShelfPanelMediator>(view.UIShelfPanelView.transform);
+            
             MediateChild<UIFlyingTextsMediator>(TargetTransform);
-            MediateChild<UITutorialMediator>(view.TutorialRootCanvasView.transform);
+            MediateChild<UITutorialMediator>(view.UITutorialRootCanvasView.transform);
+            MediateChild<UIPopupsMediator>(view.UIPopupsCanvasRootView.transform);
         }
 
         protected override void UnmediateInternal()
