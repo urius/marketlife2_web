@@ -30,6 +30,11 @@ namespace Holders
             return _floorItems.First(i => i.Key == key).Tile;
         }
 
+        public Sprite GetFloorSpriteByKey(FloorType key)
+        {
+            return _floorItems.First(i => i.Key == key).Sprite;
+        }
+
         public Sprite GetWallSpriteByKey(WallType key)
         {
             return _wallItems.First(i => i.Key == key).Sprite;
@@ -55,6 +60,7 @@ namespace Holders
         {
             public FloorType Key;
             public Tile Tile;
+            public Sprite Sprite;
         }
 
         [Serializable]

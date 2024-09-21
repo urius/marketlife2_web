@@ -14,20 +14,29 @@ namespace Model
         public event Action<bool> IsLevelProcessingActiveFlagUpdated;
         public event Action<TutorialStep> OpenTutorialStepAdded;
         public event Action<TutorialStep> OpenTutorialStepRemoved;
+        public event Action<WallType> WallUnlocked;
+        public event Action<FloorType> FloorUnlocked;
         
         public readonly ShopModel ShopModel;
         public readonly PlayerCharModel PlayerCharModel;
         public readonly LinkedList<int> PassedTutorialSteps = new();
         //
         public readonly LinkedList<TutorialStep> OpenTutorialSteps = new(); //not for save
+        //
+        
+        private readonly List<WallType> _unlockedWalls;
+        private readonly List<FloorType> _unlockedFloors;
 
-        public PlayerModel(ShopModel shopModel, int moneyAmount, int level, int staffWorkTimeSeconds,
+        public PlayerModel(ShopModel shopModel, int moneyAmount, int level, 
+            int staffWorkTimeSeconds, WallType[] unlockedWalls, FloorType[] unlockedFloors,
             PlayerCharModel playerCharModel, IEnumerable<TutorialStep> passedTutorialSteps)
         {
             ShopModel = shopModel;
             MoneyAmount = moneyAmount;
-            StaffWorkTimeSeconds = staffWorkTimeSeconds;
             Level = level <= 0 ? 1 : level;
+            StaffWorkTimeSeconds = staffWorkTimeSeconds;
+            _unlockedWalls = new List<WallType>(unlockedWalls);
+            _unlockedFloors = new List<FloorType>(unlockedFloors);
             PlayerCharModel = playerCharModel;
             if (passedTutorialSteps != null)
             {
@@ -35,12 +44,28 @@ namespace Model
             }
         }
 
+        public IReadOnlyList<WallType> UnlockedWalls => _unlockedWalls;
+        public IReadOnlyList<FloorType> UnlockedFloors => _unlockedFloors;
         public bool IsLevelProcessingActive { get; private set; }
         public int MoneyAmount { get; private set; }
         public int Level { get; private set; }
         public int StaffWorkTimeSeconds { get; private set; }
         public int LevelIndex => Level - 1;
 
+        public void UnlockWall(WallType newWallType)
+        {
+            _unlockedWalls.Add(newWallType);
+            
+            WallUnlocked?.Invoke(newWallType);
+        }
+        
+        public void UnlockFloor(FloorType newFloorType)
+        {
+            _unlockedFloors.Add(newFloorType);
+    
+            FloorUnlocked?.Invoke(newFloorType);
+        }
+        
         public void ChangeMoney(int deltaMoney)
         {
             MoneyAmount += deltaMoney;

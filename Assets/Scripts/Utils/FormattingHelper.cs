@@ -24,6 +24,11 @@ namespace Utils
             return $"{Constants.TextIconMoney}{moneyAmount}";
         }
 
+        public static string ToMoneyWithIconText2Format(int moneyAmount)
+        {
+            return $"{Constants.TextIconMoney} {moneyAmount}";
+        }
+
         private static string GetTwoDigitsString(int value)
         {
             return value < 10 ? $"0{value}" : value.ToString();

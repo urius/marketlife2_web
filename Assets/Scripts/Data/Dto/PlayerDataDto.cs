@@ -10,5 +10,7 @@ namespace Data.Dto
         public int StaffWorkTimeSeconds;
         public ShopDataDto ShopData;
         public PlayerCharDataDto PlayerCharData;
+        public WallType[] UnlockedWalls;
+        public FloorType[] UnlockedFloors;
     }
 }

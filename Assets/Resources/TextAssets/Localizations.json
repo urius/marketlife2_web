@@ -224,6 +224,21 @@
 			"key": "tutorial_upgrade_truck_point_text",
 			"en": "Here you can upgrade your truck point",
 			"ru": "Здесь можно улучшать точку доставки"
+		},
+		{
+			"key": "choose",
+			"en": "Choose",
+			"ru": "Выбрать"
+		},
+		{
+			"key": "choosen",
+			"en": "Chosen",
+			"ru": "Выбрано"
+		},
+		{
+			"key": "buy",
+			"en": "Buy",
+			"ru": "Купить"
 		}
 	]
 }

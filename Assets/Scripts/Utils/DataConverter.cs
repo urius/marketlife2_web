@@ -22,6 +22,8 @@ namespace Utils
                 dataDto.Money,
                 dataDto.Level,
                 dataDto.StaffWorkTimeSeconds,
+                dataDto.UnlockedWalls,
+                dataDto.UnlockedFloors,
                 playerCharData,
                 Enumerable.Empty<TutorialStep>());
 

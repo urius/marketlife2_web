@@ -46,6 +46,9 @@ namespace Data
         public const string LocalizationTutorialMoveToCashDeskMessageKey = "tutorial_move_to_cash_desk_text";
         public const string LocalizationTutorialHireCashDeskStaffMessageKey = "tutorial_hire_cash_desk_staff_text";
         public const string LocalizationTutorialUpgradeTruckPointMessageKey = "tutorial_upgrade_truck_point_text";
+        public const string LocalizationChooseMessageKey = "choose";
+        public const string LocalizationChosenMessageKey = "choosen";
+        public const string LocalizationBuyMessageKey = "buy";
 
         private const string ColdPrefabsFolderPath = "Prefabs/Cold Prefabs";
         public static readonly string TutorialHowToMovePath = $"{ColdPrefabsFolderPath}/TutorialHowToMove";
@@ -54,6 +57,7 @@ namespace Data
 
         public const string TextIconMoney = "<sprite name=\"money\">";
         public const string TextIconAds = "<sprite name=\"ads\">";
+        public const string TextIconStar = "<sprite name=\"star\">";
 
         public static readonly Vector2Int[] NearCells8 = new[]
         {

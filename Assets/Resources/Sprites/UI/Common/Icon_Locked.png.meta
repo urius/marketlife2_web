@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 716b3bd497ddb43b988572c4d14d9a0d
+guid: 9b3335419a2e64b8b924adbe90be90f6
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -43,7 +43,7 @@ TextureImporter:
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
-  spriteMode: 2
+  spriteMode: 1
   spriteExtrude: 1
   spriteMeshType: 0
   alignment: 0
@@ -108,70 +108,7 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
-    sprites:
-    - serializedVersion: 2
-      name: TMP_icons_0
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 0
-        width: 69
-        height: 50
-      alignment: 6
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 39e214a8165f54680b10c7da5d897bbb
-      internalID: 1558171779
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: TMP_icons_1
-      rect:
-        serializedVersion: 2
-        x: 72
-        y: 0
-        width: 64
-        height: 50
-      alignment: 6
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 5145973f7b54b4ed085930b688f712b5
-      internalID: -1877832930
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: TMP_icons_2
-      rect:
-        serializedVersion: 2
-        x: 140
-        y: 0
-        width: 50
-        height: 50
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 1e672e460d7af487bb6ffccbf2b67a09
-      internalID: 882666133
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
+    sprites: []
     outline: []
     physicsShape: []
     bones: []
@@ -182,10 +119,7 @@ TextureImporter:
     edges: []
     weights: []
     secondaryTextures: []
-    nameFileIdTable:
-      TMP_icons_0: 1558171779
-      TMP_icons_1: -1877832930
-      TMP_icons_2: 882666133
+    nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

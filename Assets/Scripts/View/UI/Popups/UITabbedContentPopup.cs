@@ -14,6 +14,8 @@ namespace View.UI.Popups
         [SerializeField] private Button _closeButton;
 
         private LinkedList<RectTransform> _displayedItems;
+
+        public RectTransform ContentTransform => _contentTransform;
         
         public void AddItem(RectTransform itemTransform)
         {
@@ -49,9 +51,31 @@ namespace View.UI.Popups
             _titleText.text = text;
         }
         
-        public void SetSize(int width, int height)
+        public void SetPopupSize(int width, int height)
         {
             _popupTransform.sizeDelta = new Vector2(width, height);
+        }
+        
+        
+        public void SetContentHeight(float height)
+        {
+            var tempSize = _popupTransform.sizeDelta;
+            _contentTransform.sizeDelta = new Vector2(tempSize.x, height);
+        }
+
+        public void ClearContent()
+        {
+            foreach (Transform child in _contentTransform)
+            {
+                Destroy(child.gameObject);
+            }
+
+            SetContentHeight(0);
+        }
+
+        public void ResetContentPosition()
+        {
+            _contentTransform.anchoredPosition = Vector2.zero;
         }
     }
 }

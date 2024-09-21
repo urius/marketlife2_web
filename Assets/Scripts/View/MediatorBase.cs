@@ -132,6 +132,15 @@ namespace View
         {
             return Object.Instantiate(prefab, transform);
         }
+
+        protected T GetComponentInPrefab<T>(PrefabKey prefabKey)
+            where T : MonoBehaviour
+        {
+            _prefabsHolder ??= Instance.Get<PrefabsHolderSo>();
+            var prefabGo = _prefabsHolder.GetPrefabByKey(prefabKey);
+            
+            return prefabGo.GetComponent<T>();
+        } 
         
         protected void Destroy(MonoBehaviour monoBehaviour)
         {
