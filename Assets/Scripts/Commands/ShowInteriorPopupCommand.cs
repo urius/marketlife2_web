@@ -25,7 +25,7 @@ namespace Commands
             _popupViewModelsHolder.AddPopup(popupViewModel);
         }
 
-        private IEnumerable<InteriorPopupViewModelFloorItem> GetFloorViewModels()
+        private IEnumerable<InteriorPopupFloorItemViewModel> GetFloorViewModels()
         {
             var playerModel = _playerModelHolder.PlayerModel;
             var shopModel = playerModel.ShopModel;
@@ -35,20 +35,20 @@ namespace Commands
             var unlockedFloorItemsOnLevel = playerModel.UnlockedFloors;
             var floorItemsOnNextLevel = _interiorDataProvider.GetFloorItemsForNextLevel(currentLevel);
 
-            var itemsToShow = new LinkedList<InteriorPopupViewModelFloorItem>();
+            var itemsToShow = new LinkedList<InteriorPopupFloorItemViewModel>();
 
             foreach (var floorItem in floorItemsOnLevel)
             {
                 var isBought = unlockedFloorItemsOnLevel.Contains(floorItem.FloorType);
                 var isChosen = floorItem.FloorType == shopModel.FloorsType;
                 itemsToShow.AddLast(
-                    new InteriorPopupViewModelFloorItem(floorItem.Level, isBought, isChosen, floorItem.FloorType));
+                    new InteriorPopupFloorItemViewModel(floorItem.Level, isBought, isChosen, floorItem.FloorType));
             }
 
             foreach (var lockedByLevelFloorItem in floorItemsOnNextLevel)
             {
                 itemsToShow.AddLast(
-                    new InteriorPopupViewModelFloorItem(
+                    new InteriorPopupFloorItemViewModel(
                         lockedByLevelFloorItem.Level, isBought: false, isChosen: false,
                         lockedByLevelFloorItem.FloorType));
             }
@@ -56,7 +56,7 @@ namespace Commands
             return itemsToShow;
         }
         
-        private IEnumerable<InteriorPopupViewModelWallItem> GetWallViewModels()
+        private IEnumerable<InteriorPopupWallItemViewModel> GetWallViewModels()
         {
             var playerModel = _playerModelHolder.PlayerModel;
             var shopModel = playerModel.ShopModel;
@@ -66,20 +66,20 @@ namespace Commands
             var unlockedWallItemsOnLevel = playerModel.UnlockedWalls;
             var wallItemsOnNextLevel = _interiorDataProvider.GetWallItemsForNextLevel(currentLevel);
 
-            var itemsToShow = new LinkedList<InteriorPopupViewModelWallItem>();
+            var itemsToShow = new LinkedList<InteriorPopupWallItemViewModel>();
 
             foreach (var wallItem in wallItemsOnLevel)
             {
                 var isBought = unlockedWallItemsOnLevel.Contains(wallItem.WallType);
                 var isChosen = wallItem.WallType == shopModel.WallsType;
                 itemsToShow.AddLast(
-                    new InteriorPopupViewModelWallItem(wallItem.Level, isBought, isChosen, wallItem.WallType));
+                    new InteriorPopupWallItemViewModel(wallItem.Level, isBought, isChosen, wallItem.WallType));
             }
 
             foreach (var lockedByLevelWallItem in wallItemsOnNextLevel)
             {
                 itemsToShow.AddLast(
-                    new InteriorPopupViewModelWallItem(
+                    new InteriorPopupWallItemViewModel(
                         lockedByLevelWallItem.Level, isBought: false, isChosen: false,
                         lockedByLevelWallItem.WallType));
             }

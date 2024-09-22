@@ -49,6 +49,7 @@ namespace Data
         public const string LocalizationChooseMessageKey = "choose";
         public const string LocalizationChosenMessageKey = "choosen";
         public const string LocalizationBuyMessageKey = "buy";
+        public const string LocalizationInteriorPopupTitleKey = "interior_popup_title";
 
         private const string ColdPrefabsFolderPath = "Prefabs/Cold Prefabs";
         public static readonly string TutorialHowToMovePath = $"{ColdPrefabsFolderPath}/TutorialHowToMove";

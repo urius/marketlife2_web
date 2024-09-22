@@ -15,22 +15,31 @@ MonoBehaviour:
   _floorItems:
   - Key: 1
     Tile: {fileID: 11400000, guid: 81a1a58e81fd84555812f5ac652bda4d, type: 2}
+    Sprite: {fileID: 21300000, guid: 419e5f1face134b2cadee51336b3f804, type: 3}
   - Key: 2
     Tile: {fileID: 11400000, guid: 2281a1047cc5b4046a5bfd25a08bde20, type: 2}
+    Sprite: {fileID: 21300000, guid: b5e42c2d8808e41ec8c2b91dd82dacf1, type: 3}
   - Key: 3
     Tile: {fileID: 11400000, guid: 738268c86563e488fa6fa3f32cd29862, type: 2}
+    Sprite: {fileID: 21300000, guid: e16ee09a6cd73431e8fb89da86a309a0, type: 3}
   - Key: 4
     Tile: {fileID: 11400000, guid: 54c7d4c978b644e12a2d73cf4246e326, type: 2}
+    Sprite: {fileID: 21300000, guid: a8df77241159b49c180f000eb6a3b5b8, type: 3}
   - Key: 5
     Tile: {fileID: 11400000, guid: 8d94c3f18f26040d89a59ffa4e373d9a, type: 2}
+    Sprite: {fileID: 21300000, guid: 91d60424bb7bd49d4a4ea00ed9a7e405, type: 3}
   - Key: 101
     Tile: {fileID: 11400000, guid: 0362352fe185647b0a1baa69c67c58e4, type: 2}
+    Sprite: {fileID: 0}
   - Key: 102
     Tile: {fileID: 11400000, guid: cec2ce896fd71495895602a707435e1a, type: 2}
+    Sprite: {fileID: 0}
   - Key: 201
     Tile: {fileID: 11400000, guid: eb3507b9ee5754701b91b6272fa78cde, type: 2}
+    Sprite: {fileID: 0}
   - Key: 202
     Tile: {fileID: 11400000, guid: 979178d4b560146dfa6600d568fa39ad, type: 2}
+    Sprite: {fileID: 0}
   _wallItems:
   - Key: 1
     Sprite: {fileID: 21300000, guid: 031cd9da9b78d485dbf6f4fa2c981d68, type: 3}

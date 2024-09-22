@@ -123,9 +123,7 @@ namespace View
         
         protected GameObject InstantiatePrefab(PrefabKey prefabKey, Transform transform)
         {
-            _prefabsHolder ??= Instance.Get<PrefabsHolderSo>();
-
-            return Instantiate(_prefabsHolder.GetPrefabByKey(prefabKey), transform);
+            return Instantiate(GetPrefabByKey(prefabKey), transform);
         }
 
         protected static GameObject Instantiate(GameObject prefab, Transform transform)
@@ -136,8 +134,7 @@ namespace View
         protected T GetComponentInPrefab<T>(PrefabKey prefabKey)
             where T : MonoBehaviour
         {
-            _prefabsHolder ??= Instance.Get<PrefabsHolderSo>();
-            var prefabGo = _prefabsHolder.GetPrefabByKey(prefabKey);
+            var prefabGo = GetPrefabByKey(prefabKey);
             
             return prefabGo.GetComponent<T>();
         } 
@@ -155,9 +152,8 @@ namespace View
         protected GameObject GetFromCache(PrefabKey prefabKey, Transform transform)
         {
             _gameObjectsCache ??= Instance.Get<IGameObjectsCache>();
-            _prefabsHolder ??= Instance.Get<PrefabsHolderSo>();
 
-            var prefab = _prefabsHolder.GetPrefabByKey(prefabKey);
+            var prefab = GetPrefabByKey(prefabKey);
 
             return _gameObjectsCache.Get(prefab, transform);
         }
@@ -188,6 +184,22 @@ namespace View
             _gameObjectsCache.Put(instance);
         }
 
+        protected void ClearCache(PrefabKey prefabKey)
+        {
+            _gameObjectsCache ??= Instance.Get<IGameObjectsCache>();
+
+            var prefab = GetPrefabByKey(prefabKey);
+            _gameObjectsCache.ClearCacheForPrefab(prefab);
+        }
+
+        protected void SetPrefabCacheCapacity(PrefabKey prefabKey, int capacity)
+        {
+            _gameObjectsCache ??= Instance.Get<IGameObjectsCache>();
+            
+            var prefab = GetPrefabByKey(prefabKey);
+            _gameObjectsCache.SetCacheCapacityForPrefab(prefab, capacity);
+        }
+
         protected GameObject InstantiateColdPrefab(string path)
         {
             _prefabsHolder ??= Instance.Get<PrefabsHolderSo>();
@@ -200,7 +212,7 @@ namespace View
 
             return null;
         }
-        
+
         protected TView InstantiateColdPrefab<TView>(string path) where TView : MonoBehaviour
         {
             var go = InstantiateColdPrefab(path);
@@ -211,6 +223,13 @@ namespace View
             }
 
             return null;
+        }
+
+        private GameObject GetPrefabByKey(PrefabKey prefabKey)
+        {
+            _prefabsHolder ??= Instance.Get<PrefabsHolderSo>();
+
+            return _prefabsHolder.GetPrefabByKey(prefabKey);
         }
     }
 }

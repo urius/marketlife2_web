@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Data;
 using Model.Popups;
 
 namespace Holders
@@ -27,6 +28,19 @@ namespace Holders
                 PopupRemoved?.Invoke(popupViewModel);
             }
         }
+
+        public PopupViewModelBase FindPopupByKey(PopupKey popupKey)
+        {
+            foreach (var popupViewModel in _popupsStack)
+            {
+                if (popupViewModel.PopupKey == popupKey)
+                {
+                    return popupViewModel;
+                }
+            }
+
+            return null;
+        }
     }
 
     public interface IPopupViewModelsHolder
@@ -35,5 +49,6 @@ namespace Holders
         public event Action<PopupViewModelBase> PopupRemoved;
         
         public void AddPopup(PopupViewModelBase popupViewModel);
+        public PopupViewModelBase FindPopupByKey(PopupKey popupKey);
     }
 }

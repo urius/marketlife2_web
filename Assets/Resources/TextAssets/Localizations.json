@@ -239,6 +239,11 @@
 			"key": "buy",
 			"en": "Buy",
 			"ru": "Купить"
+		},
+		{
+			"key": "interior_popup_title",
+			"en": "Interior",
+			"ru": "Интерьер"
 		}
 	]
 }

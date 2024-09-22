@@ -16,6 +16,8 @@ namespace Model
         public event Action<BuildPointModel> BuildPointRemoved;
         public event Action DoorsAdded;
         public event Action<Vector2Int> ShopExpanded;
+        public event Action<WallType> WallsTypeUpdated;
+        public event Action<FloorType> FloorsTypeUpdated;
 
         public readonly CustomersModel CustomersModel = new();
         public readonly BotCharsOwnedCellModel TruckPointStaffOwnedCellModel = new();
@@ -26,9 +28,6 @@ namespace Model
         private readonly List<TruckPointModel> _truckPoints;
         private readonly List<ShelfModel> _shelfs;
         private readonly List<CashDeskModel> _cashDesks;
-        
-        public WallType WallsType;
-        public FloorType FloorsType;
 
         private Vector2Int _size;
         private (int Left, int Right)[] _doors;
@@ -50,14 +49,34 @@ namespace Model
 
         public Vector2Int Size => _size;
         public (int Left, int Right)[] Doors => _doors;
-
         public IReadOnlyDictionary<Vector2Int, ShopObjectModelBase> ShopObjects => _shopObjects;
-
         public IReadOnlyDictionary<Vector2Int, BuildPointModel> BuildPoints => _buildPoints;
         public IReadOnlyList<TruckPointModel> TruckPoints => _truckPoints;
         public IReadOnlyList<ShelfModel> Shelfs => _shelfs;
         public IReadOnlyList<CashDeskModel> CashDesks => _cashDesks;
         public IReadOnlyList<BuildPointModel> ExpandPoints => _expandPoints; 
+        public WallType WallsType { get; private set; }
+        public FloorType FloorsType { get; private set; }
+
+        public void SetWallsType(WallType wallsType)
+        {
+            if (WallsType != wallsType)
+            {
+                WallsType = wallsType;
+
+                WallsTypeUpdated?.Invoke(WallsType);
+            }
+        }
+
+        public void SetFloorsType(FloorType floorsType)
+        {
+            if (FloorsType != floorsType)
+            {
+                FloorsType = floorsType;
+
+                FloorsTypeUpdated?.Invoke(FloorsType);
+            }
+        }
 
         public bool HaveBuildPoint(Vector2Int cellCoords)
         {
