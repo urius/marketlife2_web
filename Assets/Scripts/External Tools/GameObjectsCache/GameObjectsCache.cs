@@ -42,7 +42,8 @@ namespace Tools.GameObjectsCache
             if (_prefabByInstanceMap.TryGetValue(instance, out var prefab)
                 && _cacheByPrefabMap.TryGetValue(prefab, out var cache))
             {
-                if (cache.Count < _defaultCacheCapacityForPrefab)
+                var capacity = cache.Capacity <= 0 ? _defaultCacheCapacityForPrefab : cache.Capacity;
+                if (cache.Count < capacity)
                 {
                     instance.transform.SetParent(_cacheContainerTransform);
                     cache.Put(instance);
@@ -58,11 +59,33 @@ namespace Tools.GameObjectsCache
             
             Destroy(instance);
         }
+
+        public void ClearCacheForPrefab(GameObject prefab)
+        {
+            if (_cacheByPrefabMap.TryGetValue(prefab, out var cache))
+            {
+                while (cache.TryGet(out var instance))
+                {
+                    Destroy(instance);
+                }
+
+                _cacheByPrefabMap.Remove(prefab);
+            }
+        }
+
+        public void SetCacheCapacityForPrefab(GameObject prefab, int cacheCapacity)
+        {
+            if (_cacheByPrefabMap.TryGetValue(prefab, out var cache))
+            {
+                cache.SetCapacity(cacheCapacity);
+            }
+        }
         
         private class Cache
         {
             private readonly LinkedList<GameObject> _gameObjects = new();
 
+            public int Capacity { get; private set; } = -1;
             public int Count => _gameObjects.Count;
             
             public bool TryGet(out GameObject instance)
@@ -83,6 +106,14 @@ namespace Tools.GameObjectsCache
             {
                 _gameObjects.AddLast(instance);
             }
+
+            public void SetCapacity(int capacity)
+            {
+                if (capacity > 0)
+                {
+                    Capacity = capacity;
+                }
+            }
         }
     }
 
@@ -91,5 +122,8 @@ namespace Tools.GameObjectsCache
     {
         public GameObject Get(GameObject prefab, Transform targetTransform);
         public void Put(GameObject instance);
+        public void ClearCacheForPrefab(GameObject prefab);
+        public void SetCacheCapacityForPrefab(GameObject prefab, int cacheCapacity);
+
     }
 }
