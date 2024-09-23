@@ -2,10 +2,11 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 using View.UI.Common;
+using View.UI.Popups.TabbedContentPopup;
 
 namespace View.UI.Popups.InteriorPopup
 {
-    public class UIInteriorPopupItemView : MonoBehaviour
+    public class UIInteriorPopupItemView : MonoBehaviour, IUITabbedContentPopupItem
     {
         public event Action<UIInteriorPopupItemView> ButtonClicked;
             

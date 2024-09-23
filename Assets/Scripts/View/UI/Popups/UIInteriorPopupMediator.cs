@@ -10,13 +10,12 @@ using Model.Popups;
 using UnityEngine;
 using Utils;
 using View.UI.Popups.InteriorPopup;
+using View.UI.Popups.TabbedContentPopup;
 
 namespace View.UI.Popups
 {
     public class UIInteriorPopupMediator : MediatorWithModelBase<InteriorPopupViewModel>
     {
-        private const int ColumnsCount = 3;
-
         private readonly IPlayerModelHolder _playerModelHolder = Instance.Get<IPlayerModelHolder>();
         private readonly ILocalizationProvider _localizationProvider = Instance.Get<ILocalizationProvider>();
         private readonly SpritesHolderSo _spritesHolderSo = Instance.Get<SpritesHolderSo>();
@@ -41,7 +40,8 @@ namespace View.UI.Popups
             _itemSize = itemSettings.Size;
             
             _popupView = InstantiatePrefab<UITabbedContentPopup>(PrefabKey.UITabbedContentPopup);
-            
+
+            _popupView.Setup(columnsCount: 3, popupWidth: 570, popupHeight: 500);
             _popupView.SetTitleText(_localizationProvider.GetLocale(Constants.LocalizationInteriorPopupTitleKey));
 
             ShowWalls();
@@ -111,9 +111,7 @@ namespace View.UI.Popups
                 var itemViewModel = viewModels[i];
                 SetupItemView(itemView, itemViewModel, _currentShowingInteriorItemType);
                 
-                var position = SetItemPosition(itemView, i);
-                var newContentHeight = -position.y + _itemSize.y;
-                _popupView.SetContentHeight(newContentHeight);
+                _popupView.AddItem(itemView);
                 
                 _viewModelByView[itemView] = itemViewModel;
                 SubscribeOnItemView(itemView);
@@ -128,6 +126,7 @@ namespace View.UI.Popups
                 ReturnToCache(itemView.gameObject);
             }
             
+            _popupView.ClearContent();
             _viewModelByView.Clear();
         }
 
@@ -199,15 +198,6 @@ namespace View.UI.Popups
             var itemViewModel = _viewModelByView[itemView];
             
             _eventBus.Dispatch(new UIInteriorPopupItemClickedEvent(itemViewModel));
-        }
-
-        private Vector2 SetItemPosition(UIInteriorPopupItemView item, int itemIndex)
-        {
-            var position = new Vector2Int(itemIndex % ColumnsCount, -itemIndex / ColumnsCount) * _itemSize;
-
-            item.SetPosition(position);
-            
-            return position;
         }
 
         private enum InteriorItemType
