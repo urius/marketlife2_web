@@ -148,7 +148,7 @@ GameObject:
   - component: {fileID: 5131628810937594860}
   - component: {fileID: 1326400293091736325}
   m_Layer: 5
-  m_Name: UILongButton
+  m_Name: UITextButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -941,10 +941,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _titleText: {fileID: 6701860280598188863}
   _popupTransform: {fileID: 6701860280091265011}
-  _tabsButtonTransform: {fileID: 5846287646331105927}
+  _tabsButtonsTransform: {fileID: 5846287646331105927}
   _viewportTransform: {fileID: 68703929334510812}
   _contentTransform: {fileID: 3913857129095540081}
   _closeButton: {fileID: 4371110481795259868}
+  _tabButtonPrefab: {fileID: 4867255603379574287, guid: 0c560d34f4e6848549eb27a0fede8125, type: 3}
 --- !u!1 &6701860280091265008
 GameObject:
   m_ObjectHideFlags: 0

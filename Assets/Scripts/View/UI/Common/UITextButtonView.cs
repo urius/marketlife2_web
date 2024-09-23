@@ -2,10 +2,11 @@ using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using View.UI.Popups.TabbedContentPopup;
 
 namespace View.UI.Common
 {
-    public class UITextButtonView : MonoBehaviour
+    public class UITextButtonView : MonoBehaviour, IUITabbedContentPopupTabButton
     {
         [SerializeField] private Image _buttonImage;
         [SerializeField] private TMP_Text _text;
@@ -14,6 +15,7 @@ namespace View.UI.Common
         [SerializeField] private SkinData _crimsonSkinData;
         [SerializeField] private SkinData _greenSkinData;
 
+        public RectTransform RectTransform => transform as RectTransform;
         public Button Button => _button;
         public TMP_Text Text => _text;
         

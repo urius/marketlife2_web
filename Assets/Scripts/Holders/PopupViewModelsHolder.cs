@@ -50,5 +50,6 @@ namespace Holders
         
         public void AddPopup(PopupViewModelBase popupViewModel);
         public PopupViewModelBase FindPopupByKey(PopupKey popupKey);
+        public void RemovePopup(PopupViewModelBase popupViewModel);
     }
 }

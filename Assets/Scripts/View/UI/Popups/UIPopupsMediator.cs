@@ -11,7 +11,6 @@ namespace View.UI.Popups
     public class UIPopupsMediator : MediatorBase
     {
         private readonly IPopupViewModelsHolder _popupViewModelsHolder = Instance.Get<IPopupViewModelsHolder>();
-        
         private readonly Dictionary<PopupViewModelBase, MediatorBase> _popupMediatorsByModel = new();
 
         private Canvas _targetCanvas;
@@ -34,6 +33,7 @@ namespace View.UI.Popups
             {
                 UnmediatePopup(popupModel);
             }
+            
             _popupMediatorsByModel.Clear();
         }
 

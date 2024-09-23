@@ -7,7 +7,6 @@ using Infra.EventBus;
 using Infra.Instance;
 using Model;
 using Model.Popups;
-using UnityEngine;
 using Utils;
 using View.UI.Popups.InteriorPopup;
 using View.UI.Popups.TabbedContentPopup;
@@ -22,9 +21,9 @@ namespace View.UI.Popups
         private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
 
         private readonly Dictionary<UIInteriorPopupItemView, InteriorPopupItemViewModelBase> _viewModelByView = new();
+        private readonly InteriorItemType[] _tabTypes = { InteriorItemType.Wall, InteriorItemType.Floor };
         
         private UITabbedContentPopup _popupView;
-        private Vector2 _itemSize;
         private PlayerModel _playerModel;
         private InteriorItemType _currentShowingInteriorItemType;
 
@@ -36,17 +35,45 @@ namespace View.UI.Popups
                 PrefabKey.UIInteriorPopupItem,
                 Math.Max(TargetModel.WallItemViewModels.Count, TargetModel.FloorItemViewModels.Count));
             
-            var itemSettings = GetComponentInPrefab<UIInteriorPopupItemView>(PrefabKey.UIInteriorPopupItem); 
-            _itemSize = itemSettings.Size;
-            
             _popupView = InstantiatePrefab<UITabbedContentPopup>(PrefabKey.UITabbedContentPopup);
 
             _popupView.Setup(columnsCount: 3, popupWidth: 570, popupHeight: 500);
             _popupView.SetTitleText(_localizationProvider.GetLocale(Constants.LocalizationInteriorPopupTitleKey));
+            
+            InitTabs();
 
-            ShowWalls();
+            ShowTab(0);
             
             Subscribe();
+        }
+
+        private void ShowTab(int tabIndex)
+        {
+            switch (_tabTypes[tabIndex])
+            {
+                case InteriorItemType.Wall:
+                    ShowWalls();
+                    break;
+                case InteriorItemType.Floor:
+                    ShowFloors();
+                    break;
+            }
+
+            _popupView.SetSelectedTab(tabIndex);
+        }
+
+        private void InitTabs()
+        {
+            foreach (var tabType in _tabTypes)
+            {
+                var tabTitleKey = tabType switch
+                {
+                    InteriorItemType.Wall => Constants.LocalizationInteriorPopupWallsTabTitleKey,
+                    InteriorItemType.Floor => Constants.LocalizationInteriorPopupFloorsTabTitleKey,
+                    _ => string.Empty
+                };
+                _popupView.AddTab(_localizationProvider.GetLocale(tabTitleKey));
+            }
         }
 
         protected override void UnmediateInternal()
@@ -65,12 +92,28 @@ namespace View.UI.Popups
         {
             TargetModel.ItemBought += OnItemBought;
             TargetModel.ItemChosen += OnItemChosen;
+
+            _popupView.TabButtonClicked += OnTabButtonClicked;
+            _popupView.CloseButtonClicked += OnCloseButtonClicked;
         }
 
         private void Unsubscribe()
         {
             TargetModel.ItemBought -= OnItemBought;
             TargetModel.ItemChosen -= OnItemChosen;
+            
+            _popupView.TabButtonClicked -= OnTabButtonClicked;
+            _popupView.CloseButtonClicked -= OnCloseButtonClicked;
+        }
+
+        private void OnCloseButtonClicked()
+        {
+            _eventBus.Dispatch(new UIClosePopupClickedEvent(TargetModel));
+        }
+
+        private void OnTabButtonClicked(int index)
+        {
+            ShowTab(index);
         }
 
         private void OnItemBought(InteriorPopupItemViewModelBase itemViewModel)
@@ -94,6 +137,11 @@ namespace View.UI.Popups
         private void ShowWalls()
         {
             ShowContent(TargetModel.WallItemViewModels, InteriorItemType.Wall);
+        }
+
+        private void ShowFloors()
+        {
+            ShowContent(TargetModel.FloorItemViewModels, InteriorItemType.Floor);
         }
 
         private void ShowContent(IReadOnlyList<InteriorPopupItemViewModelBase> viewModels,

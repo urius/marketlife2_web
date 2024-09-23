@@ -244,6 +244,16 @@
 			"key": "interior_popup_title",
 			"en": "Interior",
 			"ru": "Интерьер"
+		},
+		{
+			"key": "interior_popup_wall_tab_title",
+			"en": "Walls",
+			"ru": "Стены"
+		},
+		{
+			"key": "interior_popup_floors_tab_title",
+			"en": "Floors",
+			"ru": "Полы"
 		}
 	]
 }

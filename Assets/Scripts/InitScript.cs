@@ -117,6 +117,7 @@ public class InitScript : MonoBehaviour
         Map<UIShelfUpgradeClickedEvent, UpgradeShelfCommand>();
         Map<UIInteriorButtonClickedEvent, ShowInteriorPopupCommand>();
         Map<UIInteriorPopupItemClickedEvent, ProcessInteriorPopupItemClickedCommand>();
+        Map<UIClosePopupClickedEvent, ProcessClosePopupClickedCommand>();
     }
 
     private void Map<TEvent, TCommand>()

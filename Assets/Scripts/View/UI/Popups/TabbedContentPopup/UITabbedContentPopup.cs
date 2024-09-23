@@ -8,16 +8,21 @@ namespace View.UI.Popups.TabbedContentPopup
 {
     public class UITabbedContentPopup : MonoBehaviour
     {
+        public event Action CloseButtonClicked;
+        public event Action<int> TabButtonClicked;
+        
         [SerializeField] private TMP_Text _titleText;
         [SerializeField] private RectTransform _popupTransform;
-        [SerializeField] private RectTransform _tabsButtonTransform;
+        [SerializeField] private RectTransform _tabsButtonsTransform;
         [SerializeField] private RectTransform _viewportTransform;
         [SerializeField] private RectTransform _contentTransform;
         [SerializeField] private Button _closeButton;
+        [SerializeField] private GameObject _tabButtonPrefab;
 
         private readonly LinkedList<ItemData> _hiddenItemsHead = new();
         private readonly LinkedList<ItemData> _displayedItems = new();
         private readonly LinkedList<ItemData> _hiddenItemsTail = new();
+        private readonly List<IUITabbedContentPopupTabButton> _tabButtons = new();
         
         private int _columnsCount = 3;
         private Vector2 _contentSize;
@@ -25,9 +30,13 @@ namespace View.UI.Popups.TabbedContentPopup
         private Vector2 _contentTransformPosition;
 
         public RectTransform ContentTransform => _contentTransform;
-        private void Start()
+        public IReadOnlyList<IUITabbedContentPopupTabButton> TabButtons => _tabButtons;
+
+        private void Awake()
         {
             _contentTransformPosition = _contentTransform.anchoredPosition;
+            
+            _closeButton.onClick.AddListener(OnCloseButtonClick);
         }
 
         private void Update()
@@ -46,6 +55,18 @@ namespace View.UI.Popups.TabbedContentPopup
             _contentTransformPosition = newContentPosition;
         }
 
+        private void OnDestroy()
+        {
+            _closeButton.onClick.RemoveAllListeners();
+
+            foreach (var tabButton in _tabButtons)
+            {
+                UnsubscribeFromTabButton(tabButton);
+            }
+            
+            _tabButtons.Clear();
+        }
+
         public void Setup(int columnsCount, int popupWidth, int popupHeight)
         {
             _viewPortSize = _viewportTransform.rect.size;
@@ -53,10 +74,27 @@ namespace View.UI.Popups.TabbedContentPopup
             _columnsCount = columnsCount;
             SetPopupSize(popupWidth, popupHeight);
         }
-        
+
+        public void AddTab(string tabTitle) //AddBab :)
+        {
+            var tabGo = Instantiate(_tabButtonPrefab, _tabsButtonsTransform);
+            var tabButtonView = tabGo.GetComponent<IUITabbedContentPopupTabButton>();
+            
+            tabButtonView.SetText(tabTitle);
+
+            var itemPos = tabButtonView.RectTransform.anchoredPosition;
+            itemPos.x = _tabButtons.Count * tabButtonView.RectTransform.rect.width;
+            tabButtonView.RectTransform.anchoredPosition = itemPos;
+
+            _tabButtons.Add(tabButtonView);
+
+            SubscribeOnTabButton(tabButtonView, _tabButtons.Count - 1);
+        }
+
         public void AddItem(IUITabbedContentPopupItem item)
         {
             item.RectTransform.SetParent(_contentTransform);
+            SetItemActive(item, true);
             
             var allItemsCount = _hiddenItemsHead.Count + _displayedItems.Count + _hiddenItemsTail.Count;
             SetItemPosition(item, allItemsCount);
@@ -72,7 +110,7 @@ namespace View.UI.Popups.TabbedContentPopup
 
             TryHideTailItem();
         }
-        
+
         public void SetPopupSize(int width, int height)
         {
             _popupTransform.sizeDelta = new Vector2(width, height);
@@ -85,13 +123,26 @@ namespace View.UI.Popups.TabbedContentPopup
                 Destroy(child.gameObject);
             }
 
+            _hiddenItemsHead.Clear();
             _displayedItems.Clear();
+            _hiddenItemsTail.Clear();
+            
             SetContentHeight(0);
         }
 
         public void ResetContentPosition()
         {
             _contentTransform.anchoredPosition = Vector2.zero;
+        }
+
+        public void SetSelectedTab(int tabIndex)
+        {
+            foreach (var tabButton in _tabButtons)
+            {
+                tabButton.Button.interactable = true;
+            }
+
+            _tabButtons[tabIndex].Button.interactable = false;
         }
 
         private void ProcessScrollForward()
@@ -129,7 +180,7 @@ namespace View.UI.Popups.TabbedContentPopup
             
                 if (ShouldHideItemAtTail(lastItemData))
                 {
-                    lastItemData.Item.RectTransform.gameObject.SetActive(false);
+                    SetItemActive(lastItemData.Item, false);
 
                     _displayedItems.RemoveLast();
                     _hiddenItemsTail.AddFirst(lastItemData);
@@ -149,7 +200,7 @@ namespace View.UI.Popups.TabbedContentPopup
             
                 if (ShouldHideItemAtTail(firstHiddenItemData) == false)
                 {
-                    firstHiddenItemData.Item.RectTransform.gameObject.SetActive(true);
+                    SetItemActive(firstHiddenItemData.Item, true);
 
                     _hiddenItemsTail.RemoveFirst();
                     _displayedItems.AddLast(firstHiddenItemData);
@@ -169,7 +220,7 @@ namespace View.UI.Popups.TabbedContentPopup
 
                 if (ShouldHideItemAtHead(firstItemData))
                 {
-                    firstItemData.Item.RectTransform.gameObject.SetActive(false);
+                    SetItemActive(firstItemData.Item, false);
 
                     _displayedItems.RemoveFirst();
                     _hiddenItemsHead.AddLast(firstItemData);
@@ -189,7 +240,7 @@ namespace View.UI.Popups.TabbedContentPopup
             
                 if (ShouldHideItemAtHead(lastHiddenItemData) == false)
                 {
-                    lastHiddenItemData.Item.RectTransform.gameObject.SetActive(true);
+                    SetItemActive(lastHiddenItemData.Item, true);
 
                     _hiddenItemsHead.RemoveLast();
                     _displayedItems.AddFirst(lastHiddenItemData);
@@ -230,7 +281,32 @@ namespace View.UI.Popups.TabbedContentPopup
             _contentTransform.sizeDelta = new Vector2(tempSize.x, height);
             _contentSize = _contentTransform.sizeDelta;
         }
-        
+
+        private void OnCloseButtonClick()
+        {
+            CloseButtonClicked?.Invoke();
+        }
+
+        private void SubscribeOnTabButton(IUITabbedContentPopupTabButton tabButtonView, int index)
+        {
+            tabButtonView.Button.onClick.AddListener(() => OnTabButtonClicked(index));
+        }
+
+        private void UnsubscribeFromTabButton(IUITabbedContentPopupTabButton tabButtonView)
+        {
+            tabButtonView.Button.onClick.RemoveAllListeners();
+        }
+
+        private void OnTabButtonClicked(int index)
+        {
+            TabButtonClicked?.Invoke(index);
+        }
+
+        private static void SetItemActive(IUITabbedContentPopupItem item, bool isActive)
+        {
+            item.RectTransform.gameObject.SetActive(isActive);
+        }
+
         private struct ItemData
         {
             public readonly IUITabbedContentPopupItem Item;
