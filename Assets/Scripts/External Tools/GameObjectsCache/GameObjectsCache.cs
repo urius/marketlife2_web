@@ -20,9 +20,8 @@ namespace Tools.GameObjectsCache
         {
             GameObject result;
             
-            _cacheByPrefabMap.TryAdd(prefab, new Cache());
-            var cache = _cacheByPrefabMap[prefab];
-            
+            var cache = GetCacheForPrefab(prefab);
+
             if (cache.TryGet(out var instance))
             {
                 instance.transform.SetParent(targetTransform);
@@ -36,7 +35,7 @@ namespace Tools.GameObjectsCache
 
             return result;
         }
-        
+
         public void Put(GameObject instance)
         {
             if (_prefabByInstanceMap.TryGetValue(instance, out var prefab)
@@ -75,10 +74,16 @@ namespace Tools.GameObjectsCache
 
         public void SetCacheCapacityForPrefab(GameObject prefab, int cacheCapacity)
         {
-            if (_cacheByPrefabMap.TryGetValue(prefab, out var cache))
-            {
-                cache.SetCapacity(cacheCapacity);
-            }
+            var cache = GetCacheForPrefab(prefab);
+            
+            cache.SetCapacity(cacheCapacity);
+        }
+
+        private Cache GetCacheForPrefab(GameObject prefab)
+        {
+            _cacheByPrefabMap.TryAdd(prefab, new Cache());
+            
+            return _cacheByPrefabMap[prefab];
         }
         
         private class Cache
