@@ -152,11 +152,10 @@ namespace View.UI.Popups
             RemoveItemViews();
             _popupView.ResetContentPosition();
             
-            for (var i = 0; i < viewModels.Count; i++)
+            foreach (var itemViewModel in viewModels)
             {
                 var itemView = GetFromCache<UIInteriorPopupItemView>(PrefabKey.UIInteriorPopupItem, _popupView.ContentTransform);
 
-                var itemViewModel = viewModels[i];
                 SetupItemView(itemView, itemViewModel, _currentShowingInteriorItemType);
                 
                 _popupView.AddItem(itemView);
