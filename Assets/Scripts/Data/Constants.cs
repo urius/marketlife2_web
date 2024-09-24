@@ -46,6 +46,7 @@ namespace Data
         public const string LocalizationTutorialMoveToCashDeskMessageKey = "tutorial_move_to_cash_desk_text";
         public const string LocalizationTutorialHireCashDeskStaffMessageKey = "tutorial_hire_cash_desk_staff_text";
         public const string LocalizationTutorialUpgradeTruckPointMessageKey = "tutorial_upgrade_truck_point_text";
+        public const string LocalizationTutorialInteriorButtonMessageKey = "tutorial_interior_button_text";
         public const string LocalizationChooseMessageKey = "choose";
         public const string LocalizationChosenMessageKey = "choosen";
         public const string LocalizationBuyMessageKey = "buy";

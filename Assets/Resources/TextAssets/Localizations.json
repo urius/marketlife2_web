@@ -226,6 +226,11 @@
 			"ru": "Здесь можно улучшать точку доставки"
 		},
 		{
+			"key": "tutorial_interior_button_text",
+			"en": "Here you can upgrade your shop design",
+			"ru": "Здесь можно улучшить дизайн магазина"
+		},
+		{
 			"key": "choose",
 			"en": "Choose",
 			"ru": "Выбрать"

@@ -21,6 +21,7 @@ namespace Holders
         private IUITruckPointPanelTransformsProvider _uiTruckPointPanelTransformsProvider;
 
         private IPlayerCharPositionsProvider _playerCharPositionsProvider;
+        private RectTransform _topPanelInteriorButtonTransform;
 
         public void RegisterTruckBoxPositionProvider(TruckPointModel model, ITruckBoxPositionsProvider provider)
         {
@@ -133,6 +134,23 @@ namespace Holders
         {
             _uiTruckPointPanelTransformsProvider = null;
         }
+        
+        
+
+        public void RegisterTopPanelInteriorButtonTransform(RectTransform transform)
+        {
+            _topPanelInteriorButtonTransform = transform;
+        }
+
+        public RectTransform GetTopPanelInteriorButtonTransform()
+        {
+            return _topPanelInteriorButtonTransform;
+        }
+
+        public void UnregisterTopPanelInteriorButtonTransform()
+        {
+            _topPanelInteriorButtonTransform = null;
+        }
     }
 
     public interface ISharedViewsDataHolder
@@ -165,5 +183,9 @@ namespace Holders
         public void RegisterTruckPointPanelTransformsProvider(IUITruckPointPanelTransformsProvider provider);
         public IUITruckPointPanelTransformsProvider GetTruckPointPanelTransformsProvider();
         public void UnregisterTruckPointPanelTransformsProvider();
+
+        public void RegisterTopPanelInteriorButtonTransform(RectTransform transform);
+        public RectTransform GetTopPanelInteriorButtonTransform();
+        public void UnregisterTopPanelInteriorButtonTransform();
     }
 }

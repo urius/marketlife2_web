@@ -34,7 +34,7 @@ namespace View.UI.Tutorial.Steps
         {
             _view = InstantiateColdPrefab<UITutorialStepUIPointerView>(Constants.TutorialStepPointUIPath);
             
-            _view.ToLeftSideState();
+            _view.ToBottomLeftSideState();
 
             var hireButtonTransform = _panelTransformsProvider.HireButtonTransform;
             

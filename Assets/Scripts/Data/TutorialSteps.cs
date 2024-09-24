@@ -2,9 +2,10 @@ namespace Data
 {
     public static class TutorialSteps
     {
-        public static readonly TutorialStep[][] TutorialSequences = new[]
+        public static readonly TutorialStep[][] TutorialSequences =
         {
-            new TutorialStep[]{
+            new TutorialStep[]
+            {
                 TutorialStep.HowToMove,
                 TutorialStep.BuildCashDesk,
                 TutorialStep.BuildShelf,
@@ -17,10 +18,12 @@ namespace Data
                 TutorialStep.HireCashDeskStaff,
                 TutorialStep.UpgradeTruckPoint,
             },
-            new TutorialStep[]{
-               // TutorialStep.UpgradeShelf
+            new TutorialStep[]
+            {
+                TutorialStep.OpenInteriorPopup,
             },
-            new TutorialStep[]{
+            new TutorialStep[]
+            {
                 //TutorialStep.HireCashDeskStaff
             },
         };
@@ -40,5 +43,6 @@ namespace Data
         UpgradeShelf = 10,
         HireCashDeskStaff = 11,
         UpgradeTruckPoint = 12,
+        OpenInteriorPopup = 13,
     }
 }

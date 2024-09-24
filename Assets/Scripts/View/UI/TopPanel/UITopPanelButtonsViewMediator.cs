@@ -17,6 +17,8 @@ namespace View.UI.TopPanel
         private readonly IPlayerModelHolder _playerModelHolder = Instance.Get<IPlayerModelHolder>();
         private readonly IPlayerFocusProvider _playerFocusProvider = Instance.Get<IPlayerFocusProvider>();
         private readonly IUpdatesProvider _updatesProvider = Instance.Get<IUpdatesProvider>();
+        private readonly ISharedFlagsHolder _sharedFlagsHolder = Instance.Get<ISharedFlagsHolder>();
+        private readonly ISharedViewsDataHolder _sharedViewsDataHolder = Instance.Get<ISharedViewsDataHolder>();
         
         private UITopPanelButtonsView _buttonsView;
         private PlayerModel _playerModel;
@@ -28,6 +30,8 @@ namespace View.UI.TopPanel
             
             _buttonsView = TargetTransform.GetComponent<UITopPanelButtonsView>();
             _interiorButton = _buttonsView.InteriorButton;
+            
+            _sharedViewsDataHolder.RegisterTopPanelInteriorButtonTransform(_interiorButton.RectTransform);
 
             var shouldShowInteriorButton = ShouldShowInteriorButton();
             _interiorButton.SetVisibility(shouldShowInteriorButton);
@@ -44,6 +48,8 @@ namespace View.UI.TopPanel
 
         protected override void UnmediateInternal()
         {
+            _sharedViewsDataHolder.UnregisterTopPanelInteriorButtonTransform();
+            
             Unsubscribe();
             
             _buttonsView = null;
@@ -100,9 +106,9 @@ namespace View.UI.TopPanel
             SetInteriorButtonShownSharedFlag(true);
         }
 
-        private static void SetInteriorButtonShownSharedFlag(bool value)
+        private void SetInteriorButtonShownSharedFlag(bool value)
         {
-            SharedFlagsHolder.Instance.Set(SharedFlagKey.UITopPanelInteriorButtonShown, value);
+            _sharedFlagsHolder.Set(SharedFlagKey.UITopPanelInteriorButtonShown, value);
         }
 
         private void OnInteriorButtonClicked()

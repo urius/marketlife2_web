@@ -7,7 +7,7 @@ using View.UI.BottomPanel;
 
 namespace View.UI.Tutorial.Steps
 {
-    public class UITutorialStepIUpgradeTruckPointMediator : UITutorialStepMediatorBase
+    public class UITutorialStepUpgradeTruckPointMediator : UITutorialStepMediatorBase
     {
         private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
         private readonly ISharedViewsDataHolder _sharedViewsDataHolder = Instance.Get<ISharedViewsDataHolder>();
@@ -34,7 +34,7 @@ namespace View.UI.Tutorial.Steps
         {
             _view = InstantiateColdPrefab<UITutorialStepUIPointerView>(Constants.TutorialStepPointUIPath);
             
-            _view.ToRightSideState();
+            _view.ToBottomRightSideState();
 
             var upgradeButtonTransform = _panelTransformsProvider.UpgradeButtonTransform;
             

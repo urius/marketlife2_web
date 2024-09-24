@@ -106,6 +106,7 @@ public class InitScript : MonoBehaviour
         SetupNewInstance<UpgradeCostProvider, IUpgradeCostProvider>();
         SetupNewInstance<HireStaffCostProvider, IHireStaffCostProvider>();
         SetupNewInstance<PopupViewModelsHolder, IPopupViewModelsHolder>();
+        SetupNewInstance<SharedFlagsHolder, ISharedFlagsHolder>();
         
         _playerModelHolder = SetupNewInstance<PlayerModelHolder, IPlayerModelHolder>();
         

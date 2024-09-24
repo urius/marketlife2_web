@@ -6,10 +6,8 @@ using Data;
 
 namespace Holders
 {
-    public class SharedFlagsHolder
+    public class SharedFlagsHolder : ISharedFlagsHolder
     {
-        public static readonly SharedFlagsHolder Instance = new SharedFlagsHolder();
-        
         private readonly Dictionary<SharedFlagKey, bool> _sharedFlagValues = new();
         private readonly Dictionary<SharedFlagKey, Action<bool>> _flagUpdateOnceActions = new();
         
@@ -95,5 +93,17 @@ namespace Holders
                 tcs.TrySetCanceled();
             }
         }
+    }
+
+    public interface ISharedFlagsHolder
+    {
+        public bool Get(SharedFlagKey flagKey);
+        public void Set(SharedFlagKey flagKey, bool flagValue);
+        
+        public void SubscribeOnce(SharedFlagKey flagKey, Action<bool> newAction);
+        public void UnsubscribeOnce(SharedFlagKey flagKey, Action<bool> newAction);
+        
+        public UniTask WaitForFlagValue(SharedFlagKey flagKey, bool expectedValue);
+        public UniTask WaitForFlagValue(SharedFlagKey flagKey, bool expectedValue, CancellationToken token);
     }
 }
