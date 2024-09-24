@@ -13,6 +13,7 @@ namespace View.UI.Common
         [SerializeField] private Image _buttonIconImage;
 
         public RectTransform RectTransform { get; private set; }
+        public bool IsVisible => _button.gameObject.activeSelf;
 
         private void Awake()
         {
