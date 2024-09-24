@@ -2,11 +2,11 @@ using Model.Popups;
 
 namespace Events
 {
-    public struct UIClosePopupClickedEvent
+    public struct UIRequestClosePopupEvent
     {
         public readonly PopupViewModelBase PopupViewModel;
 
-        public UIClosePopupClickedEvent(PopupViewModelBase popupViewModel)
+        public UIRequestClosePopupEvent(PopupViewModelBase popupViewModel)
         {
             PopupViewModel = popupViewModel;
         }

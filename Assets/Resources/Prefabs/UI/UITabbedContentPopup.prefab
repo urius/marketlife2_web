@@ -939,8 +939,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cb13f71dba064fd8afae9ee18a0eb933, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _blockRaycastsImage: {fileID: 6701860279754695540}
   _titleText: {fileID: 6701860280598188863}
   _popupTransform: {fileID: 6701860280091265011}
+  _popupBodyCanvasGroup: {fileID: 4371110481096870802}
   _tabsButtonsTransform: {fileID: 5846287646331105927}
   _viewportTransform: {fileID: 68703929334510812}
   _contentTransform: {fileID: 3913857129095540081}

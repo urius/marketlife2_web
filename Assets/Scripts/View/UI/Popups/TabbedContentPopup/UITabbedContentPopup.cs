@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using View.Extensions;
 
 namespace View.UI.Popups.TabbedContentPopup
 {
@@ -10,9 +12,14 @@ namespace View.UI.Popups.TabbedContentPopup
     {
         public event Action CloseButtonClicked;
         public event Action<int> TabButtonClicked;
-        
+
+        private const float AppearDurationSec = 0.4f;
+        private const float DisappearDurationSec = 0.25f;
+
+        [SerializeField] private Image _blockRaycastsImage;
         [SerializeField] private TMP_Text _titleText;
         [SerializeField] private RectTransform _popupTransform;
+        [SerializeField] private CanvasGroup _popupBodyCanvasGroup;
         [SerializeField] private RectTransform _tabsButtonsTransform;
         [SerializeField] private RectTransform _viewportTransform;
         [SerializeField] private RectTransform _contentTransform;
@@ -23,7 +30,7 @@ namespace View.UI.Popups.TabbedContentPopup
         private readonly LinkedList<ItemData> _displayedItems = new();
         private readonly LinkedList<ItemData> _hiddenItemsTail = new();
         private readonly List<IUITabbedContentPopupTabButton> _tabButtons = new();
-        
+
         private int _columnsCount = 3;
         private Vector2 _contentSize;
         private Vector2 _viewPortSize;
@@ -35,14 +42,14 @@ namespace View.UI.Popups.TabbedContentPopup
         private void Awake()
         {
             _contentTransformPosition = _contentTransform.anchoredPosition;
-            
+
             _closeButton.onClick.AddListener(OnCloseButtonClick);
         }
 
         private void Update()
         {
             var newContentPosition = _contentTransform.anchoredPosition;
-            
+
             if (newContentPosition.y < _contentTransformPosition.y)
             {
                 ProcessScrollForward();
@@ -63,23 +70,82 @@ namespace View.UI.Popups.TabbedContentPopup
             {
                 UnsubscribeFromTabButton(tabButton);
             }
-            
+
             _tabButtons.Clear();
         }
 
         public void Setup(int columnsCount, int popupWidth, int popupHeight)
         {
             _viewPortSize = _viewportTransform.rect.size;
-            
+
             _columnsCount = columnsCount;
             SetPopupSize(popupWidth, popupHeight);
+        }
+
+        public UniTask AppearAsync()
+        {
+            var tcs = new UniTaskCompletionSource();
+            _popupBodyCanvasGroup.alpha = 0;
+            LeanTween.value(gameObject, a => _popupBodyCanvasGroup.alpha = a, 0, 1, 0.5f * AppearDurationSec);
+            LeanTween.value(gameObject, p => _popupTransform.anchoredPosition = p, new Vector2(0, -300), Vector2.zero,
+                    AppearDurationSec)
+                .setEaseOutBack()
+                .setOnComplete(() => tcs.TrySetResult());
+
+            //AudioManager.Instance.PlaySound(SoundNames.PopupOpen);
+            return tcs.Task;
+        }
+
+        public UniTask DisappearAsync()
+        {
+            var tcs = new UniTaskCompletionSource();
+            _blockRaycastsImage.SetAlpha(0);
+            LeanTween.value(gameObject, a => _popupBodyCanvasGroup.alpha = a, 1, 0, DisappearDurationSec);
+            LeanTween.value(gameObject, p => _popupTransform.anchoredPosition = p, Vector2.zero, new Vector2(0, 300),
+                    DisappearDurationSec)
+                .setEaseInBack()
+                .setOnComplete(() => tcs.TrySetResult());
+
+            //AudioManager.Instance.PlaySound(SoundNames.PopupClose);
+            return tcs.Task;
+        }
+
+        public UniTask Appear2Async()
+        {
+            var tcs = new UniTaskCompletionSource();
+            var targetSize = _popupTransform.sizeDelta;
+            var startSize = new Vector2(targetSize.x, 0);
+            _popupBodyCanvasGroup.alpha = 0;
+            LeanTween.value(gameObject, a => _popupBodyCanvasGroup.alpha = a, 0, 1, 0.5f * AppearDurationSec);
+            LeanTween.value(gameObject, p => _popupTransform.sizeDelta = p, startSize, targetSize, AppearDurationSec)
+                .setEaseOutBack()
+                .setOnComplete(() => tcs.TrySetResult());
+
+            //AudioManager.Instance.PlaySound(SoundNames.PopupOpen);
+            return tcs.Task;
+        }
+
+        public UniTask Disappear2Async()
+        {
+            //AudioManager.Instance.PlaySound(SoundNames.PopupClose);
+
+            var tcs = new UniTaskCompletionSource();
+            var startSize = _popupTransform.sizeDelta;
+            var targetSize = new Vector2(startSize.x, 0);
+            _blockRaycastsImage.SetAlpha(0);
+            LeanTween.value(gameObject, a => _popupBodyCanvasGroup.alpha = a, 1, 0, DisappearDurationSec);
+            LeanTween.value(gameObject, p => _popupTransform.sizeDelta = p, startSize, targetSize, DisappearDurationSec)
+                .setEaseInBack()
+                .setOnComplete(() => tcs.TrySetResult());
+            
+            return tcs.Task;
         }
 
         public void AddTab(string tabTitle) //AddBab :)
         {
             var tabGo = Instantiate(_tabButtonPrefab, _tabsButtonsTransform);
             var tabButtonView = tabGo.GetComponent<IUITabbedContentPopupTabButton>();
-            
+
             tabButtonView.SetText(tabTitle);
 
             var itemPos = tabButtonView.RectTransform.anchoredPosition;
@@ -95,17 +161,17 @@ namespace View.UI.Popups.TabbedContentPopup
         {
             item.RectTransform.SetParent(_contentTransform);
             SetItemActive(item, true);
-            
+
             var allItemsCount = _hiddenItemsHead.Count + _displayedItems.Count + _hiddenItemsTail.Count;
             SetItemPosition(item, allItemsCount);
 
             var itemData = new ItemData(item);
-            
+
             if (-itemData.EndCoord > _contentSize.y)
             {
                 SetContentHeight(-itemData.EndCoord);
             }
-            
+
             _displayedItems.AddLast(new ItemData(item));
 
             TryHideTailItem();
@@ -115,7 +181,7 @@ namespace View.UI.Popups.TabbedContentPopup
         {
             _popupTransform.sizeDelta = new Vector2(width, height);
         }
-        
+
         public void ClearContent()
         {
             foreach (Transform child in _contentTransform)
@@ -126,7 +192,7 @@ namespace View.UI.Popups.TabbedContentPopup
             _hiddenItemsHead.Clear();
             _displayedItems.Clear();
             _hiddenItemsTail.Clear();
-            
+
             SetContentHeight(0);
         }
 
@@ -177,7 +243,7 @@ namespace View.UI.Popups.TabbedContentPopup
             if (_displayedItems.Count > 0)
             {
                 var lastItemData = _displayedItems.Last.Value;
-            
+
                 if (ShouldHideItemAtTail(lastItemData))
                 {
                     SetItemActive(lastItemData.Item, false);
@@ -191,13 +257,13 @@ namespace View.UI.Popups.TabbedContentPopup
 
             return false;
         }
-        
+
         private bool TryShowTailHiddenItem()
         {
             if (_hiddenItemsTail.Count > 0)
             {
                 var firstHiddenItemData = _hiddenItemsTail.First.Value;
-            
+
                 if (ShouldHideItemAtTail(firstHiddenItemData) == false)
                 {
                     SetItemActive(firstHiddenItemData.Item, true);
@@ -237,7 +303,7 @@ namespace View.UI.Popups.TabbedContentPopup
             if (_hiddenItemsHead.Count > 0)
             {
                 var lastHiddenItemData = _hiddenItemsHead.Last.Value;
-            
+
                 if (ShouldHideItemAtHead(lastHiddenItemData) == false)
                 {
                     SetItemActive(lastHiddenItemData.Item, true);
@@ -256,6 +322,7 @@ namespace View.UI.Popups.TabbedContentPopup
         {
             return -(itemData.StartCoord + _contentTransformPosition.y) > _viewPortSize.y;
         }
+
         private bool ShouldHideItemAtHead(ItemData itemData)
         {
             return -(itemData.EndCoord + _contentTransformPosition.y) < 0;
@@ -265,13 +332,13 @@ namespace View.UI.Popups.TabbedContentPopup
         {
             _titleText.text = text;
         }
-        
+
         private Vector2 SetItemPosition(IUITabbedContentPopupItem item, int itemIndex)
         {
             var position = new Vector2Int(itemIndex % _columnsCount, -itemIndex / _columnsCount) * item.Size;
 
             item.RectTransform.anchoredPosition = position;
-            
+
             return position;
         }
 
@@ -316,7 +383,7 @@ namespace View.UI.Popups.TabbedContentPopup
             public ItemData(IUITabbedContentPopupItem item)
             {
                 Item = item;
-                
+
                 var anchoredPosition = Item.RectTransform.anchoredPosition;
                 StartCoord = anchoredPosition.y;
                 EndCoord = anchoredPosition.y - Item.Size.y;

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using Data;
 using Events;
 using Holders;
@@ -43,7 +44,14 @@ namespace View.UI.Popups
             InitTabs();
 
             ShowTab(0);
-            
+
+            AppearAndSubscribe().Forget();
+        }
+
+        private async UniTaskVoid AppearAndSubscribe()
+        {
+            await _popupView.AppearAsync();
+
             Subscribe();
         }
 
@@ -108,7 +116,14 @@ namespace View.UI.Popups
 
         private void OnCloseButtonClicked()
         {
-            _eventBus.Dispatch(new UIClosePopupClickedEvent(TargetModel));
+            DisappearAndRequestUnmediate().Forget();
+        }
+
+        private async UniTaskVoid DisappearAndRequestUnmediate()
+        {
+            await _popupView.DisappearAsync();
+            
+            _eventBus.Dispatch(new UIRequestClosePopupEvent(TargetModel));
         }
 
         private void OnTabButtonClicked(int index)

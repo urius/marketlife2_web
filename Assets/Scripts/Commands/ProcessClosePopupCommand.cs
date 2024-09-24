@@ -5,11 +5,11 @@ using Infra.Instance;
 
 namespace Commands
 {
-    public class ProcessClosePopupClickedCommand : ICommand<UIClosePopupClickedEvent>
+    public class ProcessClosePopupCommand : ICommand<UIRequestClosePopupEvent>
     {
         private readonly IPopupViewModelsHolder _popupViewModelsHolder = Instance.Get<IPopupViewModelsHolder>();
         
-        public void Execute(UIClosePopupClickedEvent e)
+        public void Execute(UIRequestClosePopupEvent e)
         {
             var targetPopupViewModel = e.PopupViewModel;
             
