@@ -1,4 +1,3 @@
-using Data;
 using Events;
 using Holders;
 using Infra.CommandExecutor;
@@ -11,14 +10,11 @@ namespace Commands
     public class ProcessInteriorPopupItemClickedCommand : ICommand<UIInteriorPopupItemClickedEvent>
     {
         private readonly IPlayerModelHolder _playerModelHolder = Instance.Get<IPlayerModelHolder>();
-        private readonly IPopupViewModelsHolder _popupViewModelsHolder = Instance.Get<IPopupViewModelsHolder>();
         
         public void Execute(UIInteriorPopupItemClickedEvent e)
         {
             var playerModel = _playerModelHolder.PlayerModel;
             var shopModel = playerModel.ShopModel;
-            var interiorPopupViewModel =
-                (InteriorPopupViewModel)_popupViewModelsHolder.FindPopupByKey(PopupKey.InteriorPopup);
 
             var itemViewModel = e.ItemViewModel;
             
@@ -36,7 +32,15 @@ namespace Commands
 
                 if (playerModel.TrySpendMoney(cost))
                 {
-                    interiorPopupViewModel.SetItemBought(itemViewModel);
+                    switch (itemViewModel)
+                    {
+                        case InteriorPopupWallItemViewModel wallItem:
+                            playerModel.AddBoughtWall(wallItem.WallType);
+                            break;
+                        case InteriorPopupFloorItemViewModel floorItem:
+                            playerModel.AddBoughtFloor(floorItem.FloorType);
+                            break;
+                    }
                 }
             }
             
@@ -51,8 +55,6 @@ namespace Commands
                         shopModel.SetFloorsType(floorItem.FloorType);
                         break;
                 }
-                
-                interiorPopupViewModel.SetItemIsChosen(itemViewModel);
             }
         }
     }

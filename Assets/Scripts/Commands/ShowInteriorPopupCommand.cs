@@ -16,11 +16,11 @@ namespace Commands
 
         public void Execute(UIInteriorButtonClickedEvent e)
         {
-
             var floorItemViewModels = GetFloorViewModels();
             var wallItemViewModels = GetWallViewModels();
 
-            var popupViewModel = new InteriorPopupViewModel(floorItemViewModels, wallItemViewModels);
+            var popupViewModel =
+                new InteriorPopupViewModel(floorItemViewModels, wallItemViewModels, _playerModelHolder.PlayerModel);
             
             _popupViewModelsHolder.AddPopup(popupViewModel);
         }
@@ -32,14 +32,14 @@ namespace Commands
             var currentLevel = playerModel.Level;
             
             var floorItemsOnLevel = _interiorDataProvider.GetFloorItemsByLevel(currentLevel);
-            var unlockedFloorItemsOnLevel = playerModel.UnlockedFloors;
+            var boughtFloorItemsOnLevel = playerModel.BoughtFloors;
             var floorItemsOnNextLevel = _interiorDataProvider.GetFloorItemsForNextLevel(currentLevel);
 
             var itemsToShow = new LinkedList<InteriorPopupFloorItemViewModel>();
 
             foreach (var floorItem in floorItemsOnLevel)
             {
-                var isBought = unlockedFloorItemsOnLevel.Contains(floorItem.FloorType);
+                var isBought = boughtFloorItemsOnLevel.Contains(floorItem.FloorType);
                 var isChosen = floorItem.FloorType == shopModel.FloorsType;
                 itemsToShow.AddLast(
                     new InteriorPopupFloorItemViewModel(floorItem.Level, isBought, isChosen, floorItem.FloorType));
@@ -63,14 +63,14 @@ namespace Commands
             var currentLevel = playerModel.Level;
 
             var wallItemsOnLevel = _interiorDataProvider.GetWallItemsByLevel(currentLevel);
-            var unlockedWallItemsOnLevel = playerModel.UnlockedWalls;
+            var boughtWallItemsOnLevel = playerModel.BoughtWalls;
             var wallItemsOnNextLevel = _interiorDataProvider.GetWallItemsForNextLevel(currentLevel);
 
             var itemsToShow = new LinkedList<InteriorPopupWallItemViewModel>();
 
             foreach (var wallItem in wallItemsOnLevel)
             {
-                var isBought = unlockedWallItemsOnLevel.Contains(wallItem.WallType);
+                var isBought = boughtWallItemsOnLevel.Contains(wallItem.WallType);
                 var isChosen = wallItem.WallType == shopModel.WallsType;
                 itemsToShow.AddLast(
                     new InteriorPopupWallItemViewModel(wallItem.Level, isBought, isChosen, wallItem.WallType));

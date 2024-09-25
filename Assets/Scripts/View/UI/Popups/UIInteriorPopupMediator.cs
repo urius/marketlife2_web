@@ -234,7 +234,7 @@ namespace View.UI.Popups
                     ? InteriorCostHelper.GetWallCostForLevel(_playerModel.Level)
                     : InteriorCostHelper.GetFloorCostForLevel(_playerModel.Level);
 
-                itemView.SetButtonText(itemViewModel.IsChosen
+                itemView.SetButtonText(itemViewModel.IsBought
                     ? _localizationProvider.GetLocale(Constants.LocalizationChosenMessageKey)
                     : $"{FormattingHelper.ToMoneyWithIconText2Format(buyCost)}\n{_localizationProvider.GetLocale(Constants.LocalizationBuyMessageKey)}");
             }

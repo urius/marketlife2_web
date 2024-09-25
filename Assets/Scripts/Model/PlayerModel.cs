@@ -14,8 +14,8 @@ namespace Model
         public event Action<bool> IsLevelProcessingActiveFlagUpdated;
         public event Action<TutorialStep> OpenTutorialStepAdded;
         public event Action<TutorialStep> OpenTutorialStepRemoved;
-        public event Action<WallType> WallUnlocked;
-        public event Action<FloorType> FloorUnlocked;
+        public event Action<WallType> WallBought;
+        public event Action<FloorType> FloorBought;
         
         public readonly ShopModel ShopModel;
         public readonly PlayerCharModel PlayerCharModel;
@@ -24,8 +24,8 @@ namespace Model
         public readonly LinkedList<TutorialStep> OpenTutorialSteps = new(); //not for save
         //
         
-        private readonly List<WallType> _unlockedWalls;
-        private readonly List<FloorType> _unlockedFloors;
+        private readonly List<WallType> _boughtWalls;
+        private readonly List<FloorType> _boughtFloors;
 
         public PlayerModel(ShopModel shopModel, int moneyAmount, int level, 
             int staffWorkTimeSeconds, WallType[] unlockedWalls, FloorType[] unlockedFloors,
@@ -33,10 +33,12 @@ namespace Model
         {
             ShopModel = shopModel;
             MoneyAmount = moneyAmount;
-            Level = level <= 0 ? 1 : level;
+            Level = 3;//level <= 0 ? 1 : level;
             StaffWorkTimeSeconds = staffWorkTimeSeconds;
-            _unlockedWalls = new List<WallType>(unlockedWalls);
-            _unlockedFloors = new List<FloorType>(unlockedFloors);
+            _boughtWalls = new List<WallType>(unlockedWalls);
+            AddBoughtWall(shopModel.WallsType);
+            _boughtFloors = new List<FloorType>(unlockedFloors);
+            AddBoughtFloor(shopModel.FloorsType);
             PlayerCharModel = playerCharModel;
             if (passedTutorialSteps != null)
             {
@@ -44,26 +46,30 @@ namespace Model
             }
         }
 
-        public IReadOnlyList<WallType> UnlockedWalls => _unlockedWalls;
-        public IReadOnlyList<FloorType> UnlockedFloors => _unlockedFloors;
+        public IReadOnlyList<WallType> BoughtWalls => _boughtWalls;
+        public IReadOnlyList<FloorType> BoughtFloors => _boughtFloors;
         public bool IsLevelProcessingActive { get; private set; }
         public int MoneyAmount { get; private set; }
         public int Level { get; private set; }
         public int StaffWorkTimeSeconds { get; private set; }
         public int LevelIndex => Level - 1;
 
-        public void UnlockWall(WallType newWallType)
+        public void AddBoughtWall(WallType newWallType)
         {
-            _unlockedWalls.Add(newWallType);
+            if (_boughtWalls.Contains(newWallType)) return;
             
-            WallUnlocked?.Invoke(newWallType);
+            _boughtWalls.Add(newWallType);
+            
+            WallBought?.Invoke(newWallType);
         }
         
-        public void UnlockFloor(FloorType newFloorType)
+        public void AddBoughtFloor(FloorType newFloorType)
         {
-            _unlockedFloors.Add(newFloorType);
+            if (_boughtFloors.Contains(newFloorType)) return;
+
+            _boughtFloors.Add(newFloorType);
     
-            FloorUnlocked?.Invoke(newFloorType);
+            FloorBought?.Invoke(newFloorType);
         }
         
         public void ChangeMoney(int deltaMoney)

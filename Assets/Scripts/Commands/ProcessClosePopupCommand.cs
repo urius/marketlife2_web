@@ -14,6 +14,8 @@ namespace Commands
             var targetPopupViewModel = e.PopupViewModel;
             
             _popupViewModelsHolder.RemovePopup(targetPopupViewModel);
+            
+            targetPopupViewModel.Dispose();
         }
     }
 }
