@@ -25,6 +25,7 @@ namespace View.Game.Floors
             _tilemap = TargetTransform.GetComponentInChildren<Tilemap>();
             
             DisplayFloors();
+            DisplayGrass();
             DisplayTruckRoads();
 
             Subscribe();
@@ -39,12 +40,19 @@ namespace View.Game.Floors
         {
             _shopModel.ShopObjectAdded += OnShopObjectAdded;
             _shopModel.ShopExpanded += OnShopExpanded;
+            _shopModel.FloorsTypeUpdated += OnFloorsTypeUpdated;
         }
 
         private void Unsubscribe()
         {
             _shopModel.ShopObjectAdded -= OnShopObjectAdded;
             _shopModel.ShopExpanded -= OnShopExpanded;
+            _shopModel.FloorsTypeUpdated -= OnFloorsTypeUpdated;
+        }
+
+        private void OnFloorsTypeUpdated(FloorType floorType)
+        {
+            DisplayFloors();
         }
 
         private void OnShopExpanded(Vector2Int deltaSize)
@@ -89,30 +97,34 @@ namespace View.Game.Floors
 
         private void DisplayFloors()
         {
-            var shopModel = _playerModelHolder.PlayerModel.ShopModel;
-            var floorTile = _spritesHolder.GetFloorTileByKey(shopModel.FloorsType);
+            var floorTile = _spritesHolder.GetFloorTileByKey(_shopModel.FloorsType);
             
-            for (var x = 0; x < shopModel.Size.x; x++)
+            for (var x = 0; x < _shopModel.Size.x; x++)
             {
-                for (var y = 0; y < shopModel.Size.y; y++)
+                for (var y = 0; y < _shopModel.Size.y; y++)
                 {
                     _tilemap.SetTile(new Vector3Int(x, y, 0), floorTile);
                 }
             }
 
+            DisplayGrass();
+        }
+
+        private void DisplayGrass()
+        {
             var grassGapCells = 10;
-            
-            for (var x = shopModel.Size.x; x < shopModel.Size.x + grassGapCells; x++)
+
+            for (var x = _shopModel.Size.x; x < _shopModel.Size.x + grassGapCells; x++)
             {
-                for (var y = -grassGapCells; y < shopModel.Size.y + grassGapCells; y++)
+                for (var y = -grassGapCells; y < _shopModel.Size.y + grassGapCells; y++)
                 {
                     DrawRandomGrassTile(x, y);
                 }
             }
-            
-            for (var y = shopModel.Size.y; y < shopModel.Size.y + grassGapCells; y++)
+
+            for (var y = _shopModel.Size.y; y < _shopModel.Size.y + grassGapCells; y++)
             {
-                for (var x = -grassGapCells; x < shopModel.Size.x + grassGapCells; x++)
+                for (var x = -grassGapCells; x < _shopModel.Size.x + grassGapCells; x++)
                 {
                     DrawRandomGrassTile(x, y);
                 }

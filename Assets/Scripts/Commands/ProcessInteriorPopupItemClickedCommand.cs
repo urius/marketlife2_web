@@ -21,21 +21,9 @@ namespace Commands
                 (InteriorPopupViewModel)_popupViewModelsHolder.FindPopupByKey(PopupKey.InteriorPopup);
 
             var itemViewModel = e.ItemViewModel;
-            if (itemViewModel.IsBought)
-            {
-                switch (itemViewModel)
-                {
-                    case InteriorPopupWallItemViewModel wallItem:
-                        shopModel.SetWallsType(wallItem.WallType);
-                        break;
-                    case InteriorPopupFloorItemViewModel floorItem:
-                        shopModel.SetFloorsType(floorItem.FloorType);
-                        break;
-                }
-                
-                interiorPopupViewModel.SetItemIsChosen(itemViewModel);
-            }
-            else if (itemViewModel.UnlockLevel <= playerModel.Level)
+            
+            if (itemViewModel.IsBought == false 
+                && itemViewModel.UnlockLevel <= playerModel.Level)
             {
                 var level = playerModel.Level;
                 
@@ -50,6 +38,21 @@ namespace Commands
                 {
                     interiorPopupViewModel.SetItemBought(itemViewModel);
                 }
+            }
+            
+            if (itemViewModel.IsBought)
+            {
+                switch (itemViewModel)
+                {
+                    case InteriorPopupWallItemViewModel wallItem:
+                        shopModel.SetWallsType(wallItem.WallType);
+                        break;
+                    case InteriorPopupFloorItemViewModel floorItem:
+                        shopModel.SetFloorsType(floorItem.FloorType);
+                        break;
+                }
+                
+                interiorPopupViewModel.SetItemIsChosen(itemViewModel);
             }
         }
     }

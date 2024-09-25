@@ -50,12 +50,19 @@ namespace View.Game.Walls
         {
             ShopModel.ShopObjectAdded += OnShopObjectAdded;
             ShopModel.ShopExpanded += OnShopExpanded;
+            ShopModel.WallsTypeUpdated += OnWallsTypeUpdated;
         }
 
         private void Unsubscribe()
         {
             ShopModel.ShopObjectAdded -= OnShopObjectAdded;
             ShopModel.ShopExpanded -= OnShopExpanded;
+            ShopModel.WallsTypeUpdated -= OnWallsTypeUpdated;
+        }
+
+        private void OnWallsTypeUpdated(WallType wallType)
+        {
+            DisplayWalls();
         }
 
         private void OnShopExpanded(Vector2Int deltaSize)
