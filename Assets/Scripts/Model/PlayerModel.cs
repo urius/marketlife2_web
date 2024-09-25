@@ -33,7 +33,7 @@ namespace Model
         {
             ShopModel = shopModel;
             MoneyAmount = moneyAmount;
-            Level = 3;//level <= 0 ? 1 : level;
+            Level = level <= 0 ? 1 : level;
             StaffWorkTimeSeconds = staffWorkTimeSeconds;
             _boughtWalls = new List<WallType>(unlockedWalls);
             AddBoughtWall(shopModel.WallsType);
