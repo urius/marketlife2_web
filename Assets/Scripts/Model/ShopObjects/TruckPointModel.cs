@@ -52,7 +52,7 @@ namespace Model.ShopObjects
         public TruckPointStaffCharModel StaffCharModel { get; private set; }
         public bool IsDelivered => DeliverTimeSecondsRest <= 0 && HasProducts;
         public int UpgradesCount => _upgradesCount;
-        public bool HasProducts => _currentProductBoxes.Any(p => p != ProductType.None);
+        public bool HasProducts => HasProductsInternal();
         public bool HasStaff => StaffCharModel != null;
 
         public void RemoveBox(int boxIndex)
@@ -222,6 +222,19 @@ namespace Model.ShopObjects
             }
 
             return result.ToArray();
+        }
+
+        private bool HasProductsInternal()
+        {
+            foreach (var productBox in _currentProductBoxes)
+            {
+                if (productBox != ProductType.None)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
     }
 }

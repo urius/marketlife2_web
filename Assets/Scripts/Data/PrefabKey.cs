@@ -32,5 +32,6 @@ namespace Data
         VFXStars,
         UITabbedContentPopup,
         UIInteriorPopupItem,
+        ManCompass,
     }
 }

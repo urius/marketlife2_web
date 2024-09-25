@@ -17,13 +17,6 @@ namespace View.Game.People
         private readonly ISharedViewsDataHolder _sharedViewsDataHolder = Instance.Get<ISharedViewsDataHolder>();
 
         private readonly TakeMoneyAnimationContext _takeMoneyAnimationContext = new();
-        
-        private ManView _playerCharView;
-
-        public PlayerCharMoneyAnimationMediator(ManView playerCharView)
-        {
-            _playerCharView = playerCharView;
-        }
 
         protected override void MediateInternal()
         {
@@ -34,9 +27,6 @@ namespace View.Game.People
         {
             Unsubscribe();
             ClearTakeMoneyAnimation();
-            
-            Destroy(_playerCharView);
-            _playerCharView = null;
         }
 
         private void Subscribe()

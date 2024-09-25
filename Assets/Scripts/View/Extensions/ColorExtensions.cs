@@ -17,5 +17,10 @@ namespace View.Extensions
         {
             image.color = image.color.SetAlpha(alpha);
         }
+        
+        public static void SetAlpha(this SpriteRenderer spriteRenderer, float alpha)
+        {
+            spriteRenderer.color = spriteRenderer.color.SetAlpha(alpha);
+        }
     }
 }

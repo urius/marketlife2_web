@@ -3,7 +3,6 @@ using Holders;
 using Infra.Instance;
 using Model;
 using Model.People;
-using Model.People.States;
 using UnityEngine;
 
 namespace View.UI.Tutorial.Steps
@@ -67,16 +66,7 @@ namespace View.UI.Tutorial.Steps
 
         private CustomerCharModel GetWaitingCustomer()
         {
-            foreach (var customer in _shopModel.CustomersModel.Customers)
-            {
-                if (customer.State?.StateName == TargetStateName
-                    && ((BotCharMovingStateBase)customer.State).TargetCell == customer.CellCoords)
-                {
-                    return customer;
-                }
-            }
-
-            return null;
+            return _shopModel.CustomersModel.GetWaitingCustomer();
         }
 
         protected override Vector2Int GetTargetMoveToCell()

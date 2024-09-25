@@ -35,7 +35,15 @@ namespace Model.ShopObjects
 
         public bool HasEmptySlots()
         {
-            return ProductSlots.Any(slot => slot == ProductType.None);
+            foreach (var slot in ProductSlots)
+            {
+                if (slot == ProductType.None)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         public bool HasProducts()

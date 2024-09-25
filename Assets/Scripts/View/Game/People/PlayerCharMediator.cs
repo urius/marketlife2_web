@@ -20,8 +20,9 @@ namespace View.Game.People
             SetupView();
             
             MediateChild<PlayerCharMovementMediator>(_playerCharView.transform);
-            MediateChild(new PlayerCharMoneyAnimationMediator(_playerCharView));
+            MediateChild<PlayerCharMoneyAnimationMediator>(TargetTransform);
             MediateChild(new PlayerCharProductsMediator(_playerCharView));
+            MediateChild(new PlayerCharCompassMediator(_playerCharView));
 
             _playerCharViewSharedDataHolder.SetView(_playerCharView);
         }

@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using Data;
+using Model.People.States;
 using UnityEngine;
 
 namespace Model.People
@@ -39,6 +41,20 @@ namespace Model.People
             _customerModels.Remove(customer);
 
             CustomerRemoved?.Invoke(customer);
+        }
+
+        public CustomerCharModel GetWaitingCustomer()
+        {
+            foreach (var customer in Customers)
+            {
+                if (customer.State?.StateName == ShopCharStateName.CustomerMovingToCashDesk
+                    && ((BotCharMovingStateBase)customer.State).TargetCell == customer.CellCoords)
+                {
+                    return customer;
+                }
+            }
+
+            return null;
         }
 
         public bool HaveCustomerOnCell(Vector2Int cell)
