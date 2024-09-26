@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using Data;
+using Events;
 using Holders;
+using Infra.EventBus;
 using Infra.Instance;
 using Model;
 using Model.People.States.Customer;
@@ -15,6 +17,7 @@ namespace View.Game.People
         private readonly IUpdatesProvider _updatesProvider = Instance.Get<IUpdatesProvider>();
         private readonly IGridCalculator _gridCalculator = Instance.Get<IGridCalculator>();
         private readonly IPlayerModelHolder _playerModelHolder = Instance.Get<IPlayerModelHolder>();
+        private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
         
         private readonly ManView _playerCharView;
         private readonly LinkedList<CompassDataBase> _compassDataList = new();
@@ -22,6 +25,7 @@ namespace View.Game.People
         private ShopModel _shopModel;
         private PlayerCharModel _playerCharModel;
         private bool _addCompassPhaseFlag;
+        private PlayerModel _playerModel;
 
         public PlayerCharCompassMediator(ManView playerCharView)
         {
@@ -31,7 +35,8 @@ namespace View.Game.People
         protected override void MediateInternal()
         {
             _playerCharModel = _playerModelHolder.PlayerCharModel;
-            _shopModel = _playerModelHolder.PlayerModel.ShopModel;
+            _playerModel = _playerModelHolder.PlayerModel;
+            _shopModel = _playerModel.ShopModel;
             
             Subscribe();
         }
@@ -52,6 +57,9 @@ namespace View.Game.People
 
         private void Subscribe()
         {
+            _eventBus.Subscribe<RequestCompassEvent>(OnRequestCompassEvent);
+            _eventBus.Subscribe<RequestRemoveCompassEvent>(OnRequestRemoveCompassEvent);
+            
             _updatesProvider.SecondPassed += OnSecondPassed;
             _updatesProvider.QuarterSecondPassed += OnQuarterSecondPassed;
             _updatesProvider.GameplayFixedUpdate += OnGameplayFixedUpdate;
@@ -59,9 +67,32 @@ namespace View.Game.People
 
         private void Unsubscribe()
         {
+            _eventBus.Unsubscribe<RequestCompassEvent>(OnRequestCompassEvent);
+            _eventBus.Unsubscribe<RequestRemoveCompassEvent>(OnRequestRemoveCompassEvent);
+            
             _updatesProvider.SecondPassed -= OnSecondPassed;
             _updatesProvider.QuarterSecondPassed -= OnQuarterSecondPassed;
             _updatesProvider.GameplayFixedUpdate -= OnGameplayFixedUpdate;
+        }
+
+        private void OnRequestCompassEvent(RequestCompassEvent e)
+        {
+            AddSimpleCompass(e.TargetCellCoord);
+        }
+
+        private void OnRequestRemoveCompassEvent(RequestRemoveCompassEvent e)
+        {
+            foreach (var compassData in _compassDataList)
+            {
+                if (compassData.CompassType == CompassType.Simple)
+                {
+                    if (((SimpleCompassData)compassData).TargetCellCoords == e.TargetCellCoord)
+                    {
+                        RemoveCompass(compassData);
+                        return;
+                    }
+                }
+            }
         }
 
         private void OnQuarterSecondPassed()
@@ -71,7 +102,8 @@ namespace View.Game.People
 
         private void OnSecondPassed()
         {
-            if (_playerModelHolder.PlayerModel.Level < Constants.MinLevelForCompass)
+            if (CheckCompassExists(CompassType.Simple)
+                || _playerModel.IsTutorialStepPassed(TutorialStep.MoveToCashDesk) == false)
             {
                 return;
             }
@@ -199,9 +231,12 @@ namespace View.Game.People
                 compassData.CompassView.SetPosition(playerCharPosition);
                 compassData.CompassView.SetLookToPosition(compassData.TargetCoords);
 
-                //var distanceSqr = (compassData.TargetCoords - playerCharPosition).sqrMagnitude;
-                //compassData.CompassView.SetArrowDistancePercent(distanceSqr);
-                //compassData.CompassView.SetArrowAlphaPercent(distanceSqr * 0.5f);
+                if (compassData.CompassType == CompassType.Simple)
+                {
+                    var distanceSqr = (compassData.TargetCoords - playerCharPosition).sqrMagnitude;
+                    compassData.CompassView.SetArrowDistancePercent(distanceSqr);
+                    compassData.CompassView.SetArrowAlphaPercent(distanceSqr);
+                }
             }
         }
 
@@ -234,6 +269,17 @@ namespace View.Game.People
             
             var targetWorldPosition = _gridCalculator.GetCellCenterWorld(truckPointModel.CellCoords);
             var compassData = new TruckPointCompassData(compassView, targetWorldPosition, truckPointModel);
+
+            _compassDataList.AddLast(compassData);
+        }
+
+        private void AddSimpleCompass(Vector2Int targetCellCoord)
+        {
+            var compassView = InstantiatePrefab<PlayerCompassView>(PrefabKey.ManCompass);
+            compassView.SetSimplePreset();
+            
+            var targetWorldPosition = _gridCalculator.GetCellCenterWorld(targetCellCoord);
+            var compassData = new SimpleCompassData(compassView, targetWorldPosition, targetCellCoord);
 
             _compassDataList.AddLast(compassData);
         }
@@ -286,6 +332,19 @@ namespace View.Game.People
             public override CompassType CompassType => CompassType.TakeProductFromTruckPointCompass;
         }
         
+        private class SimpleCompassData : CompassDataBase
+        {
+            public readonly Vector2Int TargetCellCoords;
+
+            public SimpleCompassData(PlayerCompassView compassView, Vector3 targetCoords, Vector2Int targetCellCoords) 
+                : base(compassView, targetCoords)
+            {
+                TargetCellCoords = targetCellCoords;
+            }
+
+            public override CompassType CompassType => CompassType.Simple;
+        }
+        
         private abstract class CompassDataBase
         {
             public readonly Vector3 TargetCoords;
@@ -303,6 +362,7 @@ namespace View.Game.People
         private enum CompassType
         {
             Undefined,
+            Simple,
             CashDeskCompass,
             TakeProductFromTruckPointCompass,
             PlaceProductOnShelfCompass,

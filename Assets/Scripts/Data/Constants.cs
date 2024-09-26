@@ -16,7 +16,6 @@ namespace Data
         public const int MinLevelForTruckPointUpgrades = 2;
         public const int MinLevelForShelfUpgrades = 1;
         public const int MinLevelForShopExpand = 2;
-        public const int MinLevelForCompass = 2;
         public const int ExpandCellsAmount = 3;
         public const int ExpandPointFreeCoord = 3;
         public const int HireByAdvertWorkTimeMultiplier = 5;

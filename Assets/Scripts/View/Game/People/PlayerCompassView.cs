@@ -8,10 +8,11 @@ namespace View.Game.People
     {
         [SerializeField] private SpriteRenderer _arrowImage;
         [SerializeField] private SpriteRenderer _iconImage;
-        [Space(5)] 
+        [Space(25)] 
         [SerializeField] private PresetData _cashDeskPreset;
         [SerializeField] private PresetData _truckPointPreset;
         [SerializeField] private PresetData _shelfPreset;
+        [SerializeField] private PresetData _simplePreset;
 
         private float _arrowDistanceDefault;
         private float _arrowAlphaDefault;
@@ -30,6 +31,11 @@ namespace View.Game.People
             _iconRotationDefault = _iconImageTransform.rotation;
             
             _transform.localPosition = Vector3.zero;
+        }
+
+        public void SetSimplePreset()
+        {
+            SetPreset(_simplePreset);
         }
 
         public void SetCashDeskPreset()
