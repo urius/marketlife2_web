@@ -14,8 +14,6 @@ namespace View.Game.People
 {
     public class PlayerCharCompassMediator : MediatorBase
     {
-        private const int MaxCompassesOfSingleTypeAmount = 2;
-        
         private readonly IUpdatesProvider _updatesProvider = Instance.Get<IUpdatesProvider>();
         private readonly IGridCalculator _gridCalculator = Instance.Get<IGridCalculator>();
         private readonly IPlayerModelHolder _playerModelHolder = Instance.Get<IPlayerModelHolder>();
@@ -117,7 +115,7 @@ namespace View.Game.People
         {
             var result = false;
 
-            if (GetCompassesAmount(CompassType.CashDeskCompass) < MaxCompassesOfSingleTypeAmount)
+            if (CheckCompassExists(CompassType.CashDeskCompass) == false)
             {
                 var waitingCustomer = _shopModel.CustomersModel.GetWaitingCustomer();
 
@@ -132,7 +130,7 @@ namespace View.Game.People
             }
 
             if (_playerCharModel.HasProducts == false
-                && GetCompassesAmount(CompassType.TakeProductFromTruckPointCompass) < MaxCompassesOfSingleTypeAmount)
+                && CheckCompassExists(CompassType.TakeProductFromTruckPointCompass) == false)
             {
                 foreach (var truckPointModel in _shopModel.TruckPoints)
                 {
@@ -147,7 +145,7 @@ namespace View.Game.People
                 }
             }
             else if (_playerCharModel.HasProducts
-                     && GetCompassesAmount(CompassType.PlaceProductOnShelfCompass) < MaxCompassesOfSingleTypeAmount)
+                     && CheckCompassExists(CompassType.PlaceProductOnShelfCompass) == false)
             {
                 foreach (var shelfModel in _shopModel.Shelfs)
                 {
@@ -225,20 +223,6 @@ namespace View.Game.People
             }
 
             return false;
-        }
-        
-        private int GetCompassesAmount(CompassType compassType)
-        {
-            var result = 0;
-            foreach (var compassData in _compassDataList)
-            {
-                if (compassData.CompassType == compassType)
-                {
-                    result++;
-                }
-            }
-
-            return result;
         }
 
         private void OnGameplayFixedUpdate()
