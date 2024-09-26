@@ -14,6 +14,8 @@ namespace View.Game.People
 {
     public class PlayerCharCompassMediator : MediatorBase
     {
+        private const int MaxCompassesOfSingleTypeAmount = 2;
+        
         private readonly IUpdatesProvider _updatesProvider = Instance.Get<IUpdatesProvider>();
         private readonly IGridCalculator _gridCalculator = Instance.Get<IGridCalculator>();
         private readonly IPlayerModelHolder _playerModelHolder = Instance.Get<IPlayerModelHolder>();
@@ -115,7 +117,7 @@ namespace View.Game.People
         {
             var result = false;
 
-            if (CheckCompassExists(CompassType.CashDeskCompass) == false)
+            if (GetCompassesAmount(CompassType.CashDeskCompass) < MaxCompassesOfSingleTypeAmount)
             {
                 var waitingCustomer = _shopModel.CustomersModel.GetWaitingCustomer();
 
@@ -130,7 +132,7 @@ namespace View.Game.People
             }
 
             if (_playerCharModel.HasProducts == false
-                && CheckCompassExists(CompassType.TakeProductFromTruckPointCompass) == false)
+                && GetCompassesAmount(CompassType.TakeProductFromTruckPointCompass) < MaxCompassesOfSingleTypeAmount)
             {
                 foreach (var truckPointModel in _shopModel.TruckPoints)
                 {
@@ -140,11 +142,12 @@ namespace View.Game.People
                     {
                         AddTruckPointCompass(truckPointModel);
                         result = true;
+                        break;
                     }
                 }
             }
             else if (_playerCharModel.HasProducts
-                     && CheckCompassExists(CompassType.PlaceProductOnShelfCompass) == false)
+                     && GetCompassesAmount(CompassType.PlaceProductOnShelfCompass) < MaxCompassesOfSingleTypeAmount)
             {
                 foreach (var shelfModel in _shopModel.Shelfs)
                 {
@@ -152,6 +155,7 @@ namespace View.Game.People
                     {
                         AddShelfCompass(shelfModel);
                         result = true;
+                        break;
                     }
                 }
             }
@@ -221,6 +225,20 @@ namespace View.Game.People
             }
 
             return false;
+        }
+        
+        private int GetCompassesAmount(CompassType compassType)
+        {
+            var result = 0;
+            foreach (var compassData in _compassDataList)
+            {
+                if (compassData.CompassType == compassType)
+                {
+                    result++;
+                }
+            }
+
+            return result;
         }
 
         private void OnGameplayFixedUpdate()
