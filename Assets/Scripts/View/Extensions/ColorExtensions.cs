@@ -12,15 +12,30 @@ namespace View.Extensions
             
             return result;
         }
-        
+
+        public static Color SetColorWithoutAlpha(this Color currentColor, Color newColor)
+        {
+            var result = currentColor;
+            result.r = newColor.r;
+            result.g = newColor.g;
+            result.b = newColor.b;
+
+            return result;
+        }
+
         public static void SetAlpha(this Image image, float alpha)
         {
             image.color = image.color.SetAlpha(alpha);
         }
-        
+
         public static void SetAlpha(this SpriteRenderer spriteRenderer, float alpha)
         {
             spriteRenderer.color = spriteRenderer.color.SetAlpha(alpha);
+        }
+
+        public static void SetColorWithoutAlpha(this SpriteRenderer spriteRenderer, Color color)
+        {
+            spriteRenderer.color = spriteRenderer.color.SetColorWithoutAlpha(color);
         }
     }
 }

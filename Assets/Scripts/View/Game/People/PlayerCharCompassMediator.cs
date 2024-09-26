@@ -71,6 +71,11 @@ namespace View.Game.People
 
         private void OnSecondPassed()
         {
+            if (_playerModelHolder.PlayerModel.Level < Constants.MinLevelForCompass)
+            {
+                return;
+            }
+            
             AddNewCompassesIfNeeded();
         }
 
@@ -194,15 +199,16 @@ namespace View.Game.People
                 compassData.CompassView.SetPosition(playerCharPosition);
                 compassData.CompassView.SetLookToPosition(compassData.TargetCoords);
 
-                var distanceSqr = (compassData.TargetCoords - playerCharPosition).sqrMagnitude;
-                compassData.CompassView.SetArrowDistancePercent(distanceSqr);
-                compassData.CompassView.SetArrowAlphaPercent(distanceSqr * 0.5f);
+                //var distanceSqr = (compassData.TargetCoords - playerCharPosition).sqrMagnitude;
+                //compassData.CompassView.SetArrowDistancePercent(distanceSqr);
+                //compassData.CompassView.SetArrowAlphaPercent(distanceSqr * 0.5f);
             }
         }
 
         private void AddCashDeskCompass(CashDeskModel targetCashDeskModel)
         {
             var compassView = InstantiatePrefab<PlayerCompassView>(PrefabKey.ManCompass);
+            compassView.SetCashDeskPreset();
             
             var targetWorldPosition = _gridCalculator.GetCellCenterWorld(targetCashDeskModel.CellCoords);
             var compassData = new CashDeskCompassData(compassView, targetWorldPosition, targetCashDeskModel);
@@ -213,6 +219,7 @@ namespace View.Game.People
         private void AddShelfCompass(ShelfModel targetShelfModel)
         {
             var compassView = InstantiatePrefab<PlayerCompassView>(PrefabKey.ManCompass);
+            compassView.SetShelfPreset();
             
             var targetWorldPosition = _gridCalculator.GetCellCenterWorld(targetShelfModel.CellCoords);
             var compassData = new ShelfCompassData(compassView, targetWorldPosition, targetShelfModel);
@@ -223,6 +230,7 @@ namespace View.Game.People
         private void AddTruckPointCompass(TruckPointModel truckPointModel)
         {
             var compassView = InstantiatePrefab<PlayerCompassView>(PrefabKey.ManCompass);
+            compassView.SetTruckPointPreset();
             
             var targetWorldPosition = _gridCalculator.GetCellCenterWorld(truckPointModel.CellCoords);
             var compassData = new TruckPointCompassData(compassView, targetWorldPosition, truckPointModel);

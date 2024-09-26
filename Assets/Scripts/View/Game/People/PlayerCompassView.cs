@@ -7,16 +7,52 @@ namespace View.Game.People
     public class PlayerCompassView : MonoBehaviour
     {
         [SerializeField] private SpriteRenderer _arrowImage;
+        [SerializeField] private SpriteRenderer _iconImage;
+        [Space(5)] 
+        [SerializeField] private PresetData _cashDeskPreset;
+        [SerializeField] private PresetData _truckPointPreset;
+        [SerializeField] private PresetData _shelfPreset;
 
         private float _arrowDistanceDefault;
         private float _arrowAlphaDefault;
-        
+        private Quaternion _iconRotationDefault;
+        private Transform _transform;
+        private Transform _iconImageTransform;
+
         private void Awake()
         {
+            _transform = transform;
+            _iconImageTransform = _iconImage.transform;
+            
             _arrowDistanceDefault = _arrowImage.transform.localPosition.y;
             _arrowAlphaDefault = _arrowImage.color.a;
             
-            transform.localPosition = Vector3.zero;
+            _iconRotationDefault = _iconImageTransform.rotation;
+            
+            _transform.localPosition = Vector3.zero;
+        }
+
+        public void SetCashDeskPreset()
+        {
+            SetPreset(_cashDeskPreset);
+        }
+
+        public void SetTruckPointPreset()
+        {
+            SetPreset(_truckPointPreset);
+        }
+
+        public void SetShelfPreset()
+        {
+            SetPreset(_shelfPreset);
+        }
+
+        private void SetPreset(PresetData presetData)
+        {
+            _iconImage.sprite = presetData.IconImageSprite;
+            
+            _iconImage.SetColorWithoutAlpha(presetData.Color);
+            _arrowImage.SetColorWithoutAlpha(presetData.Color);
         }
 
         public void SetArrowDistancePercent(float percent)
@@ -43,14 +79,22 @@ namespace View.Game.People
 
         public void SetLookToPosition(Vector3 targetLookToPos)
         {
-            var vectorRotation = targetLookToPos - transform.position;
+            var vectorRotation = targetLookToPos - _transform.position;
             
             var angle = Vector2.SignedAngle(vectorRotation, new Vector2(-1, 1));
 
-            var selfTransform = transform;
-            var localEulerAngles = selfTransform.localEulerAngles;
+            var localEulerAngles = _transform.localEulerAngles;
             localEulerAngles.z = angle;
-            selfTransform.localEulerAngles = localEulerAngles;
+            _transform.localEulerAngles = localEulerAngles;
+
+            _iconImageTransform.rotation = _iconRotationDefault;
+        }
+        
+        [Serializable]
+        private struct PresetData
+        {
+            public Sprite IconImageSprite;
+            public Color Color;
         }
     }
 }
