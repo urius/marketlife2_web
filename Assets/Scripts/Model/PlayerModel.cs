@@ -27,9 +27,12 @@ namespace Model
         private readonly List<WallType> _boughtWalls;
         private readonly List<FloorType> _boughtFloors;
 
+        public readonly PlayerAudioSettingsModel AudioSettingsModel;
+
         public PlayerModel(ShopModel shopModel, int moneyAmount, int level, 
             int staffWorkTimeSeconds, WallType[] unlockedWalls, FloorType[] unlockedFloors,
-            PlayerCharModel playerCharModel, IEnumerable<TutorialStep> passedTutorialSteps)
+            PlayerCharModel playerCharModel, IEnumerable<TutorialStep> passedTutorialSteps,
+            PlayerAudioSettingsModel audioSettingsModel)
         {
             ShopModel = shopModel;
             MoneyAmount = moneyAmount;
@@ -40,6 +43,7 @@ namespace Model
             _boughtFloors = new List<FloorType>(unlockedFloors);
             AddBoughtFloor(shopModel.FloorsType);
             PlayerCharModel = playerCharModel;
+            AudioSettingsModel = audioSettingsModel;
             if (passedTutorialSteps != null)
             {
                 PassedTutorialSteps.AddRange(passedTutorialSteps.Select(s => (int)s));

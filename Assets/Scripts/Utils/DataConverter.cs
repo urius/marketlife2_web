@@ -16,6 +16,7 @@ namespace Utils
         {
             var shopModel = ToShopModel(dataDto.ShopData);
             var playerCharData = ToPlayerCharModel(dataDto.PlayerCharData);
+            var audioSettingsModel = ToAudioSettingsModel(dataDto.AudioSettings);
 
             var result = new PlayerModel(
                 shopModel,
@@ -25,9 +26,15 @@ namespace Utils
                 dataDto.UnlockedWalls,
                 dataDto.UnlockedFloors,
                 playerCharData,
-                Enumerable.Empty<TutorialStep>());
+                Enumerable.Empty<TutorialStep>(),
+                audioSettingsModel);
 
             return result;
+        }
+
+        private static PlayerAudioSettingsModel ToAudioSettingsModel(AudioSettingsDto dto)
+        {
+            return new PlayerAudioSettingsModel(dto.IsAudioMuted, dto.IsMusicMuted);
         }
 
         public static BuildPointModel ToBuildPointModel(BuildPointDto buildPointDto)

@@ -5,6 +5,7 @@ using Infra.CommandExecutor;
 using Infra.EventBus;
 using Infra.Instance;
 using Systems;
+using Tools.AudioManager;
 using Tools.GameObjectsCache;
 using UnityEngine;
 using Utils;
@@ -29,6 +30,8 @@ public class InitScript : MonoBehaviour
     [SerializeField] private InteriorDataProviderSo _interiorDataProviderSo;
     [SerializeField] private UpdatesProvider _updatesProvider;
     [SerializeField] private GameObjectsCache _gameObjectsCache;
+    [SerializeField] private AudioManager _audioManager;
+    [SerializeField] private SoundsHolderSo _soundsHolder;
 
     private PlayerModelHolder _playerModelHolder;
     private GameRootMediator _gameRootMediator;
@@ -49,10 +52,20 @@ public class InitScript : MonoBehaviour
     {
         var commandExecutor = Instance.Get<ICommandExecutor>();
 
+        InitAudioManager();
+
         InitializeRootSystem();
         InitializeRootMediators();
         
         await commandExecutor.ExecuteAsync<InitPlayerModelCommand, PlayerModelHolder>(_playerModelHolder);
+    }
+
+    private void InitAudioManager()
+    {
+        foreach (var soundData in _soundsHolder.SoundsCollection)
+        {
+            _audioManager.SetupSound((int)soundData.SoundIdKey, soundData.AudioClip);
+        }
     }
 
     private void InitializeRootSystem()
@@ -90,6 +103,7 @@ public class InitScript : MonoBehaviour
         SetupInstance.From(_gameObjectsCache).As<IGameObjectsCache>();
         SetupInstance.From(_commonGameSettings).As<ICommonGameSettings>();
         SetupInstance.From(_localizationsHolder).As<ILocalizationProvider>();
+        SetupInstance.From(_audioManager).As<IAudioPlayer>();
         
         var commandExecutor = SetupNewInstance<CommandExecutor, ICommandExecutor>();
         var eventBus = SetupNewInstance<EventBus, IEventBus>();

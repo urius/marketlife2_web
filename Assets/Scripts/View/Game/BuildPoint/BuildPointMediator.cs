@@ -1,10 +1,12 @@
 using System.Collections.Generic;
 using Data;
 using Events;
+using Extensions;
 using Holders;
 using Infra.EventBus;
 using Infra.Instance;
 using Model.SpendPoints;
+using Tools.AudioManager;
 using UnityEngine;
 using Utils;
 using View.Game.Shared;
@@ -22,6 +24,7 @@ namespace View.Game.BuildPoint
         private readonly IPlayerCharViewSharedDataHolder _playerCharViewSharedDataHolder = Instance.Get<IPlayerCharViewSharedDataHolder>();
         private readonly SpritesHolderSo _spritesHolderSo = Instance.Get<SpritesHolderSo>();
         private readonly ILocalizationProvider _localizationProvider = Instance.Get<ILocalizationProvider>();
+        private readonly IAudioPlayer _audioPlayer = Instance.Get<IAudioPlayer>();
 
         private readonly Queue<SpendAnimationContext> _contextsQueue = new();
         
@@ -184,6 +187,8 @@ namespace View.Game.BuildPoint
             LeanTween.move(moneyGo, targetPoint, AnimDuration)
                 .setEase(LeanTweenType.easeOutQuad)
                 .setOnComplete(OnSpendAnimationComplete);
+            
+            _audioPlayer.PlaySound(SoundIdKey.MoneySpendOnBuildPoint);
         }
 
         private void OnSpendAnimationHalf()

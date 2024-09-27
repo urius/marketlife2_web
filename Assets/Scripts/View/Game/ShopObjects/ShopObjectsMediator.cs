@@ -1,11 +1,13 @@
 using System;
 using Data;
 using Events;
+using Extensions;
 using Holders;
 using Infra.EventBus;
 using Infra.Instance;
 using Model;
 using Model.ShopObjects;
+using Tools.AudioManager;
 using View.Game.ShopObjects.CashDesk;
 using View.Game.ShopObjects.Shelf;
 using View.Game.ShopObjects.TruckPoint;
@@ -16,6 +18,7 @@ namespace View.Game.ShopObjects
     {
         private readonly IShopModelHolder _shopModelHolder = Instance.Get<IShopModelHolder>();
         private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
+        private readonly IAudioPlayer _audioPlayer = Instance.Get<IAudioPlayer>();
         
         private ShopModel _shopModel;
 
@@ -50,6 +53,9 @@ namespace View.Game.ShopObjects
         {
             var useBigSmoke = model.ShopObjectType is ShopObjectType.CashDesk or ShopObjectType.TruckPoint;
             _eventBus.Dispatch(new VFXRequestSmokeEvent(model.CellCoords, useBigSmoke));
+
+            _audioPlayer.PlaySound(SoundIdKey.ObjectPlacement);
+            _audioPlayer.PlaySound(SoundIdKey.Puff);
             
             MediateShopObject(model);
         }
