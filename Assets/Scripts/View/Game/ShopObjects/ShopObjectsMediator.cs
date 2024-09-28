@@ -55,7 +55,6 @@ namespace View.Game.ShopObjects
             _eventBus.Dispatch(new VFXRequestSmokeEvent(model.CellCoords, useBigSmoke));
 
             _audioPlayer.PlaySound(SoundIdKey.ObjectPlacement);
-            _audioPlayer.PlaySound(SoundIdKey.Puff);
             
             MediateShopObject(model);
         }

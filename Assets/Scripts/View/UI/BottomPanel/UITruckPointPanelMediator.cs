@@ -87,6 +87,8 @@ namespace View.UI.BottomPanel
 
         private void OnUpgradeButtonClicked()
         {
+            PlayButtonSound();
+            
             if (_targetTruckPoint != null)
             {
                 _eventBus.Dispatch(new UpgradeTruckPointButtonClickedEvent(_targetTruckPoint));
@@ -95,6 +97,8 @@ namespace View.UI.BottomPanel
 
         private void OnHireStaffButtonClicked()
         {
+            PlayButtonSound();
+            
             if (_targetTruckPoint != null)
             {
                 _eventBus.Dispatch(new TruckPointHireStaffButtonClickedEvent(_targetTruckPoint));

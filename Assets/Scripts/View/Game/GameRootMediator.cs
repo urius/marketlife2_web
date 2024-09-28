@@ -29,7 +29,7 @@ namespace View.Game
             MediateChild<BuildPointsMediator>(_gameRootView.ShopObjectsContainerTransform);
             MediateChild<PlayerCharMediator>(_gameRootView.PeopleContainerTransform);
             MediateChild<BotCharsMediator>(_gameRootView.PeopleContainerTransform);
-            MediateChild<VFXMediator>(_gameRootView.transform);
+            MediateChild<FXMediator>(_gameRootView.transform);
         }
 
         protected override void UnmediateInternal()

@@ -1,7 +1,10 @@
+using Data;
 using Events;
+using Extensions;
 using Holders;
 using Infra.CommandExecutor;
 using Infra.Instance;
+using Tools.AudioManager;
 
 namespace Commands
 {
@@ -10,6 +13,7 @@ namespace Commands
         private readonly IUpgradeCostProvider _upgradeCostProvider = Instance.Get<IUpgradeCostProvider>();
         private readonly IShelfUpgradeSettingsProvider _shelfUpgradeSettingsProvider = Instance.Get<IShelfUpgradeSettingsProvider>();
         private readonly IPlayerModelHolder _playerModelHolder = Instance.Get<IPlayerModelHolder>();
+        private readonly IAudioPlayer _audioPlayer = Instance.Get<IAudioPlayer>();
         
         public void Execute(UIShelfUpgradeClickedEvent e)
         {
@@ -23,6 +27,8 @@ namespace Commands
                 if (upgradeCost > 0 
                     && playerModel.TrySpendMoney(upgradeCost))
                 {
+                    _audioPlayer.PlaySound(SoundIdKey.CashSound_2);
+                    
                     shelfModel.SetSlotsAmount(shelfSettings.SlotsAmount);
                     shelfModel.IncrementUpgradeIndex();
                 }

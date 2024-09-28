@@ -1,7 +1,10 @@
 using System;
+using Data;
+using Extensions;
 using Holders;
 using Infra.Instance;
 using Model;
+using Tools.AudioManager;
 using UnityEngine;
 using Utils;
 using Random = UnityEngine.Random;
@@ -12,13 +15,14 @@ namespace View.UI.TopPanel
     {
         private readonly IPlayerModelHolder _playerModelHolder = Instance.Get<IPlayerModelHolder>();
         private readonly IUpdatesProvider _updatesProvider = Instance.Get<IUpdatesProvider>();
+        private readonly IAudioPlayer _audioPlayer = Instance.Get<IAudioPlayer>();
 
         private readonly MoneyAnimationContext _moneyAnimationContext = new ();
         private readonly Color[] _blinkColors = { Color.white, Color.red };
         
         private UITopPanelMoneyView _moneyView;
         private PlayerModel _playerModel;
-        private int _currentMoneyDisplayed;
+        private int _currentMoneyDisplayed = -1;
         private int _blinksCounter;
         private int _blinkMoneyCooldown;
         private int _currentColorIndex;
@@ -102,7 +106,7 @@ namespace View.UI.TopPanel
 
         private void OnMoneyChanged(int _)
         {
-            if (Math.Abs(_playerModel.MoneyAmount - _currentMoneyDisplayed) <= 3)
+            if (Math.Abs(_playerModel.MoneyAmount - _currentMoneyDisplayed) <= 1)
             {
                 DisplayMoney(_playerModel.MoneyAmount);
             }
@@ -119,7 +123,7 @@ namespace View.UI.TopPanel
 
         private void OnMoneyAnimationGameplayFixedUpdate()
         {
-            _moneyAnimationContext.Progress += Time.fixedDeltaTime;
+            _moneyAnimationContext.Progress += 3 * Time.fixedDeltaTime;
 
             if (_moneyAnimationContext.Progress >= 1)
             {
@@ -137,6 +141,11 @@ namespace View.UI.TopPanel
 
         private void DisplayMoney(int moneyAmount)
         {
+            if (moneyAmount > _currentMoneyDisplayed && _currentMoneyDisplayed >= 0)
+            {
+                _audioPlayer.PlaySound(SoundIdKey.MoneyTick);
+            }
+
             _currentMoneyDisplayed = moneyAmount;
             
             var moneyAmountFormatted = FormattingHelper.ToCommaSeparatedNumber(_currentMoneyDisplayed); 

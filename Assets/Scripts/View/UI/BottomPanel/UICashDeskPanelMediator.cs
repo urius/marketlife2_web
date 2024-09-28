@@ -98,6 +98,8 @@ namespace View.UI.BottomPanel
 
         private void OnHireStaffButtonClicked()
         {
+            PlayButtonSound();
+            
             if (_targetCashDeskModel != null)
             {
                 _eventBus.Dispatch(new CashDeskHireStaffButtonClickedEvent(_targetCashDeskModel));

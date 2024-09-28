@@ -1,9 +1,11 @@
 using System;
 using Cysharp.Threading.Tasks;
 using Data;
+using Extensions;
 using Holders;
 using Infra.Instance;
 using Model;
+using Tools.AudioManager;
 using UnityEngine;
 using Utils;
 
@@ -17,6 +19,7 @@ namespace View.UI.TopPanel
         private readonly ICommonGameSettings _commonGameSettings = Instance.Get<ICommonGameSettings>();
         private readonly ILocalizationProvider _localizationProvider = Instance.Get<ILocalizationProvider>();
         private readonly IUpdatesProvider _updatesProvider = Instance.Get<IUpdatesProvider>();
+        private readonly IAudioPlayer _audioPlayer = Instance.Get<IAudioPlayer>();
         
         private UITopPanelLevelView _levelView;
         private PlayerModel _playerModel;
@@ -131,6 +134,8 @@ namespace View.UI.TopPanel
 
         private async UniTask AnimateNewLevelStar()
         {
+            _audioPlayer.PlaySound(SoundIdKey.NewLevel);
+            
             InstantiatePrefab(PrefabKey.VFXStars, _levelView.transform);
 
             await LeanTweenHelper.BounceYAsync(_levelView.StarTransform, deltaY: -25, duration1: 0.5f, duration2: 1f);

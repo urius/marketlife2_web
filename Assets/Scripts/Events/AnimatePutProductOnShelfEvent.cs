@@ -11,19 +11,22 @@ namespace Events
         public readonly ProductType ProductToMove;
         public readonly int BoxSlotIndex;
         public readonly int ShelfSlotIndex;
+        public readonly bool IsPlayerCharAction;
 
         public AnimatePutProductOnShelfEvent(
             ShelfModel shelfModel,
             ProductBoxModel productBoxModel,
             ProductType productToMove,
             int boxSlotIndex,
-            int shelfSlotIndex)
+            int shelfSlotIndex,
+            bool isPlayerCharAction)
         {
             ShelfModel = shelfModel;
             ProductBoxModel = productBoxModel;
             ProductToMove = productToMove;
             BoxSlotIndex = boxSlotIndex;
             ShelfSlotIndex = shelfSlotIndex;
+            IsPlayerCharAction = isPlayerCharAction;
         }
     }
 }

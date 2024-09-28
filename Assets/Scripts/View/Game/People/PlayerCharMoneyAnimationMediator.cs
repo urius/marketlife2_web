@@ -1,9 +1,11 @@
 using System;
 using Data;
 using Events;
+using Extensions;
 using Holders;
 using Infra.EventBus;
 using Infra.Instance;
+using Tools.AudioManager;
 using UnityEngine;
 using View.Game.Misc;
 using Random = UnityEngine.Random;
@@ -12,11 +14,17 @@ namespace View.Game.People
 {
     public class PlayerCharMoneyAnimationMediator : MediatorBase
     {
+        private const int MoneySoundDelayFrames = 5;
+        
         private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
         private readonly IUpdatesProvider _updatesProvider = Instance.Get<IUpdatesProvider>();
         private readonly ISharedViewsDataHolder _sharedViewsDataHolder = Instance.Get<ISharedViewsDataHolder>();
+        private readonly IAudioPlayer _audioPlayer = Instance.Get<IAudioPlayer>();
 
         private readonly TakeMoneyAnimationContext _takeMoneyAnimationContext = new();
+
+        private int _moneySoundDelayCounter;
+        private int _moneySoundsLeftCount = 0;
 
         protected override void MediateInternal()
         {
@@ -70,6 +78,8 @@ namespace View.Game.People
 
             _updatesProvider.GameplayFixedUpdate -= OnAnimateTakeMoneyGameplayFixedUpdate;
             _updatesProvider.GameplayFixedUpdate += OnAnimateTakeMoneyGameplayFixedUpdate;
+
+            _moneySoundsLeftCount = Math.Min(itemsAmount, 10);
         }
 
         private void OnAnimateTakeMoneyGameplayFixedUpdate()
@@ -77,6 +87,7 @@ namespace View.Game.People
             if (_takeMoneyAnimationContext.IsFinished)
             {
                 ClearTakeMoneyAnimation();
+                _moneySoundsLeftCount = 0;
                 return;
             }
             
@@ -101,6 +112,24 @@ namespace View.Game.People
                 {
                     _takeMoneyAnimationContext.IsFinished = false;
                 }
+            }
+
+            ProcessMoneySoundPlay();
+        }
+
+        private void ProcessMoneySoundPlay()
+        {
+            if (_moneySoundsLeftCount > 0
+                && _moneySoundDelayCounter <= 0)
+            {
+                _moneySoundDelayCounter = MoneySoundDelayFrames;
+                _moneySoundsLeftCount--;
+                
+                _audioPlayer.PlaySound(SoundIdKey.TakeMoneyFromCashDesk);
+            }
+            else if (_moneySoundDelayCounter > 0)
+            {
+                _moneySoundDelayCounter--;
             }
         }
 

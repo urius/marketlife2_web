@@ -1,8 +1,11 @@
+using Data;
 using Events;
+using Extensions;
 using Holders;
 using Infra.CommandExecutor;
 using Infra.Instance;
 using Model.Popups;
+using Tools.AudioManager;
 using Utils;
 
 namespace Commands
@@ -10,6 +13,7 @@ namespace Commands
     public class ProcessInteriorPopupItemClickedCommand : ICommand<UIInteriorPopupItemClickedEvent>
     {
         private readonly IPlayerModelHolder _playerModelHolder = Instance.Get<IPlayerModelHolder>();
+        private readonly IAudioPlayer _audioPlayer = Instance.Get<IAudioPlayer>();
         
         public void Execute(UIInteriorPopupItemClickedEvent e)
         {
@@ -32,6 +36,8 @@ namespace Commands
 
                 if (playerModel.TrySpendMoney(cost))
                 {
+                    _audioPlayer.PlaySound(SoundIdKey.CashSound_2);
+                    
                     switch (itemViewModel)
                     {
                         case InteriorPopupWallItemViewModel wallItem:

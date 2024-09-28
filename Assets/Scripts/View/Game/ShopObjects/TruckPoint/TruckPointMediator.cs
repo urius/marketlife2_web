@@ -8,7 +8,6 @@ using Infra.Instance;
 using Model;
 using Model.ShopObjects;
 using Tools.AudioManager;
-using UnityEngine;
 using Utils;
 
 namespace View.Game.ShopObjects.TruckPoint
@@ -178,7 +177,7 @@ namespace View.Game.ShopObjects.TruckPoint
 
         private bool CheckPlayerCloseEnough()
         {
-            return Vector2Int.Distance(_playerCharModel.CellPosition, TargetModel.CellCoords) <= Constants.CellDistanceToSound;
+            return _playerCharModel.CheckPlaySoundDistance(TargetModel.CellCoords);
         }
 
         private void SetTruckMovedOut()

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Data;
 using Events;
+using Extensions;
 using Holders;
 using Infra.EventBus;
 using Infra.Instance;
@@ -10,6 +11,7 @@ using Model.People;
 using Model.People.States;
 using Model.People.States.Staff;
 using Model.ShopObjects;
+using Tools.AudioManager;
 using UnityEngine;
 using Utils;
 using View.Helpers;
@@ -24,6 +26,7 @@ namespace Systems
         private readonly IHireStaffCostProvider _hireStaffCostProvider = Instance.Get<IHireStaffCostProvider>();
         private readonly IOwnedCellsDataHolder _ownedCellsDataHolder = Instance.Get<IOwnedCellsDataHolder>();
         private readonly IGridCalculator _gridCalculator = Instance.Get<IGridCalculator>();
+        private readonly IAudioPlayer _audioPlayer = Instance.Get<IAudioPlayer>();
 
         private readonly Dictionary<TruckPointStaffCharModel, TruckPointModel> _truckPointByStaffModel = new();
         private readonly Vector2Int _staffInitialPointOffset = Vector2Int.right + 2 * Vector2Int.down;
@@ -268,7 +271,7 @@ namespace Systems
                     targetShelf.AddProductToSlot(emptyShelfSlotIndex, productToPut);
 
                     _eventBus.Dispatch(new AnimatePutProductOnShelfEvent(targetShelf, charModel.ProductsBox,
-                        productToPut, staffProductsBoxIndex, emptyShelfSlotIndex));
+                        productToPut, staffProductsBoxIndex, emptyShelfSlotIndex, isPlayerCharAction: false));
 
                     return true;
                 }
@@ -431,6 +434,8 @@ namespace Systems
 
         private void HireOrProlongStaffTo(TruckPointModel truckPointModel)
         {
+            PlayHireSound();
+            
             var workTime = _playerModel.StaffWorkTimeSeconds;
 
             if (truckPointModel.HasStaff)
@@ -449,6 +454,8 @@ namespace Systems
 
         private void HireOrProlongStaffTo(CashDeskModel cashDeskModel)
         {
+            PlayHireSound();
+
             if (cashDeskModel.HasCashMan)
             {
                 cashDeskModel.CashDeskStaffModel.ProlongWorkTime(_playerModel.StaffWorkTimeSeconds);
@@ -461,6 +468,11 @@ namespace Systems
             
                 cashDeskModel.AddStaff(staffModel);
             }
+        }
+
+        private void PlayHireSound()
+        {
+            _audioPlayer.PlaySound(SoundIdKey.CashSound_2);
         }
 
         private bool IsNearToShelf(Vector2Int cellCoords, ShelfModel shelfModel)

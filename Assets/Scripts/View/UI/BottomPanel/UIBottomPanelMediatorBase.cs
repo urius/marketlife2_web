@@ -1,8 +1,11 @@
 using System;
+using Data;
 using Events;
+using Extensions;
 using Holders;
 using Infra.EventBus;
 using Infra.Instance;
+using Tools.AudioManager;
 using UnityEngine;
 
 namespace View.UI.BottomPanel
@@ -16,6 +19,7 @@ namespace View.UI.BottomPanel
         private readonly IUpdatesProvider _updatesProvider = Instance.Get<IUpdatesProvider>();
         private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
         private readonly ILocalizationProvider _localizationProvider = Instance.Get<ILocalizationProvider>();
+        private readonly IAudioPlayer _audioPlayer = Instance.Get<IAudioPlayer>();
         
         private float _slideUpPositionPercent = 0;
         private int _slideDirection = 0;
@@ -48,6 +52,11 @@ namespace View.UI.BottomPanel
             _slideDirection = -1;
             
             ResubscribeOnSlideUpdate();
+        }
+
+        protected void PlayButtonSound()
+        {
+            _audioPlayer.PlaySound(SoundIdKey.Button_4);
         }
 
         protected void RequestFlyingText(string localeKey, Transform targetTransform)

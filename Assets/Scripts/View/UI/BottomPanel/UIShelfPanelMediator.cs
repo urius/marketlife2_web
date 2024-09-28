@@ -127,6 +127,8 @@ namespace View.UI.BottomPanel
 
         private void OnUpgradeButtonClicked()
         {
+            PlayButtonSound();
+            
             if (_targetShelfModel == null) return;
             
             _eventBus.Dispatch(new UIShelfUpgradeClickedEvent(_targetShelfModel));

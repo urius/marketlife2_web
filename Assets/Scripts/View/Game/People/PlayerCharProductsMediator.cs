@@ -1,9 +1,11 @@
 using Data;
 using Events;
+using Extensions;
 using Holders;
 using Infra.EventBus;
 using Infra.Instance;
 using Model;
+using Tools.AudioManager;
 using View.Game.Misc;
 using View.Game.Shared;
 using View.Helpers;
@@ -18,6 +20,7 @@ namespace View.Game.People
         private readonly SpritesHolderSo _spritesHolderSo = Instance.Get<SpritesHolderSo>();
         private readonly IUpdatesProvider _updatesProvider = Instance.Get<IUpdatesProvider>();
         private readonly ISharedViewsDataHolder _viewsDataHolder = Instance.Get<ISharedViewsDataHolder>();
+        private readonly IAudioPlayer _audioPlayer = Instance.Get<IAudioPlayer>();
 
         private readonly ManView _playerCharView;
         private readonly PlayerCharModel _playerCharModel;
@@ -95,6 +98,8 @@ namespace View.Game.People
 
         private void AnimateTakeBoxFromTruckEventHandler(AnimateTakeBoxFromTruckEvent e)
         {
+            _audioPlayer.PlaySound(SoundIdKey.TakeProductsBoxFromTruck);
+            
             var startPosition = _sharedViewsDataHolder
                 .GetTruckPointBoxPositions(e.TruckPointModel, e.ProductBoxIndexToTake);
 

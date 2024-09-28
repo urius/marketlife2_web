@@ -3,16 +3,17 @@ using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using Data;
 using Events;
+using Extensions;
 using Holders;
 using Infra.EventBus;
 using Infra.Instance;
 using Model;
 using Model.Popups;
+using Tools.AudioManager;
 using Utils;
-using View.UI.Popups.InteriorPopup;
 using View.UI.Popups.TabbedContentPopup;
 
-namespace View.UI.Popups
+namespace View.UI.Popups.InteriorPopup
 {
     public class UIInteriorPopupMediator : MediatorWithModelBase<InteriorPopupViewModel>
     {
@@ -20,6 +21,7 @@ namespace View.UI.Popups
         private readonly ILocalizationProvider _localizationProvider = Instance.Get<ILocalizationProvider>();
         private readonly SpritesHolderSo _spritesHolderSo = Instance.Get<SpritesHolderSo>();
         private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
+        private readonly IAudioPlayer _audioPlayer = Instance.Get<IAudioPlayer>();
 
         private readonly Dictionary<UIInteriorPopupItemView, InteriorPopupItemViewModelBase> _viewModelByView = new();
         private readonly InteriorItemType[] _tabTypes = { InteriorItemType.Wall, InteriorItemType.Floor };
@@ -50,6 +52,8 @@ namespace View.UI.Popups
 
         private async UniTaskVoid AppearAndSubscribe()
         {
+            _audioPlayer.PlaySound(SoundIdKey.PopupOpen);
+            
             await _popupView.AppearAsync();
 
             Subscribe();
@@ -121,6 +125,8 @@ namespace View.UI.Popups
 
         private async UniTaskVoid DisappearAndRequestUnmediate()
         {
+            _audioPlayer.PlaySound(SoundIdKey.PopupClose);
+
             await _popupView.DisappearAsync();
             
             _eventBus.Dispatch(new UIRequestClosePopupEvent(TargetModel));
@@ -257,6 +263,8 @@ namespace View.UI.Popups
 
         private void OnItemButtonClicked(UIInteriorPopupItemView itemView)
         {
+            _audioPlayer.PlaySound(SoundIdKey.Button_1);
+            
             var itemViewModel = _viewModelByView[itemView];
             
             _eventBus.Dispatch(new UIInteriorPopupItemClickedEvent(itemViewModel));

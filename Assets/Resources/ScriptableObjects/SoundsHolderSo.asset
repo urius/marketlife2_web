@@ -23,3 +23,29 @@ MonoBehaviour:
     AudioClip: {fileID: 8300000, guid: 565658eed11334996aaad2ae8e1e57f9, type: 3}
   - SoundIdKey: 5
     AudioClip: {fileID: 8300000, guid: ba66fe5bc4ae84a06903b825dfadcf7e, type: 3}
+  - SoundIdKey: 6
+    AudioClip: {fileID: 8300000, guid: 46f59d85a30df4cabbed12bd0570a261, type: 3}
+  - SoundIdKey: 7
+    AudioClip: {fileID: 8300000, guid: e73807ff8881b465aab411e9c7e2a966, type: 3}
+  - SoundIdKey: 8
+    AudioClip: {fileID: 8300000, guid: 36128855b57d54c3f8f268ae7ff36372, type: 3}
+  - SoundIdKey: 9
+    AudioClip: {fileID: 8300000, guid: 44142ce38fc574471839f900e6069c6f, type: 3}
+  - SoundIdKey: 10
+    AudioClip: {fileID: 8300000, guid: 8f972ae4f9f3b4ce5bcf5b5c63ec15c6, type: 3}
+  - SoundIdKey: 11
+    AudioClip: {fileID: 8300000, guid: 420e43e8be4644c2fb5dade0b4f89a83, type: 3}
+  - SoundIdKey: 12
+    AudioClip: {fileID: 8300000, guid: 8e4623f69c9124c74ab57adca32c563d, type: 3}
+  - SoundIdKey: 13
+    AudioClip: {fileID: 8300000, guid: eb81cedc801234fc287a191c81dd635c, type: 3}
+  - SoundIdKey: 14
+    AudioClip: {fileID: 8300000, guid: 79f498a7096884af4b0a0a051a623c32, type: 3}
+  - SoundIdKey: 15
+    AudioClip: {fileID: 8300000, guid: db04c9cfe58ef4029ab2892fa80b15c0, type: 3}
+  - SoundIdKey: 16
+    AudioClip: {fileID: 8300000, guid: b6231ebf49edf4977af77dbf686b06e8, type: 3}
+  - SoundIdKey: 17
+    AudioClip: {fileID: 8300000, guid: 91ba6a2e4cca84f9a956a6d98030ba95, type: 3}
+  - SoundIdKey: 18
+    AudioClip: {fileID: 8300000, guid: bdb153c8897bd43bb889f892fe62a487, type: 3}

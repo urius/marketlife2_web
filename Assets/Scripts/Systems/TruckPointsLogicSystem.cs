@@ -1,9 +1,12 @@
+using Data;
 using Events;
+using Extensions;
 using Holders;
 using Infra.EventBus;
 using Infra.Instance;
 using Model;
 using Model.ShopObjects;
+using Tools.AudioManager;
 
 namespace Systems
 {
@@ -13,6 +16,7 @@ namespace Systems
         private readonly IUpdatesProvider _updatesProvider = Instance.Get<IUpdatesProvider>();
         private readonly IUpgradeCostProvider _upgradeCostProvider = Instance.Get<IUpgradeCostProvider>();
         private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
+        private readonly IAudioPlayer _audioPlayer = Instance.Get<IAudioPlayer>();
         
         private ShopModel _shopModel;
         private PlayerModel _playerModel;
@@ -84,6 +88,8 @@ namespace Systems
                 var upgradeCost = _upgradeCostProvider.GetTruckPointUpgradeCost(truckPointModel);
                 if (_playerModel.TrySpendMoney(upgradeCost))
                 {
+                    _audioPlayer.PlaySound(SoundIdKey.CashSound_2);
+                    
                     truckPointModel.Upgrade();
                 }
             }

@@ -169,7 +169,7 @@ namespace Systems
 
             _eventBus.Dispatch(
                 new AnimatePutProductOnShelfEvent(nearEmptyShelf, _playerCharModel.ProductsBox, productToMove,
-                    boxSlotIndex, shelfSlotIndex));
+                    boxSlotIndex, shelfSlotIndex, isPlayerCharAction: true));
         }
 
         private void OnPutProductOnShelfHalfAnimationEvent(PutProductOnShelfHalfAnimationEvent e)

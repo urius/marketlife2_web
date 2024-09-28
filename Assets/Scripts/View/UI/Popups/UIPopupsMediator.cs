@@ -5,6 +5,7 @@ using Holders;
 using Infra.Instance;
 using Model.Popups;
 using UnityEngine;
+using View.UI.Popups.InteriorPopup;
 
 namespace View.UI.Popups
 {

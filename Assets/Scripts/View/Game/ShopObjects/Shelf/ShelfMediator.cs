@@ -2,11 +2,13 @@ using System.Collections.Generic;
 using System.IO;
 using Data;
 using Events;
+using Extensions;
 using Holders;
 using Infra.EventBus;
 using Infra.Instance;
 using Model.People;
 using Model.ShopObjects;
+using Tools.AudioManager;
 using UnityEngine;
 using Utils;
 using View.Game.Extensions;
@@ -27,6 +29,7 @@ namespace View.Game.ShopObjects.Shelf
         private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
         private readonly ISharedViewsDataHolder _sharedViewsDataHolder = Instance.Get<ISharedViewsDataHolder>();
         private readonly Queue<PutProductAnimationContext> _putProductAnimationContexts = new();
+        private readonly IAudioPlayer _audioPlayer = Instance.Get<IAudioPlayer>();
 
         private ShelfView _view;
 
@@ -109,6 +112,11 @@ namespace View.Game.ShopObjects.Shelf
         private void AnimatePutProductOnShelfEventHandler(AnimatePutProductOnShelfEvent e)
         {
             if (e.ShelfModel != TargetModel) return;
+
+            if (e.IsPlayerCharAction)
+            {
+                _audioPlayer.PlaySound(SoundIdKey.PutProductOnShelf);
+            }
 
             var shelfSlotIndex = e.ShelfSlotIndex;
             var productView = GetFromCache<ProductView>(PrefabKey.ProductView);

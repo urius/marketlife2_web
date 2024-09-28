@@ -50,6 +50,11 @@ namespace Model
             CellPositionChanged?.Invoke(CellPosition);
         }
 
+        public bool CheckPlaySoundDistance(Vector2Int targetCellCoords)
+        {
+            return Vector2Int.Distance(CellPosition, targetCellCoords) < Constants.CellDistanceToSound;
+        }
+
         public void FillBoxWithProduct(ProductType product)
         {
             ProductsBox.FillBoxWithProduct(product);

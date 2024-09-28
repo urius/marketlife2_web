@@ -1,12 +1,15 @@
 using Cysharp.Threading.Tasks;
 using Data;
 using Events;
+using Extensions;
 using Holders;
 using Infra.EventBus;
 using Infra.Instance;
+using Model;
 using Model.People;
 using Model.People.States;
 using Model.People.States.Customer;
+using Tools.AudioManager;
 using UnityEngine;
 using View.Game.Product;
 using View.Helpers;
@@ -20,15 +23,20 @@ namespace View.Game.People
         private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
         private readonly ISharedViewsDataHolder _sharedViewsDataHolder = Instance.Get<ISharedViewsDataHolder>();
         private readonly SpritesHolderSo _spritesHolderSo = Instance.Get<SpritesHolderSo>();
+        private readonly IAudioPlayer _audioPlayer = Instance.Get<IAudioPlayer>();
+        private readonly IPlayerModelHolder _playerModelHolder = Instance.Get<IPlayerModelHolder>();
         
         private readonly TakeProductContext _takeProductContext = new ();
         
         private int _flyingProductFromBasketAnimationIndex = 0;
+        private PlayerCharModel _playerCharModel;
 
         private bool HasShoppingBasket => TargetModel.HasProducts && !TargetModel.HasBag;
 
         protected override void MediateInternal()
         {
+            _playerCharModel = _playerModelHolder.PlayerCharModel;
+            
             base.MediateInternal();
             
             SetClothes();
@@ -108,6 +116,12 @@ namespace View.Game.People
 
             _flyingProductFromBasketAnimationIndex = 0;
             AnimateProductFlyingFromBasket(_flyingProductFromBasketAnimationIndex);
+
+            if (_playerCharModel.CheckPlaySoundDistance(TargetModel.CellCoords))
+            {
+                //_audioPlayer.PlaySound(Random.value < 0.5 ? SoundIdKey.CashSound_1 : SoundIdKey.CashSound_2);
+                _audioPlayer.PlaySound(SoundIdKey.CashSound_1);
+            }
         }
 
         private void AnimateProductFlyingFromBasket(int slotIndex)
