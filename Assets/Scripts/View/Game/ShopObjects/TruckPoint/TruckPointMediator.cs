@@ -1,10 +1,14 @@
 using Cysharp.Threading.Tasks;
 using Data;
 using Events;
+using Extensions;
 using Holders;
 using Infra.EventBus;
 using Infra.Instance;
+using Model;
 using Model.ShopObjects;
+using Tools.AudioManager;
+using UnityEngine;
 using Utils;
 
 namespace View.Game.ShopObjects.TruckPoint
@@ -15,12 +19,17 @@ namespace View.Game.ShopObjects.TruckPoint
         private readonly SpritesHolderSo _spritesHolderSo = Instance.Get<SpritesHolderSo>();
         private readonly ISharedViewsDataHolder _sharedViewsDataHolder = Instance.Get<ISharedViewsDataHolder>();
         private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
+        private readonly IAudioPlayer _audioPlayer = Instance.Get<IAudioPlayer>();
+        private readonly IPlayerModelHolder _playerModelHolder = Instance.Get<IPlayerModelHolder>();
         
         private TruckView _truckView;
         private bool _truckArrivingTriggeredFlag = false;
+        private PlayerCharModel _playerCharModel;
 
         protected override void MediateInternal()
         {
+            _playerCharModel = _playerModelHolder.PlayerCharModel;
+            
             _truckView = InstantiatePrefab<TruckView>(PrefabKey.ProductTruck);
             _truckView.transform.position = _gridCalculator.GetCellCenterWorld(TargetModel.CellCoords);
             
@@ -126,6 +135,11 @@ namespace View.Game.ShopObjects.TruckPoint
         private async UniTaskVoid AnimateTruckArrive()
         {
             _truckArrivingTriggeredFlag = true;
+
+            if (CheckPlayerCloseEnough())
+            {
+                _audioPlayer.PlaySound(SoundIdKey.TruckIn);
+            }
             
             await _truckView.AnimateTruckArrive();
             
@@ -142,14 +156,29 @@ namespace View.Game.ShopObjects.TruckPoint
             
             _truckView.SetTruckArrived();
         }
-        
-        
 
         private void AnimateTruckMovedOut()
         {
             _truckArrivingTriggeredFlag = false;
+
+            PlayTruckOutSoundWithDelay().Forget();
             
             _truckView.AnimateTruckMovedOut();
+        }
+
+        private async UniTaskVoid PlayTruckOutSoundWithDelay()
+        {
+            if (CheckPlayerCloseEnough())
+            {
+                await UniTask.Delay((int)(TruckView.CapAnimationDuration * 1000));
+            
+                _audioPlayer.PlaySound(SoundIdKey.TruckOut);
+            }
+        }
+
+        private bool CheckPlayerCloseEnough()
+        {
+            return Vector2Int.Distance(_playerCharModel.CellPosition, TargetModel.CellCoords) <= Constants.CellDistanceToSound;
         }
 
         private void SetTruckMovedOut()

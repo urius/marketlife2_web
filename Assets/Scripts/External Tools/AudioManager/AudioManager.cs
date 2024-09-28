@@ -137,7 +137,7 @@ namespace Tools.AudioManager
 
         private float GetMusicVolume()
         {
-            return _audioSettingsModel.IsAudioMuted || _audioSettingsModel.IsMusicMuted ? 0 : 1;
+            return _audioSettingsModel.IsAudioMuted || _audioSettingsModel.IsMusicMuted ? 0 : 0.5f;
         }
 
         private void OnAudioMutedStateChanged(bool isAudioMuted)
@@ -155,7 +155,7 @@ namespace Tools.AudioManager
             if (_audioSettingsModel != null)
             {
                 SetMusicVolume(GetMusicVolume());
-                SetSoundsVolume(_audioSettingsModel.IsAudioMuted ? 0 : 1);
+                SetSoundsVolume(_audioSettingsModel.IsAudioMuted ? 0 : 0.5f);
             }
         }
 

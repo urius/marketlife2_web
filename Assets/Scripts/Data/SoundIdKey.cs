@@ -6,5 +6,7 @@ namespace Data
         Puff,
         ObjectPlacement,
         MoneySpendOnBuildPoint,
+        TruckIn,
+        TruckOut,
     }
 }

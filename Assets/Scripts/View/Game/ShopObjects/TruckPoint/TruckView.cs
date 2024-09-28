@@ -7,6 +7,8 @@ namespace View.Game.ShopObjects.TruckPoint
 {
     public class TruckView : MonoBehaviour, ITruckBoxPositionsProvider
     {
+        public const float CapAnimationDuration = 0.6f;
+        
         [SerializeField] private ProductsBoxView[] _productsBoxViews;
         [SerializeField] private Transform _spritesContainer;
         [SerializeField] private Transform _truckBoxCapTransform;
@@ -14,7 +16,6 @@ namespace View.Game.ShopObjects.TruckPoint
         [SerializeField] private Transform _truckBoxCapClosedPositionTransform;
         [SerializeField] private Transform _truckFarPositionTransform;
 
-        private const float CapAnimationDuration = 0.8f;
         private const float TruckArriveAnimationDuration = Constants.TruckArrivingDuration - CapAnimationDuration;
 
         public int ProductBoxesAmount => _productsBoxViews.Length;
