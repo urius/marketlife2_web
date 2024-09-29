@@ -17,6 +17,7 @@ namespace Utils
             var shopModel = ToShopModel(dataDto.ShopData);
             var playerCharData = ToPlayerCharModel(dataDto.PlayerCharData);
             var audioSettingsModel = ToAudioSettingsModel(dataDto.AudioSettings);
+            var uiFLagsModel = ToUiFLagsModel(dataDto.UIFlags);
 
             var result = new PlayerModel(
                 shopModel,
@@ -26,10 +27,16 @@ namespace Utils
                 dataDto.UnlockedWalls,
                 dataDto.UnlockedFloors,
                 playerCharData,
-                Enumerable.Empty<TutorialStep>(),
-                audioSettingsModel);
+                dataDto.TutorialSteps,
+                audioSettingsModel,
+                uiFLagsModel);
 
             return result;
+        }
+
+        private static PlayerUIFlagsModel ToUiFLagsModel(PlayerUIFlagsDto dto)
+        {
+            return new PlayerUIFlagsModel(dto.HaveNewWalls, dto.HaveNewFloors);
         }
 
         private static PlayerAudioSettingsModel ToAudioSettingsModel(AudioSettingsDto dto)

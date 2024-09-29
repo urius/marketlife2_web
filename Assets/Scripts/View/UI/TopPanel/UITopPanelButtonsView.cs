@@ -1,12 +1,11 @@
 using UnityEngine;
-using View.UI.Common;
 
 namespace View.UI.TopPanel
 {
     public class UITopPanelButtonsView : MonoBehaviour
     {
-        [SerializeField] private UISimpleButtonView _interiorButton;
+        [SerializeField] private UITopPanelButtonView _interiorButton;
 
-        public UISimpleButtonView InteriorButton => _interiorButton;
+        public UITopPanelButtonView InteriorButton => _interiorButton;
     }
 }

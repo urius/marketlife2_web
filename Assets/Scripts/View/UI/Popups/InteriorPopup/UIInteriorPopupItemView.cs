@@ -14,6 +14,7 @@ namespace View.UI.Popups.InteriorPopup
         [SerializeField] private UITextButtonView _button;
         [SerializeField] private Image _itemImage;
         [SerializeField] private Image _lockImage;
+        [SerializeField] private Transform _newNotificationTransform;
 
         public RectTransform RectTransform => _rectTransform;
         public Vector2 Size => _rectTransform.sizeDelta;
@@ -21,6 +22,8 @@ namespace View.UI.Popups.InteriorPopup
 
         private void Awake()
         {
+            SetNewNotificationVisibility(false);
+
             Button.Button.onClick.AddListener(OnBuyButtonClick);
         }
 
@@ -52,6 +55,11 @@ namespace View.UI.Popups.InteriorPopup
         public void SetButtonText(string text)
         {
             _button.SetText(text);
+        }
+
+        public void SetNewNotificationVisibility(bool isVisible)
+        {
+            _newNotificationTransform.gameObject.SetActive(isVisible);
         }
 
         private void OnBuyButtonClick()

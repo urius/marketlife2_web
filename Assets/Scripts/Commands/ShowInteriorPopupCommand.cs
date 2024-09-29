@@ -41,8 +41,9 @@ namespace Commands
             {
                 var isBought = boughtFloorItemsOnLevel.Contains(floorItem.FloorType);
                 var isChosen = floorItem.FloorType == shopModel.FloorsType;
+                var isNew = floorItem.Level == currentLevel;
                 itemsToShow.AddLast(
-                    new InteriorPopupFloorItemViewModel(floorItem.Level, isBought, isChosen, floorItem.FloorType));
+                    new InteriorPopupFloorItemViewModel(floorItem.Level, isBought, isChosen, floorItem.FloorType, isNew));
             }
 
             foreach (var lockedByLevelFloorItem in floorItemsOnNextLevel)
@@ -50,7 +51,7 @@ namespace Commands
                 itemsToShow.AddLast(
                     new InteriorPopupFloorItemViewModel(
                         lockedByLevelFloorItem.Level, isBought: false, isChosen: false,
-                        lockedByLevelFloorItem.FloorType));
+                        lockedByLevelFloorItem.FloorType, isNew: false));
             }
 
             return itemsToShow;
@@ -72,8 +73,9 @@ namespace Commands
             {
                 var isBought = boughtWallItemsOnLevel.Contains(wallItem.WallType);
                 var isChosen = wallItem.WallType == shopModel.WallsType;
+                var isNew = wallItem.Level == currentLevel;
                 itemsToShow.AddLast(
-                    new InteriorPopupWallItemViewModel(wallItem.Level, isBought, isChosen, wallItem.WallType));
+                    new InteriorPopupWallItemViewModel(wallItem.Level, isBought, isChosen, wallItem.WallType, isNew));
             }
 
             foreach (var lockedByLevelWallItem in wallItemsOnNextLevel)
@@ -81,7 +83,7 @@ namespace Commands
                 itemsToShow.AddLast(
                     new InteriorPopupWallItemViewModel(
                         lockedByLevelWallItem.Level, isBought: false, isChosen: false,
-                        lockedByLevelWallItem.WallType));
+                        lockedByLevelWallItem.WallType, isNew: false));
             }
 
             return itemsToShow;

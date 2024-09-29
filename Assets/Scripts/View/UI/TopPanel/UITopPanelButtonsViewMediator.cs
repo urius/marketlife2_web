@@ -6,7 +6,6 @@ using Infra.EventBus;
 using Infra.Instance;
 using Model;
 using UnityEngine;
-using View.UI.Common;
 
 namespace View.UI.TopPanel
 {
@@ -22,11 +21,13 @@ namespace View.UI.TopPanel
         
         private UITopPanelButtonsView _buttonsView;
         private PlayerModel _playerModel;
-        private UISimpleButtonView _interiorButton;
+        private UITopPanelButtonView _interiorButton;
+        private PlayerUIFlagsModel _uiFlagsModel;
 
         protected override void MediateInternal()
         {
             _playerModel = _playerModelHolder.PlayerModel;
+            _uiFlagsModel = _playerModel.UIFlagsModel;
             
             _buttonsView = TargetTransform.GetComponent<UITopPanelButtonsView>();
             _interiorButton = _buttonsView.InteriorButton;
@@ -34,6 +35,7 @@ namespace View.UI.TopPanel
             _sharedViewsDataHolder.RegisterTopPanelInteriorButtonTransform(_interiorButton.RectTransform);
 
             var shouldShowInteriorButton = ShouldShowInteriorButton();
+            UpdateInteriorButtonNewNotificationVisibility();
             _interiorButton.SetVisibility(shouldShowInteriorButton);
             SetInteriorButtonShownSharedFlag(shouldShowInteriorButton);
             
@@ -58,6 +60,8 @@ namespace View.UI.TopPanel
         private void Subscribe()
         {
             _playerModel.LevelChanged += OnLevelChanged;
+            _uiFlagsModel.FloorsFlagChanged += OnFloorsFlagChanged;
+            _uiFlagsModel.WallsFlagChanged += OnWallsFlagChanged;
             
             _interiorButton.Clicked += OnInteriorButtonClicked;
         }
@@ -65,8 +69,26 @@ namespace View.UI.TopPanel
         private void Unsubscribe()
         {            
             _playerModel.LevelChanged -= OnLevelChanged;
+            _uiFlagsModel.FloorsFlagChanged -= OnFloorsFlagChanged;
+            _uiFlagsModel.WallsFlagChanged -= OnWallsFlagChanged;
 
             _interiorButton.Clicked -= OnInteriorButtonClicked;
+        }
+
+        private void OnWallsFlagChanged(bool flagValue)
+        {
+            UpdateInteriorButtonNewNotificationVisibility();
+        }
+
+        private void OnFloorsFlagChanged(bool flagValue)
+        {
+            UpdateInteriorButtonNewNotificationVisibility();
+        }
+
+        private void UpdateInteriorButtonNewNotificationVisibility()
+        {
+            var isNewNotificationVisible = _uiFlagsModel.HaveNewFloors || _uiFlagsModel.HaveNewWalls;
+            _interiorButton.SetNewNotificationVisibility(isNewNotificationVisible);
         }
 
         private void OnLevelChanged(int level)

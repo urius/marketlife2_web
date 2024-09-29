@@ -109,8 +109,9 @@ namespace Model.Popups
     {
         public readonly WallType WallType;
         
-        public InteriorPopupWallItemViewModel(int unlockLevel, bool isBought, bool isChosen, WallType wallType) 
-            : base(unlockLevel, isBought, isChosen)
+        public InteriorPopupWallItemViewModel(
+            int unlockLevel, bool isBought, bool isChosen, WallType wallType, bool isNew) 
+            : base(unlockLevel, isBought, isChosen, isNew)
         {
             WallType = wallType;
         }
@@ -121,8 +122,8 @@ namespace Model.Popups
         public readonly FloorType FloorType;
         
         public InteriorPopupFloorItemViewModel(
-            int unlockLevel, bool isBought, bool isChosen, FloorType floorType) 
-            : base(unlockLevel, isBought, isChosen)
+            int unlockLevel, bool isBought, bool isChosen, FloorType floorType, bool isNew) 
+            : base(unlockLevel, isBought, isChosen, isNew)
         {
             FloorType = floorType;
         }
@@ -131,15 +132,17 @@ namespace Model.Popups
     public abstract class InteriorPopupItemViewModelBase
     {
         public readonly int UnlockLevel;
+        public readonly bool IsNew;
 
         public bool IsBought;
         public bool IsChosen;
 
-        protected InteriorPopupItemViewModelBase(int unlockLevel, bool isBought, bool isChosen)
+        protected InteriorPopupItemViewModelBase(int unlockLevel, bool isBought, bool isChosen, bool isNew)
         {
             UnlockLevel = unlockLevel;
             IsBought = isBought;
             IsChosen = isChosen;
+            IsNew = isNew;
         }
     }
 }

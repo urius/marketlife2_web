@@ -28,11 +28,12 @@ namespace Model
         private readonly List<FloorType> _boughtFloors;
 
         public readonly PlayerAudioSettingsModel AudioSettingsModel;
+        public readonly PlayerUIFlagsModel UIFlagsModel;
 
         public PlayerModel(ShopModel shopModel, int moneyAmount, int level, 
             int staffWorkTimeSeconds, WallType[] unlockedWalls, FloorType[] unlockedFloors,
             PlayerCharModel playerCharModel, IEnumerable<TutorialStep> passedTutorialSteps,
-            PlayerAudioSettingsModel audioSettingsModel)
+            PlayerAudioSettingsModel audioSettingsModel, PlayerUIFlagsModel uiFlagsModel)
         {
             ShopModel = shopModel;
             MoneyAmount = moneyAmount;
@@ -44,6 +45,7 @@ namespace Model
             AddBoughtFloor(shopModel.FloorsType);
             PlayerCharModel = playerCharModel;
             AudioSettingsModel = audioSettingsModel;
+            UIFlagsModel = uiFlagsModel;
             if (passedTutorialSteps != null)
             {
                 PassedTutorialSteps.AddRange(passedTutorialSteps.Select(s => (int)s));

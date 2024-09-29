@@ -211,6 +211,11 @@ namespace View.UI.Popups.TabbedContentPopup
             _tabButtons[tabIndex].Button.interactable = false;
         }
 
+        public void SetTabNewNotificationVisibility(int tabIndex, bool isVisible)
+        {
+            _tabButtons[tabIndex].SetNewNotificationVisibility(isVisible);
+        }
+
         private void ProcessScrollForward()
         {
             ProcessItemsAction(TryShowHeadHiddenItem);

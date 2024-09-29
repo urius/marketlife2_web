@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using Data;
+using Data.Internal;
 using Events;
 using Extensions;
 using Holders;
@@ -29,10 +30,12 @@ namespace View.UI.Popups.InteriorPopup
         private UITabbedContentPopup _popupView;
         private PlayerModel _playerModel;
         private InteriorItemType _currentShowingInteriorItemType;
+        private PlayerUIFlagsModel _uiFlagsModel;
 
         protected override void MediateInternal()
         {
             _playerModel = _playerModelHolder.PlayerModel;
+            _uiFlagsModel = _playerModel.UIFlagsModel;
 
             SetPrefabCacheCapacity(
                 PrefabKey.UIInteriorPopupItem,
@@ -45,33 +48,39 @@ namespace View.UI.Popups.InteriorPopup
             
             InitTabs();
 
+            Subscribe();
+
             ShowTab(0);
 
-            AppearAndSubscribe().Forget();
+            Appear().Forget();
         }
 
-        private async UniTaskVoid AppearAndSubscribe()
+        private async UniTaskVoid Appear()
         {
             _audioPlayer.PlaySound(SoundIdKey.PopupOpen);
             
             await _popupView.AppearAsync();
-
-            Subscribe();
         }
 
         private void ShowTab(int tabIndex)
         {
-            switch (_tabTypes[tabIndex])
+            var tabType = _tabTypes[tabIndex];
+            
+            switch (tabType)
             {
                 case InteriorItemType.Wall:
-                    ShowWalls();
+                    ShowContent(TargetModel.WallItemViewModels, InteriorItemType.Wall);
                     break;
                 case InteriorItemType.Floor:
-                    ShowFloors();
+                    ShowContent(TargetModel.FloorItemViewModels, InteriorItemType.Floor);
                     break;
             }
 
             _popupView.SetSelectedTab(tabIndex);
+            
+            UpdateNewNotificationsOnTabs();
+            
+            _eventBus.Dispatch(new UIInteriorPopupTabShownEvent(tabType));
         }
 
         private void InitTabs()
@@ -104,6 +113,8 @@ namespace View.UI.Popups.InteriorPopup
         {
             TargetModel.ItemBought += OnItemBought;
             TargetModel.ItemChosen += OnItemChosen;
+            _uiFlagsModel.FloorsFlagChanged += OnFloorsFlagChanged;
+            _uiFlagsModel.WallsFlagChanged += OnWallsFlagChanged;
 
             _popupView.TabButtonClicked += OnTabButtonClicked;
             _popupView.CloseButtonClicked += OnCloseButtonClicked;
@@ -113,9 +124,30 @@ namespace View.UI.Popups.InteriorPopup
         {
             TargetModel.ItemBought -= OnItemBought;
             TargetModel.ItemChosen -= OnItemChosen;
+            _uiFlagsModel.FloorsFlagChanged -= OnFloorsFlagChanged;
+            _uiFlagsModel.WallsFlagChanged -= OnWallsFlagChanged;
             
             _popupView.TabButtonClicked -= OnTabButtonClicked;
             _popupView.CloseButtonClicked -= OnCloseButtonClicked;
+        }
+
+        private void OnFloorsFlagChanged(bool isEnabled)
+        {
+            UpdateNewNotificationsOnTabs();
+        }
+
+        private void OnWallsFlagChanged(bool isEnabled)
+        {
+            UpdateNewNotificationsOnTabs();
+        }
+
+        private void UpdateNewNotificationsOnTabs()
+        {
+            var floorTabIndex = Array.IndexOf(_tabTypes, InteriorItemType.Floor);
+            _popupView.SetTabNewNotificationVisibility(floorTabIndex, _uiFlagsModel.HaveNewFloors);
+            
+            var wallTabIndex = Array.IndexOf(_tabTypes, InteriorItemType.Wall);
+            _popupView.SetTabNewNotificationVisibility(wallTabIndex, _uiFlagsModel.HaveNewWalls);
         }
 
         private void OnCloseButtonClicked()
@@ -153,16 +185,6 @@ namespace View.UI.Popups.InteriorPopup
             {
                 UpdateItemViewState(view, viewModel, _currentShowingInteriorItemType);
             }
-        }
-
-        private void ShowWalls()
-        {
-            ShowContent(TargetModel.WallItemViewModels, InteriorItemType.Wall);
-        }
-
-        private void ShowFloors()
-        {
-            ShowContent(TargetModel.FloorItemViewModels, InteriorItemType.Floor);
         }
 
         private void ShowContent(IReadOnlyList<InteriorPopupItemViewModelBase> viewModels,
@@ -208,6 +230,7 @@ namespace View.UI.Popups.InteriorPopup
                     var wallItemViewModel = (InteriorPopupWallItemViewModel)itemViewModel;
                     var sprite = _spritesHolderSo.GetWallSpriteByKey(wallItemViewModel.WallType);
                     itemView.SetItemSprite(sprite);
+                    itemView.SetNewNotificationVisibility(wallItemViewModel.IsNew && _uiFlagsModel.HaveNewWalls);
                     break;
                 }
                 case InteriorItemType.Floor:
@@ -215,6 +238,7 @@ namespace View.UI.Popups.InteriorPopup
                     var floorItemViewModel = (InteriorPopupFloorItemViewModel)itemViewModel;
                     var sprite = _spritesHolderSo.GetFloorSpriteByKey(floorItemViewModel.FloorType);
                     itemView.SetItemSprite(sprite);
+                    itemView.SetNewNotificationVisibility(floorItemViewModel.IsNew && _uiFlagsModel.HaveNewFloors);
                     break;
                 }
             }
@@ -268,13 +292,6 @@ namespace View.UI.Popups.InteriorPopup
             var itemViewModel = _viewModelByView[itemView];
             
             _eventBus.Dispatch(new UIInteriorPopupItemClickedEvent(itemViewModel));
-        }
-
-        private enum InteriorItemType
-        {
-            Undefined,
-            Wall,
-            Floor,
         }
     }
 }

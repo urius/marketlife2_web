@@ -8,5 +8,6 @@ namespace View.UI.Popups.TabbedContentPopup
         public RectTransform RectTransform { get; }
         public Button Button { get; }
         public void SetText(string text);
+        public void SetNewNotificationVisibility(bool isVisible);
     }
 }

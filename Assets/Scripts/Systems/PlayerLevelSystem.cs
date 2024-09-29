@@ -13,6 +13,7 @@ namespace Systems
     {
         private readonly IPlayerModelHolder _playerModelHolder = Instance.Get<IPlayerModelHolder>();
         private readonly ICommonGameSettings _commonGameSettings = Instance.Get<ICommonGameSettings>();
+        private readonly IInteriorDataProvider _interiorDataProvider = Instance.Get<IInteriorDataProvider>();
         private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
         
         private PlayerModel _playerModel;
@@ -54,8 +55,25 @@ namespace Systems
             if (levelIndex > _playerModel.LevelIndex)
             {
                 _playerModel.SetLevel(levelIndex + 1);
+                UpdateUIFlagsIfNeeded();
 
                 DispatchUnlockedExpandPoints();
+            }
+        }
+
+        private void UpdateUIFlagsIfNeeded()
+        {
+            var level = _playerModel.Level;
+            var uiFlagsModel = _playerModel.UIFlagsModel;
+
+            if (_interiorDataProvider.GetFloorItemsByLevel(level).Length > 0)
+            {
+                uiFlagsModel.SetNewFloorsFlag(true);
+            }
+
+            if (_interiorDataProvider.GetWallItemsForNextLevel(level).Length > 0)
+            {
+                uiFlagsModel.SetNewWallsFlag(true);
             }
         }
 

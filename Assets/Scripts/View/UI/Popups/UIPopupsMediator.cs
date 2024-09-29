@@ -62,17 +62,18 @@ namespace View.UI.Popups
 
         private void MediatePopup(PopupViewModelBase popupViewModel)
         {
+            SetCanvasActivity(true);
+            
             switch (popupViewModel.PopupKey)
             {
                 case PopupKey.InteriorPopup:
                     MediatePopupInternal<UIInteriorPopupMediator, InteriorPopupViewModel>(popupViewModel);
                     break;
                 default:
+                    UpdateCanvasActivity();
                     throw new NotSupportedException(
                         $"{nameof(UIPopupsMediator)}: Unsupported popup key: {popupViewModel.PopupKey}");
             }
-
-            UpdateCanvasActivity();
         }
 
         private void MediatePopupInternal<TMediator, TViewModel>(PopupViewModelBase popupViewModel)
@@ -91,16 +92,18 @@ namespace View.UI.Popups
                 UnmediateChild(mediator);
                 
                 _popupMediatorsByModel.Remove(popupViewModel);
-            
+                
                 UpdateCanvasActivity();
             }
         }
 
         private void UpdateCanvasActivity()
         {
-            var openedPopupsCount = _popupMediatorsByModel.Count;
-            var isActive = openedPopupsCount > 0;
-            
+            SetCanvasActivity(_popupMediatorsByModel.Count > 0);
+        }
+
+        private void SetCanvasActivity(bool isActive)
+        {
             _targetCanvas.enabled = isActive;
             _targetCanvas.gameObject.SetActive(isActive);
         }
