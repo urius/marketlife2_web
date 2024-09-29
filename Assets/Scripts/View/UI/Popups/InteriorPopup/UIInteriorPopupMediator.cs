@@ -166,6 +166,8 @@ namespace View.UI.Popups.InteriorPopup
 
         private void OnTabButtonClicked(int index)
         {
+            _audioPlayer.PlaySound(SoundIdKey.Button_5);
+            
             ShowTab(index);
         }
 
