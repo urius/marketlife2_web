@@ -13,6 +13,8 @@ namespace Systems
         
         public async void Start()
         {
+            StartSystem<GamePauseSystem>();
+            
             await _playerModelHolder.PlayerModelSetTask;
 
             StartSystem<PlayerLevelSystem>();

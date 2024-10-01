@@ -57,6 +57,8 @@ namespace View.UI.Popups.InteriorPopup
 
         private async UniTaskVoid Appear()
         {
+            _eventBus.Dispatch(new RequestGamePauseEvent(nameof(UIInteriorPopupMediator), true));
+            
             _audioPlayer.PlaySound(SoundIdKey.PopupOpen);
             
             await _popupView.AppearAsync();
@@ -99,6 +101,8 @@ namespace View.UI.Popups.InteriorPopup
 
         protected override void UnmediateInternal()
         {
+            _eventBus.Dispatch(new RequestGamePauseEvent(nameof(UIInteriorPopupMediator), false));
+            
             Unsubscribe();
             
             RemoveItemViews();
@@ -157,6 +161,8 @@ namespace View.UI.Popups.InteriorPopup
 
         private async UniTaskVoid DisappearAndRequestUnmediate()
         {
+            _eventBus.Dispatch(new RequestGamePauseEvent(nameof(UIInteriorPopupMediator), false));
+            
             _audioPlayer.PlaySound(SoundIdKey.PopupClose);
 
             await _popupView.DisappearAsync();
