@@ -48,7 +48,7 @@ namespace View.UI.BottomPanel
         {
             _clockIcon.color = color;
         }
-        
+
         public void SetHireStaffButtonInteractable(bool isInteractable)
         {
             _hireStaffButtonView.SetInteractable(isInteractable);
@@ -57,6 +57,11 @@ namespace View.UI.BottomPanel
         public void SetStaffWorkTimerText(string text)
         {
             _staffWorkTimerText.text = text;
+        }
+
+        public void SetStaffWorkTimerTextColor(Color color)
+        {
+            _staffWorkTimerText.color = color;
         }
 
         private void HireStaffButtonClickHandler()

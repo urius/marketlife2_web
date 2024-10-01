@@ -98,6 +98,11 @@ namespace View.UI.BottomPanel
             _staffWorkTimerText.text = text;
         }
 
+        public void SetStaffWorkTimerTextColor(Color color)
+        {
+            _staffWorkTimerText.color = color;
+        }
+
         private void UpgradeButtonClickHandler()
         {
             UpgradeButtonClicked?.Invoke();

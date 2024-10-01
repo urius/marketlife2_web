@@ -282,6 +282,7 @@ namespace View.UI.BottomPanel
                         _playerModel.StaffWorkTimeSeconds);
                     
                     PanelView.SetClockColor(clockColor);
+                    PanelView.SetStaffWorkTimerTextColor(clockColor);
             }
         }
 
