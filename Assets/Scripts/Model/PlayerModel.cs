@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Data;
-using Unity.VisualScripting;
 
 namespace Model
 {
@@ -46,9 +44,13 @@ namespace Model
             PlayerCharModel = playerCharModel;
             AudioSettingsModel = audioSettingsModel;
             UIFlagsModel = uiFlagsModel;
+            
             if (passedTutorialSteps != null)
             {
-                PassedTutorialSteps.AddRange(passedTutorialSteps.Select(s => (int)s));
+                foreach (var s in passedTutorialSteps)
+                {
+                    PassedTutorialSteps.AddLast((int)s);
+                }
             }
         }
 

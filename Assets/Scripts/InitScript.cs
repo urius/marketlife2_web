@@ -5,6 +5,7 @@ using Infra.CommandExecutor;
 using Infra.EventBus;
 using Infra.Instance;
 using Systems;
+using Tools;
 using Tools.AudioManager;
 using Tools.GameObjectsCache;
 using UnityEngine;
@@ -56,7 +57,8 @@ public class InitScript : MonoBehaviour
 
         InitializeRootSystem();
         InitializeRootMediators();
-        
+
+        await GamePushWrapper.Init();
         await commandExecutor.ExecuteAsync<InitPlayerModelCommand, PlayerModelHolder>(_playerModelHolder);
     }
 
