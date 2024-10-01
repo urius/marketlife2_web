@@ -21,31 +21,78 @@ namespace View.UI.GameOverlayPanel.MovingControl
         private Vector2 _viewZeroPoint;
         private Vector3 _lastMousePosition;
         private Vector2 _directionVector;
+        private bool _keyWPressed = false;
+        private bool _keyAPressed = false;
+        private bool _keySPressed = false;
+        private bool _keyDPressed = false;
 
         protected override void MediateInternal()
         {
             _rectTransform = TargetTransform as RectTransform;
             
-            SubscribeToEvents();
+            Subscribe();
         }
 
         protected override void UnmediateInternal()
         {
-            UnsubscribeFromEvents();
+            Unsubscribe();
         }
 
-        private void SubscribeToEvents()
+        private void Subscribe()
         {
             _eventBus.Subscribe<GameLayerPointerDownEvent>(OnGameLayerPointerDownEvent);
             _eventBus.Subscribe<GameLayerPointerUpEvent>(OnGameLayerPointerUpEvent);
+            
+            _updatesProvider.GameplayFixedUpdate += OnProcessKeyboardGameplayFixedUpdate;
         }
 
-        private void UnsubscribeFromEvents()
+        private void Unsubscribe()
         {
             _eventBus.Unsubscribe<GameLayerPointerDownEvent>(OnGameLayerPointerDownEvent);
             _eventBus.Unsubscribe<GameLayerPointerUpEvent>(OnGameLayerPointerUpEvent);
             
-            _updatesProvider.GameplayFixedUpdate -= OnGameplayFixedUpdate;
+            _updatesProvider.GameplayFixedUpdate -= OnPointerDownGameplayFixedUpdate;
+            _updatesProvider.GameplayFixedUpdate -= OnProcessKeyboardGameplayFixedUpdate;
+        }
+
+        private void OnProcessKeyboardGameplayFixedUpdate()
+        {
+            var keyWPressed = Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow);
+            var keyAPressed = Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow);
+            var keySPressed = Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow);
+            var keyDPressed = Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow);
+
+            if (_keyWPressed != keyWPressed
+                || _keyAPressed != keyAPressed
+                || _keySPressed != keySPressed
+                || _keyDPressed != keyDPressed)
+            {
+                var moveVector = Vector2.zero;
+                if (keyWPressed)
+                {
+                    moveVector.y = 1;
+                }
+                else if (keySPressed)
+                {
+                    moveVector.y = -1;
+                }
+
+                if (keyAPressed)
+                {
+                    moveVector.x = -1;
+                }
+                else if (keyDPressed)
+                {
+                    moveVector.x = 1;
+                }
+
+                _eventBus.Dispatch(new MovingVectorChangedEvent(moveVector.normalized));
+            }
+
+            _keyWPressed = keyWPressed;
+            _keyAPressed = keyAPressed;
+            _keySPressed = keySPressed;
+            _keyDPressed = keyDPressed;
         }
 
         private void OnGameLayerPointerDownEvent(GameLayerPointerDownEvent e)
@@ -56,11 +103,11 @@ namespace View.UI.GameOverlayPanel.MovingControl
             _movingControlView.SetAnchoredPosition(_viewZeroPoint);
             _movingControlView.ResetAndActivate();
 
-            _updatesProvider.GameplayFixedUpdate -= OnGameplayFixedUpdate;
-            _updatesProvider.GameplayFixedUpdate += OnGameplayFixedUpdate;
+            _updatesProvider.GameplayFixedUpdate -= OnPointerDownGameplayFixedUpdate;
+            _updatesProvider.GameplayFixedUpdate += OnPointerDownGameplayFixedUpdate;
         }
 
-        private void OnGameplayFixedUpdate()
+        private void OnPointerDownGameplayFixedUpdate()
         {
             if (Input.mousePosition == _lastMousePosition) return;
             
@@ -90,7 +137,7 @@ namespace View.UI.GameOverlayPanel.MovingControl
             _movingControlView ??= CreateView();
             _movingControlView.Deactivate();
             
-            _updatesProvider.GameplayFixedUpdate -= OnGameplayFixedUpdate;
+            _updatesProvider.GameplayFixedUpdate -= OnPointerDownGameplayFixedUpdate;
             
             _eventBus.Dispatch(new MovingVectorChangedEvent(Vector2.zero));
         }

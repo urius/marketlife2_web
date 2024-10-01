@@ -200,7 +200,7 @@ namespace View.Game.People
         {
             if (ShouldPlayerNotMove) return;
             
-            const float speed = 0.04f;
+            const float speed = 0.06f;
 
             var clampedMoveDirection = ClampMoveDirection(_moveDirection);
 
