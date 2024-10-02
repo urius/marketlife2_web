@@ -60,8 +60,8 @@ namespace View.Game.People
             _eventBus.Subscribe<RequestCompassEvent>(OnRequestCompassEvent);
             _eventBus.Subscribe<RequestRemoveCompassEvent>(OnRequestRemoveCompassEvent);
             
-            _updatesProvider.SecondPassed += OnSecondPassed;
-            _updatesProvider.QuarterSecondPassed += OnQuarterSecondPassed;
+            _updatesProvider.GameplaySecondPassed += OnSecondPassed;
+            _updatesProvider.GameplayQuarterSecondPassed += OnQuarterSecondPassed;
             _updatesProvider.GameplayFixedUpdate += OnGameplayFixedUpdate;
         }
 
@@ -70,8 +70,8 @@ namespace View.Game.People
             _eventBus.Unsubscribe<RequestCompassEvent>(OnRequestCompassEvent);
             _eventBus.Unsubscribe<RequestRemoveCompassEvent>(OnRequestRemoveCompassEvent);
             
-            _updatesProvider.SecondPassed -= OnSecondPassed;
-            _updatesProvider.QuarterSecondPassed -= OnQuarterSecondPassed;
+            _updatesProvider.GameplaySecondPassed -= OnSecondPassed;
+            _updatesProvider.GameplayQuarterSecondPassed -= OnQuarterSecondPassed;
             _updatesProvider.GameplayFixedUpdate -= OnGameplayFixedUpdate;
         }
 

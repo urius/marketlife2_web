@@ -137,8 +137,8 @@
 		},
 		{
 			"key": "seconds_short_postfix",
-			"en": "s.",
-			"ru": "с."
+			"en": "s",
+			"ru": "с"
 		},
 		{
 			"key": "upgraded",

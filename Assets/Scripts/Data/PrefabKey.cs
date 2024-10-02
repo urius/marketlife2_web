@@ -33,5 +33,6 @@ namespace Data
         UITabbedContentPopup,
         UIInteriorPopupItem,
         ManCompass,
+        UIAdsOfferMoney,
     }
 }

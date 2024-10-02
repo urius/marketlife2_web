@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Cysharp.Threading.Tasks;
 using Data;
 using Events;
 using Extensions;
@@ -11,6 +12,7 @@ using Model.People;
 using Model.People.States;
 using Model.People.States.Staff;
 using Model.ShopObjects;
+using Tools;
 using Tools.AudioManager;
 using UnityEngine;
 using Utils;
@@ -64,21 +66,21 @@ namespace Systems
         {
             _eventBus.Subscribe<TruckPointHireStaffButtonClickedEvent>(OnTruckPointHireStaffButtonClickedEvent);
             _eventBus.Subscribe<CashDeskHireStaffButtonClickedEvent>(OnCashDeskHireStaffButtonClickedEvent);
-            _eventBus.Subscribe<TrucPointStaffStepFinishedEvent>(OnStaffStepFinishedEvent);
+            _eventBus.Subscribe<TruckPointStaffStepFinishedEvent>(OnStaffStepFinishedEvent);
             _eventBus.Subscribe<StaffTakeBoxFromTruckAnimationFinishedEvent>(OnStaffTakeBoxFromTruckAnimationFinishedEvent);
             _eventBus.Subscribe<PutProductOnShelfHalfAnimationEvent>(OnPutProductOnShelfHalfAnimationEvent);
             
-            _updatesProvider.SecondPassed += OnSecondPassed;
+            _updatesProvider.GameplaySecondPassed += OnSecondPassed;
         }
         
         private void Unsubscribe()
         {            
             _eventBus.Unsubscribe<TruckPointHireStaffButtonClickedEvent>(OnTruckPointHireStaffButtonClickedEvent);
-            _eventBus.Unsubscribe<TrucPointStaffStepFinishedEvent>(OnStaffStepFinishedEvent);
+            _eventBus.Unsubscribe<TruckPointStaffStepFinishedEvent>(OnStaffStepFinishedEvent);
             _eventBus.Unsubscribe<StaffTakeBoxFromTruckAnimationFinishedEvent>(OnStaffTakeBoxFromTruckAnimationFinishedEvent);
             _eventBus.Unsubscribe<PutProductOnShelfHalfAnimationEvent>(OnPutProductOnShelfHalfAnimationEvent);
             
-            _updatesProvider.SecondPassed -= OnSecondPassed;
+            _updatesProvider.GameplaySecondPassed -= OnSecondPassed;
         }
 
         private void OnPutProductOnShelfHalfAnimationEvent(PutProductOnShelfHalfAnimationEvent e)
@@ -348,7 +350,7 @@ namespace Systems
             charModel.SetTakeProductFromTruckPointState(truckPointModel, productBoxIndexToTake);
         }
 
-        private void OnStaffStepFinishedEvent(TrucPointStaffStepFinishedEvent e)
+        private void OnStaffStepFinishedEvent(TruckPointStaffStepFinishedEvent e)
         {
             var charModel = e.CharModel;
             var movingState = (BotCharMovingStateBase)charModel.State;
@@ -408,8 +410,14 @@ namespace Systems
             }
             else if (hireCost == HireStaffCostProvider.HireStaffWatchAdsCost)
             {
-                //process watch ads and hire
-                //HireNewStaffTo(truckPointModel, StaffWorkTimeForHiringByAds);
+                if (GamePushWrapper.CanShowRewardedAds())
+                {
+                    ShowAdsAndHireIfNeeded(truckPointModel).Forget();
+                }
+                else
+                {
+                    _audioPlayer.PlaySound(SoundIdKey.InsufficientFunds);
+                }
             }
         }
 
@@ -427,12 +435,38 @@ namespace Systems
             }
             else if (hireCost == HireStaffCostProvider.HireStaffWatchAdsCost)
             {
-                //process watch ads and hire
-                //HireNewStaffTo(cashDeskModel, StaffWorkTimeForHiringByAds);
+                if (GamePushWrapper.CanShowRewardedAds())
+                {
+                    ShowAdsAndHireIfNeeded(cashDeskModel).Forget();
+                }
+                else
+                {
+                    _audioPlayer.PlaySound(SoundIdKey.InsufficientFunds);
+                }
+            }
+        }
+        
+        private async UniTask ShowAdsAndHireIfNeeded(TruckPointModel truckPointModel)
+        {
+            var rewardedAdsShowResult = await GamePushWrapper.ShowRewardedAds();
+            
+            if (rewardedAdsShowResult)
+            {
+                HireOrProlongStaffTo(truckPointModel, Constants.HireByAdvertWorkTimeMultiplier);
             }
         }
 
-        private void HireOrProlongStaffTo(TruckPointModel truckPointModel)
+        private async UniTask ShowAdsAndHireIfNeeded(CashDeskModel cashDeskModel)
+        {
+            var rewardedAdsShowResult = await GamePushWrapper.ShowRewardedAds();
+            
+            if (rewardedAdsShowResult)
+            {
+                HireOrProlongStaffTo(cashDeskModel, Constants.HireByAdvertWorkTimeMultiplier);
+            }
+        }
+
+        private void HireOrProlongStaffTo(TruckPointModel truckPointModel, int workTimeMultiplier = 1)
         {
             PlayHireSound();
             
@@ -440,7 +474,7 @@ namespace Systems
 
             if (truckPointModel.HasStaff)
             {
-                truckPointModel.StaffCharModel.ProlongWorkTime(workTime);
+                truckPointModel.StaffCharModel.ProlongWorkTime(workTime * workTimeMultiplier);
             }
             else
             {
@@ -452,13 +486,13 @@ namespace Systems
             }
         }
 
-        private void HireOrProlongStaffTo(CashDeskModel cashDeskModel)
+        private void HireOrProlongStaffTo(CashDeskModel cashDeskModel, int workTimeMultiplier = 1)
         {
             PlayHireSound();
 
             if (cashDeskModel.HasCashMan)
             {
-                cashDeskModel.CashDeskStaffModel.ProlongWorkTime(_playerModel.StaffWorkTimeSeconds);
+                cashDeskModel.CashDeskStaffModel.ProlongWorkTime(_playerModel.StaffWorkTimeSeconds * workTimeMultiplier);
             }
             else
             {

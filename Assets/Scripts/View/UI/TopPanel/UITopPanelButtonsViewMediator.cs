@@ -96,8 +96,8 @@ namespace View.UI.TopPanel
             if (_buttonsView.InteriorButton.IsVisible == false
                 && ShouldShowInteriorButton())
             {
-                _updatesProvider.QuarterSecondPassed -= OnShowInteriorButtonQuarterSecondPassed;
-                _updatesProvider.QuarterSecondPassed += OnShowInteriorButtonQuarterSecondPassed;
+                _updatesProvider.GameplayQuarterSecondPassed -= OnShowInteriorButtonQuarterSecondPassed;
+                _updatesProvider.GameplayQuarterSecondPassed += OnShowInteriorButtonQuarterSecondPassed;
             }
         }
 
@@ -105,7 +105,7 @@ namespace View.UI.TopPanel
         {
             if (_playerFocusProvider.IsPlayerFocused)
             {
-                _updatesProvider.QuarterSecondPassed -= OnShowInteriorButtonQuarterSecondPassed;
+                _updatesProvider.GameplayQuarterSecondPassed -= OnShowInteriorButtonQuarterSecondPassed;
 
                 _interiorButton.SetVisibility(isVisible: true);
                 

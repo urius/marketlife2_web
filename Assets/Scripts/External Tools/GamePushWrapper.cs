@@ -10,9 +10,33 @@ namespace Tools
 
         private readonly UniTaskCompletionSource _initTcs = new UniTaskCompletionSource();
 
+        private UniTaskCompletionSource<bool> _rewardedAdsTcs;
+        
         public static UniTask Init()
         {
             return Instance.InitInternal();
+        }
+        
+        public static UniTask<bool> ShowRewardedAds()
+        {
+#if UNITY_EDITOR
+            return UniTask.FromResult(true);
+#endif
+            return Instance.ShowRewardedAdsInternal();
+        }
+
+        public static bool CanShowRewardedAds()
+        {
+            return GP_Ads.IsRewardedAvailable();
+        }
+
+        private UniTask<bool> ShowRewardedAdsInternal()
+        {
+            _rewardedAdsTcs = new UniTaskCompletionSource<bool>();
+            
+            GP_Ads.ShowRewarded(onRewardedReward:RewardedAdsRewardedResultHandler, onRewardedClose:RewardedAdsClosedResultHandler);
+
+            return _rewardedAdsTcs.Task;
         }
         
         private UniTask InitInternal()
@@ -43,6 +67,16 @@ namespace Tools
         private void OnGpInitError()
         {
             LogError("Game Push init error!");
+        }
+
+        private void RewardedAdsRewardedResultHandler(string idOrTag)
+        {
+            _rewardedAdsTcs.TrySetResult(true);
+        }
+        
+        private void RewardedAdsClosedResultHandler(bool success)
+        {
+            _rewardedAdsTcs.TrySetResult(false);
         }
 
         private void Log(string message)

@@ -121,7 +121,7 @@ public class InitScript : MonoBehaviour
         SetupNewInstance<SharedViewsDataHolder, ISharedViewsDataHolder>();
         SetupNewInstance<UpgradeCostProvider, IUpgradeCostProvider>();
         SetupNewInstance<HireStaffCostProvider, IHireStaffCostProvider>();
-        SetupNewInstance<PopupViewModelsHolder, IPopupViewModelsHolder>();
+        SetupNewInstance<ViewModelsHolder, IPopupViewModelsHolder, IAdsOfferViewModelsHolder>();
         SetupNewInstance<SharedFlagsHolder, ISharedFlagsHolder>();
         
         _playerModelHolder = SetupNewInstance<PlayerModelHolder, IPlayerModelHolder>();
@@ -150,6 +150,19 @@ public class InitScript : MonoBehaviour
     {
         var instance = new TInstance();
         SetupInstance.From(instance).As<TInterface>();
+
+        return instance;
+    }
+    
+    private static TInstance SetupNewInstance<TInstance, TInterface1, TInterface2>()
+        where TInstance : class, TInterface1 , TInterface2, new() 
+        where TInterface1 : class
+        where TInterface2 : class
+    {
+        var instance = new TInstance();
+        SetupInstance.From(instance)
+            .As<TInterface1>()
+            .As<TInterface2>();
 
         return instance;
     }

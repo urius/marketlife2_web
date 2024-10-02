@@ -46,12 +46,12 @@ namespace View.UI.Tutorial.Steps
         {
             base.Subscribe();
 
-            _updatesProvider.SecondPassed += OnSecondPassed;
+            _updatesProvider.GameplaySecondPassed += OnSecondPassed;
         }
 
         protected override void Unsubscribe()
         {
-            _updatesProvider.SecondPassed -= OnSecondPassed;
+            _updatesProvider.GameplaySecondPassed -= OnSecondPassed;
 
             base.Unsubscribe();
         }

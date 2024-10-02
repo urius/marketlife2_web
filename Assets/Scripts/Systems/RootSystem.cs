@@ -7,7 +7,7 @@ namespace Systems
 {
     public class RootSystem : ISystem
     {
-        private IPlayerModelHolder _playerModelHolder = Instance.Get<IPlayerModelHolder>();
+        private readonly IPlayerModelHolder _playerModelHolder = Instance.Get<IPlayerModelHolder>();
 
         private readonly LinkedList<ISystem> _systems = new();
         
@@ -24,6 +24,7 @@ namespace Systems
             StartSystem<CustomersControlSystem>();
             StartSystem<StaffControlSystem>();
             StartSystem<TutorialSystem>();
+            StartSystem<AdsOfferSystem>();
         }
 
         public void Stop()

@@ -24,13 +24,13 @@ namespace View.UI.Tutorial.Steps
 
             if (TryActivateStep() == false)
             {
-                _updatesProvider.QuarterSecondPassed += OnQuarterSecondPassed;
+                _updatesProvider.GameplayQuarterSecondPassed += OnQuarterSecondPassed;
             }
         }
 
         public override void Unmediate()
         {
-            _updatesProvider.QuarterSecondPassed -= OnQuarterSecondPassed;
+            _updatesProvider.GameplayQuarterSecondPassed -= OnQuarterSecondPassed;
 
             base.Unmediate();
         }
@@ -39,7 +39,7 @@ namespace View.UI.Tutorial.Steps
         {
             if (TryActivateStep())
             {
-                _updatesProvider.QuarterSecondPassed -= OnQuarterSecondPassed;
+                _updatesProvider.GameplayQuarterSecondPassed -= OnQuarterSecondPassed;
             }
         }
 

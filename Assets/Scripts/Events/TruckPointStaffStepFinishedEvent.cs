@@ -2,11 +2,11 @@ using Model.People;
 
 namespace Events
 {
-    public struct TrucPointStaffStepFinishedEvent
+    public struct TruckPointStaffStepFinishedEvent
     {
         public readonly TruckPointStaffCharModel CharModel;
 
-        public TrucPointStaffStepFinishedEvent(TruckPointStaffCharModel charModel)
+        public TruckPointStaffStepFinishedEvent(TruckPointStaffCharModel charModel)
         {
             CharModel = charModel;
         }

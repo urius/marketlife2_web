@@ -36,7 +36,7 @@ namespace Systems
 
         private void Subscribe()
         {
-            _updatesProvider.SecondPassed += OnSecondPassed;
+            _updatesProvider.GameplaySecondPassed += OnSecondPassed;
             
             _eventBus.Subscribe<TruckArriveAnimationFinishedEvent>(OnTruckArriveAnimationFinished);
             _eventBus.Subscribe<UpgradeTruckPointButtonClickedEvent>(OnUpgradeTruckPointButtonClickedEvent);
@@ -44,7 +44,7 @@ namespace Systems
 
         private void Unsubscribe()
         {
-            _updatesProvider.SecondPassed -= OnSecondPassed;
+            _updatesProvider.GameplaySecondPassed -= OnSecondPassed;
             
             _eventBus.Unsubscribe<TruckArriveAnimationFinishedEvent>(OnTruckArriveAnimationFinished);
             _eventBus.Unsubscribe<UpgradeTruckPointButtonClickedEvent>(OnUpgradeTruckPointButtonClickedEvent);

@@ -59,7 +59,7 @@ namespace Systems
         private void Subscribe()
         {
             _shopModel.ShopObjectAdded += OnShopObjectAdded;
-            _updatesProvider.SecondPassed += OnSecondPassed;
+            _updatesProvider.GameplaySecondPassed += OnSecondPassed;
             _updatesProvider.GameplayFixedUpdate += OnGameplayFixedUpdate;
             _eventBus.Subscribe<CustomerInitializedEvent>(OnCustomerInitializedEvent);
             _eventBus.Subscribe<CustomerStepFinishedEvent>(OnCustomerStepFinishedEvent);
@@ -70,7 +70,7 @@ namespace Systems
         private void Unsubscribe()
         {
             _shopModel.ShopObjectAdded -= OnShopObjectAdded;
-            _updatesProvider.SecondPassed -= OnSecondPassed;
+            _updatesProvider.GameplaySecondPassed -= OnSecondPassed;
             _updatesProvider.GameplayFixedUpdate -= OnGameplayFixedUpdate;
             _eventBus.Unsubscribe<CustomerInitializedEvent>(OnCustomerInitializedEvent);
             _eventBus.Unsubscribe<CustomerStepFinishedEvent>(OnCustomerStepFinishedEvent);

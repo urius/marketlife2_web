@@ -49,8 +49,8 @@ namespace Systems
             _eventBus.Subscribe<TruckArrivedEvent>(OnTruckArrivedEvent);
             _eventBus.Subscribe<PutProductOnShelfHalfAnimationEvent>(OnPutProductOnShelfHalfAnimationEvent);
             _eventBus.Subscribe<ShopObjectCellsRegisteredEvent>(OnShopObjectCellsRegisteredEvent);
-            _updatesProvider.SecondPassed += OnSecondPassed;
-            _updatesProvider.QuarterSecondPassed += OnQuarterSecondPassed;
+            _updatesProvider.GameplaySecondPassed += OnSecondPassed;
+            _updatesProvider.GameplayQuarterSecondPassed += OnQuarterSecondPassed;
             _playerCharModel.CellPositionChanged += OnCellPositionChanged;
         }
 
@@ -62,8 +62,8 @@ namespace Systems
             _eventBus.Unsubscribe<TruckArrivedEvent>(OnTruckArrivedEvent);
             _eventBus.Unsubscribe<PutProductOnShelfHalfAnimationEvent>(OnPutProductOnShelfHalfAnimationEvent);
             _eventBus.Unsubscribe<ShopObjectCellsRegisteredEvent>(OnShopObjectCellsRegisteredEvent);
-            _updatesProvider.SecondPassed -= OnSecondPassed;
-            _updatesProvider.QuarterSecondPassed -= OnQuarterSecondPassed;
+            _updatesProvider.GameplaySecondPassed -= OnSecondPassed;
+            _updatesProvider.GameplayQuarterSecondPassed -= OnQuarterSecondPassed;
             _playerCharModel.CellPositionChanged -= OnCellPositionChanged;
         }
 

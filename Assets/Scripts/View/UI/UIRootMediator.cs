@@ -3,6 +3,7 @@ using Infra.Instance;
 using View.UI.BottomPanel;
 using View.UI.Common;
 using View.UI.GameOverlayPanel;
+using View.UI.LeftPanel;
 using View.UI.Popups;
 using View.UI.TopPanel;
 using View.UI.Tutorial;
@@ -32,6 +33,7 @@ namespace View.UI
             MediateChild<UIFlyingTextsMediator>(TargetTransform);
             MediateChild<UITutorialMediator>(view.UITutorialRootCanvasView.transform);
             MediateChild<UIPopupsMediator>(view.UIPopupsCanvasRootView.transform);
+            MediateChild<UILeftPanelMediator>(view.UILeftPanelView.transform);
         }
 
         protected override void UnmediateInternal()

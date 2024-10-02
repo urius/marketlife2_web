@@ -70,7 +70,7 @@ namespace View.Game.People
 
         protected override void StepFinishedHandler()
         {
-            _eventBus.Dispatch(new TrucPointStaffStepFinishedEvent(TargetModel));
+            _eventBus.Dispatch(new TruckPointStaffStepFinishedEvent(TargetModel));
         }
 
         protected override void ProcessWalk()
