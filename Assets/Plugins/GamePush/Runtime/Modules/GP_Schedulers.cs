@@ -1,6 +1,9 @@
 ﻿using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.Events;
+#if !UNITY_EDITOR && UNITY_WEBGL
+using GamePush.Utilities;
+#endif
 
 namespace GamePush
 {

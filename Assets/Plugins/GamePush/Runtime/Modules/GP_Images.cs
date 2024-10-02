@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using GamePush.Utilities;
 using UnityEngine.Events;
+#if !UNITY_EDITOR && UNITY_WEBGL
+using UnityEngine;
+#endif
 
 namespace GamePush
 {
