@@ -27,6 +27,9 @@ namespace Tools
 
         public static bool CanShowRewardedAds()
         {
+#if UNITY_EDITOR
+            return true;
+#endif
             return GP_Ads.IsRewardedAvailable();
         }
 

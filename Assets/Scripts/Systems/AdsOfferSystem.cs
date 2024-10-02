@@ -29,8 +29,9 @@ namespace Systems
         private PlayerModel _playerModel;
         private int _secondsSinceLastAdsShown = ShowAdsOfferCooldownSeconds;
 
-        private bool CanShowOffer => _adsOfferViewModelsHolder.CurrentAdsOfferViewModel == null &&
-                                     _secondsSinceLastAdsShown > ShowAdsOfferCooldownSeconds;
+        private bool CanShowOffer => _adsOfferViewModelsHolder.CurrentAdsOfferViewModel == null 
+                                     && _secondsSinceLastAdsShown > ShowAdsOfferCooldownSeconds
+                                     && GamePushWrapper.CanShowRewardedAds();
 
         public void Start()
         {
