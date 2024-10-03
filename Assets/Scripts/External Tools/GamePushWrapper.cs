@@ -33,6 +33,32 @@ namespace Tools
             return showAdsResult;
         }
 
+        public static string GetLanguage()
+        {
+            var gpCurrentLanguage = GP_Language.Current();
+
+            switch (gpCurrentLanguage)
+            {
+                case Language.Russian:
+                    return "ru";
+                case Language.English:
+                case Language.Turkish:
+                case Language.French:
+                case Language.Italian:
+                case Language.German:
+                case Language.Spanish:
+                case Language.Chineese:
+                case Language.Portuguese:
+                case Language.Korean:
+                case Language.Japanese:
+                case Language.Arab:
+                case Language.Hindi:
+                case Language.Indonesian:
+                default:
+                    return "en";
+            }
+        }
+
         private static void Dispatch(RequestGamePauseEvent e)
         {
             var eventBus = Infra.Instance.Instance.Get<IEventBus>();

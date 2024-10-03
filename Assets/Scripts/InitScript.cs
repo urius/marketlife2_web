@@ -59,6 +59,9 @@ public class InitScript : MonoBehaviour
         InitializeRootMediators();
 
         await GamePushWrapper.Init();
+        
+        _localizationsHolder.SetLocaleLang(GamePushWrapper.GetLanguage());
+        
         await commandExecutor.ExecuteAsync<InitPlayerModelCommand, PlayerModelHolder>(_playerModelHolder);
     }
 
