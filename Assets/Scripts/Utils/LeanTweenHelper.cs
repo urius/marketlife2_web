@@ -47,7 +47,7 @@ public class LeanTweenHelper
         return BounceYAsync(rectTransform, deltaY, CancellationToken.None, duration1, duration2);
     }
 
-    public static async UniTask BounceYAsync(RectTransform rectTransform, float deltaY, CancellationToken stopToken, float duration1 = 0.3f, float duration2 = 0.6f)
+    public static async UniTask BounceYAsync(RectTransform rectTransform, float deltaY, CancellationToken stopToken, float duration1 = 0.3f, float duration2 = 0.6f, bool ignoreTimeScale = false)
     {
         var tcs = new UniTaskCompletionSource();
         void CancelAnimation()
@@ -59,12 +59,12 @@ public class LeanTweenHelper
         {
             var startPos = rectTransform.anchoredPosition.y;
             var (task, tweenDescription) = MoveYAsync(rectTransform, rectTransform.anchoredPosition.y + deltaY, duration1);
-            tweenDescription.setEaseOutQuad();
+            tweenDescription.setEaseOutQuad().setIgnoreTimeScale(ignoreTimeScale);
             await task;
             if (false == stopToken.IsCancellationRequested)
             {
                 (task, tweenDescription) = MoveYAsync(rectTransform, startPos, duration2);
-                tweenDescription.setEaseOutBounce();
+                tweenDescription.setEaseOutBounce().setIgnoreTimeScale(ignoreTimeScale);
                 await task;
             }
             rectTransform.anchoredPosition = new Vector2(rectTransform.anchoredPosition.x, startPos);

@@ -84,7 +84,7 @@ namespace Model
         {
             MoneyAmount += deltaMoney;
             
-            MoneyChanged?.Invoke(MoneyAmount);
+            MoneyChanged?.Invoke(deltaMoney);
         }
 
         public bool TrySpendMoney(int amount)

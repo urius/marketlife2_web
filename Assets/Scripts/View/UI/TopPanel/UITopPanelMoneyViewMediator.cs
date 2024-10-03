@@ -1,4 +1,5 @@
 using System;
+using Cysharp.Threading.Tasks;
 using Data;
 using Extensions;
 using Holders;
@@ -58,13 +59,13 @@ namespace View.UI.TopPanel
             _playerModel.MoneyChanged -= OnMoneyChanged;
             _playerModel.InsufficientFunds -= OnInsufficientFundsSignal;
             
-            _updatesProvider.GameplayFixedUpdate -= OnMoneyAnimationGameplayFixedUpdate;
+            _updatesProvider.RealtimeUpdate -= OnMoneyAnimationGameplayFixedUpdate;
         }
 
         private void OnInsufficientFundsSignal(int _)
         {
-            _updatesProvider.GameplayFixedUpdate -= OnBlinkMoneyGameplayFixedUpdate;
-            _updatesProvider.GameplayFixedUpdate += OnBlinkMoneyGameplayFixedUpdate;
+            _updatesProvider.RealtimeUpdate -= OnBlinkMoneyGameplayFixedUpdate;
+            _updatesProvider.RealtimeUpdate += OnBlinkMoneyGameplayFixedUpdate;
             
             _blinksCounter = 0;
             _currentColorIndex = 0;
@@ -100,11 +101,11 @@ namespace View.UI.TopPanel
             {
                 _moneyView.SetDefaultTextColor();
                 _moneyView.ResetMoneyIconPosition();
-                _updatesProvider.GameplayFixedUpdate -= OnBlinkMoneyGameplayFixedUpdate;
+                _updatesProvider.RealtimeUpdate -= OnBlinkMoneyGameplayFixedUpdate;
             }
         }
 
-        private void OnMoneyChanged(int _)
+        private void OnMoneyChanged(int deltaMoney)
         {
             if (Math.Abs(_playerModel.MoneyAmount - _currentMoneyDisplayed) <= 1)
             {
@@ -116,27 +117,32 @@ namespace View.UI.TopPanel
                 
                 _moneyAnimationContext.Reset(_currentMoneyDisplayed);
 
-                _updatesProvider.GameplayFixedUpdate -= OnMoneyAnimationGameplayFixedUpdate;
-                _updatesProvider.GameplayFixedUpdate += OnMoneyAnimationGameplayFixedUpdate;
+                _updatesProvider.RealtimeUpdate -= OnMoneyAnimationGameplayFixedUpdate;
+                _updatesProvider.RealtimeUpdate += OnMoneyAnimationGameplayFixedUpdate;
+
+                var isPositiveDelta = _playerModel.MoneyAmount > _moneyAnimationContext.StartValue;
+                _moneyView.SetTextColor(isPositiveDelta ? Color.green : Color.yellow);
+            }
+
+            if (deltaMoney > 0)
+            {
+                _moneyView.AnimateIconJump().Forget();
             }
         }
 
         private void OnMoneyAnimationGameplayFixedUpdate()
         {
-            _moneyAnimationContext.Progress += 3 * Time.fixedDeltaTime;
+            _moneyAnimationContext.Progress += 3 * Time.fixedUnscaledDeltaTime;
 
             if (_moneyAnimationContext.Progress >= 1)
             {
-                _updatesProvider.GameplayFixedUpdate -= OnMoneyAnimationGameplayFixedUpdate;
+                _updatesProvider.RealtimeUpdate -= OnMoneyAnimationGameplayFixedUpdate;
+                _moneyView.SetDefaultTextColor();
             }
 
             var moneyValue = (int)Mathf.Lerp(_moneyAnimationContext.StartValue, _playerModel.MoneyAmount,
                 _moneyAnimationContext.Progress);
             DisplayMoney(moneyValue);
-
-            var isPositiveDelta = _playerModel.MoneyAmount > _moneyAnimationContext.StartValue;
-            var moneyColor = Color.Lerp(isPositiveDelta ? Color.green : Color.yellow, _moneyView.TextDefaultColor, _moneyAnimationContext.Progress);
-            _moneyView.SetTextColor(moneyColor);
         }
 
         private void DisplayMoney(int moneyAmount)

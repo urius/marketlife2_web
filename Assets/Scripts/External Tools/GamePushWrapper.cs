@@ -1,5 +1,7 @@
 using Cysharp.Threading.Tasks;
+using Events;
 using GamePush;
+using Infra.EventBus;
 using UnityEngine;
 
 namespace Tools
@@ -17,12 +19,24 @@ namespace Tools
             return Instance.InitInternal();
         }
         
-        public static UniTask<bool> ShowRewardedAds()
+        public static async UniTask<bool> ShowRewardedAds()
         {
 #if UNITY_EDITOR
-            return UniTask.FromResult(true);
+            return true;
 #endif
-            return Instance.ShowRewardedAdsInternal();
+            Dispatch(new RequestGamePauseEvent(nameof(GamePushWrapper), true));
+
+            var showAdsResult = await Instance.ShowRewardedAdsInternal();
+            
+            Dispatch(new RequestGamePauseEvent(nameof(GamePushWrapper), false));
+
+            return showAdsResult;
+        }
+
+        private static void Dispatch(RequestGamePauseEvent e)
+        {
+            var eventBus = Infra.Instance.Instance.Get<IEventBus>();
+            eventBus.Dispatch(e);
         }
 
         public static bool CanShowRewardedAds()
@@ -79,7 +93,7 @@ namespace Tools
         
         private void RewardedAdsClosedResultHandler(bool success)
         {
-            _rewardedAdsTcs.TrySetResult(false);
+            _rewardedAdsTcs.TrySetResult(success);
         }
 
         private void Log(string message)

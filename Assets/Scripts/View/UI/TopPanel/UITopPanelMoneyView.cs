@@ -1,6 +1,7 @@
+using System.Threading;
+using Cysharp.Threading.Tasks;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace View.UI.TopPanel
 {
@@ -11,6 +12,7 @@ namespace View.UI.TopPanel
         
         private Color _textDefaultColor;
         private Vector2 _defaultMoneyIconPosition;
+        private CancellationTokenSource _moneyIconBounceTcs;
 
         public Color TextDefaultColor => _textDefaultColor;
 
@@ -43,6 +45,17 @@ namespace View.UI.TopPanel
         public void ResetMoneyIconPosition()
         {
             _moneyIconTransform.anchoredPosition = _defaultMoneyIconPosition;
+        }
+
+        public UniTask AnimateIconJump()
+        {
+            _moneyIconBounceTcs?.Cancel();
+            _moneyIconBounceTcs = new CancellationTokenSource();
+            
+            ResetMoneyIconPosition();
+            
+            return LeanTweenHelper.BounceYAsync(_moneyIconTransform, deltaY: -25f, duration1: 0.3f, duration2: 0.6f,
+                stopToken: _moneyIconBounceTcs.Token, ignoreTimeScale: true);
         }
     }
 }

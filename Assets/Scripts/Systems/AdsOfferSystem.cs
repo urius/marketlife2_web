@@ -16,7 +16,7 @@ namespace Systems
 {
     public class AdsOfferSystem : ISystem
     {
-        private const int ShowAdsOfferCooldownSeconds = 60;
+        private const int ShowAdsOfferCooldownSeconds = 1;
         private const int ShowAdsOfferTimeSeconds = 10;
         
         private readonly IPlayerModelHolder _playerModelHolder = Instance.Get<IPlayerModelHolder>();
@@ -117,9 +117,9 @@ namespace Systems
             AddMoneyAdsOfferIfNeeded(delta > 5 ? delta : delta * 2);
         }
 
-        private void OnMoneyChanged(int moneyAmount)
+        private void OnMoneyChanged(int _)
         {
-            if (moneyAmount <= 0)
+            if (_playerModel.MoneyAmount <= 0)
             {
                 AddMoneyAdsOfferIfNeeded();
             }

@@ -46,7 +46,7 @@ namespace Systems
             _shopModel.ShopObjectAdded -= OnShopObjectAdded;
         }
 
-        private void OnMoneyChanged(int moneyAmount)
+        private void OnMoneyChanged(int _)
         {
             if (!_playerModel.IsLevelProcessingActive) return;
             

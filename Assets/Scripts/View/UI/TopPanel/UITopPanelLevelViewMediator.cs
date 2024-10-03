@@ -92,7 +92,7 @@ namespace View.UI.TopPanel
             _levelView.SetVisibility(_playerModel.IsLevelProcessingActive);
         }
 
-        private void OnMoneyChanged(int moneyAmount)
+        private void OnMoneyChanged(int _)
         {
             DisplayLevelProgress(forceProgressBar: false);
         }

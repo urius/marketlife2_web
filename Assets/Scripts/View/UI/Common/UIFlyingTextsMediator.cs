@@ -8,8 +8,9 @@ namespace View.UI.Common
 {
     public class UIFlyingTextsMediator : MediatorBase
     {
-        private const float TextFlyingTime = 1f;
-        private const int FlyingTextYOffset = 100;
+        private const float TextFlyingTime = 2.5f;
+        private const float TextFadingOutTime = 0.8f;
+        private const int FlyingTextYOffset = 150;
         
         private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
         private readonly IScreenCalculator _screenCalculator = Instance.Get<IScreenCalculator>();
@@ -44,8 +45,10 @@ namespace View.UI.Common
             var screenPoint = _screenCalculator.WorldToScreenPoint(e.WorldPosition);
             flyingText.RectTransform.anchoredPosition = screenPoint;
 
-            LeanTween.value(flyingText.gameObject, flyingText.SetAlpha, 1, 0, TextFlyingTime)
-                .setEaseInQuad();
+
+            LeanTween.value(flyingText.gameObject, flyingText.SetAlpha, 1, 0, TextFadingOutTime)
+                .setEaseInQuad()
+                .setDelay(TextFlyingTime - TextFadingOutTime);
             
             flyingText.RectTransform
                 .LeanMoveY(flyingText.RectTransform.anchoredPosition.y + FlyingTextYOffset, TextFlyingTime)
