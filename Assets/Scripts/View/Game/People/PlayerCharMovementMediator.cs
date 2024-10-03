@@ -48,7 +48,8 @@ namespace View.Game.People
             FillDetectorOffsets();
             
             _playerCharView = TargetTransform.GetComponent<ManView>();
-            _playerWorldPosition = _playerCharView.transform.position;
+            _playerWorldPosition = _playerCharView.transform.position =
+                _gridCalculator.GetCellCenterWorld(_playerCharModel.CellPosition);
 
             UpdateSorting();
             

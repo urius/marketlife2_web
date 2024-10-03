@@ -13,6 +13,12 @@ MonoBehaviour:
   m_Name: DefaultPlayerDataHolderSo
   m_EditorClassIdentifier: 
   _defaultPlayerData:
+    AudioSettings:
+      IsAudioMuted: 0
+      IsMusicMuted: 0
+    UIFlags:
+      HaveNewWalls: 0
+      HaveNewFloors: 0
     Money: 20
     Level: 1
     StaffWorkTimeSeconds: 60
@@ -24,4 +30,7 @@ MonoBehaviour:
       BuildPoints: []
       ExpandPoints: []
     PlayerCharData:
-      CellPosition: {x: 3, y: 4}
+      CellPosition: {x: 4, y: 1}
+    UnlockedWalls: 
+    UnlockedFloors: 
+    TutorialSteps: 

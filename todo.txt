@@ -1,12 +1,16 @@
 Saves!
 Music
 In-game splash screen
-Start player position
 Connect language detection
 x2 Money ads offer
-Money icon animation on money get
+Flying text on interior popup
+More floors content
+
++ Money icon animation on money get
++ Start player position
 
 --
+More walls content
 Smiles
 Player clothes window
 Leaderboards
