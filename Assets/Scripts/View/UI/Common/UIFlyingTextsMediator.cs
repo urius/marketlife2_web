@@ -48,13 +48,15 @@ namespace View.UI.Common
 
             LeanTween.value(flyingText.gameObject, flyingText.SetAlpha, 1, 0, TextFadingOutTime)
                 .setEaseInQuad()
-                .setDelay(TextFlyingTime - TextFadingOutTime);
+                .setDelay(TextFlyingTime - TextFadingOutTime)
+                .setIgnoreTimeScale(true);
             
             flyingText.RectTransform
                 .LeanMoveY(flyingText.RectTransform.anchoredPosition.y + FlyingTextYOffset, TextFlyingTime)
                 .setEaseOutQuad()
                 .setOnComplete(OnFlyingTextComplete)
-                .setOnCompleteParam(flyingText);
+                .setOnCompleteParam(flyingText)
+                .setIgnoreTimeScale(true);
         }
 
         private void SetTextColor(UIFlyingTextView flyingText, UIRequestFlyingTextColor color)

@@ -259,6 +259,11 @@
 			"key": "interior_popup_floors_tab_title",
 			"en": "Floors",
 			"ru": "Полы"
+		},
+		{
+			"key": "bought",
+			"en": "Bought!",
+			"ru": "Куплено!"
 		}
 	]
 }

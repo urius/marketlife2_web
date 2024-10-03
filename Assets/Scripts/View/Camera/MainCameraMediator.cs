@@ -14,6 +14,7 @@ namespace View.Camera
     public class MainCameraMediator : MediatorBase
     {
         private const int ShowPositionsDelayFrames = 20;
+        private const int ShowPositionsShortDelayFrames = 1;
         
         private readonly IMainCameraHolder _mainCameraHolder = Instance.Get<IMainCameraHolder>();
         private readonly IPlayerModelHolder _playerModelHolder = Instance.Get<IPlayerModelHolder>();
@@ -100,9 +101,10 @@ namespace View.Camera
             SetDelayState();
         }
 
-        private void SetDelayState()
+        private void SetDelayState(bool isShort = false)
         {
-            ResetDelay();
+            _showPositionsDelayFramesLeft = isShort ? ShowPositionsShortDelayFrames : ShowPositionsDelayFrames;
+            
             _fixedUpdateAction = ShowRequestedPositionsDelay;
         }
 
@@ -114,11 +116,6 @@ namespace View.Camera
                 PositionShownAction = shownAction,
             };
             _showPositionsQueue.Enqueue(showPositionData);
-        }
-
-        private void ResetDelay()
-        {
-            _showPositionsDelayFramesLeft = ShowPositionsDelayFrames;
         }
 
         private void OnPlayerCharPositionChanged(PlayerCharPositionChangedEvent e)
@@ -133,9 +130,9 @@ namespace View.Camera
 
         private void FollowMainChar()
         {
-            var followCameraResult = MoveCameraToPosition(_playerCharPos);
+            var wasCameraMoved = MoveCameraToPosition(_playerCharPos);
             
-            if (followCameraResult == false)
+            if (wasCameraMoved == false)
             {
                 _playerFocusSetter.SetPlayerFocusedFlag(true);
             }
@@ -168,8 +165,8 @@ namespace View.Camera
                 _showPositionsQueue.Dequeue();
 
                 showPositionData.PositionShownAction?.Invoke(showPositionData.WorldPosition);
-                
-                SetDelayState();
+
+                SetDelayState(_showPositionsQueue.Count > 0);
             }
         }
 

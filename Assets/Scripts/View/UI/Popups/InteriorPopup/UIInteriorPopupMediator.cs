@@ -180,6 +180,16 @@ namespace View.UI.Popups.InteriorPopup
         private void OnItemBought(InteriorPopupItemViewModelBase itemViewModel)
         {
             UpdateItemViewStates();
+
+            foreach (var kvp in _viewModelByView)
+            {
+                if (kvp.Value == itemViewModel)
+                {
+                    var text = _localizationProvider.GetLocale(Constants.LocalizationKeyBought);
+                    _eventBus.Dispatch(new UIRequestFlyingTextEvent(text, kvp.Key.Button.transform.position, UIRequestFlyingTextColor.Green));
+                    break;
+                }
+            }
         }
 
         private void OnItemChosen(InteriorPopupItemViewModelBase itemViewModel)
