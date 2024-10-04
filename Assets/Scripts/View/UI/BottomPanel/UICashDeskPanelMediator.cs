@@ -151,6 +151,7 @@ namespace View.UI.BottomPanel
             UnsubscribeFromCashDesk(_targetCashDeskModel);
 
             _targetCashDeskModel = null;
+            _workSecondsLeftTemp = 0;
         }
 
         private void ProcessNewTargetCashDesk(CashDeskModel cashDeskModel)

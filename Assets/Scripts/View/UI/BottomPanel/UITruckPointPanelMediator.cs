@@ -173,7 +173,9 @@ namespace View.UI.BottomPanel
         private void ResetTargetTruckPoint()
         {
             UnsubscribeFromTruckPoint(_targetTruckPoint);
+            
             _targetTruckPoint = null;
+            _workSecondsLeftTemp = 0;
         }
 
         private void SubscribeOnTruckPoint(TruckPointModel targetTruckPoint)
