@@ -16,7 +16,7 @@ namespace Systems
 {
     public class AdsOfferSystem : ISystem
     {
-        private const int ShowAdsOfferCooldownSeconds = 1;
+        private const int ShowAdsOfferCooldownSeconds = 50;
         private const int ShowAdsOfferTimeSeconds = 10;
         
         private readonly IPlayerModelHolder _playerModelHolder = Instance.Get<IPlayerModelHolder>();
@@ -27,10 +27,9 @@ namespace Systems
         private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
         
         private PlayerModel _playerModel;
-        private int _secondsSinceLastAdsShown = ShowAdsOfferCooldownSeconds;
+        private int _secondsSinceLastOfferShown = int.MaxValue;
 
-        private bool CanShowOffer => _adsOfferViewModelsHolder.CurrentAdsOfferViewModel == null 
-                                     && _secondsSinceLastAdsShown > ShowAdsOfferCooldownSeconds
+        private bool CanShowOffer => _adsOfferViewModelsHolder.CurrentAdsOfferViewModel == null
                                      && GamePushWrapper.CanShowRewardedAds();
 
         public void Start()
@@ -50,6 +49,7 @@ namespace Systems
             _playerModel.MoneyChanged += OnMoneyChanged;
             _playerModel.InsufficientFunds += OnInsufficientFunds;
             _updatesProvider.RealtimeSecondPassed += OnRealtimeSecondPassed;
+            _updatesProvider.GameplaySecondPassed += OnGameplaySecondPassed;
             
             _eventBus.Subscribe<AdsOfferClickedEvent>(OnAdsOfferClickedEvent);
         }
@@ -59,6 +59,7 @@ namespace Systems
             _playerModel.MoneyChanged -= OnMoneyChanged;
             _playerModel.InsufficientFunds -= OnInsufficientFunds;
             _updatesProvider.RealtimeSecondPassed -= OnRealtimeSecondPassed;
+            _updatesProvider.GameplaySecondPassed -= OnGameplaySecondPassed;
             
             _eventBus.Unsubscribe<AdsOfferClickedEvent>(OnAdsOfferClickedEvent);
         }
@@ -72,7 +73,6 @@ namespace Systems
         {
             var showRewardedAdsResult = await GamePushWrapper.ShowRewardedAds();
 
-            _secondsSinceLastAdsShown = 0;
             _adsOfferViewModelsHolder.RemoveCurrentAdsOffer();
             
             if (showRewardedAdsResult)
@@ -83,7 +83,16 @@ namespace Systems
                         var adsOfferAddMoneyViewModel = (AdsOfferAddMoneyViewModel)adsOfferViewModel;
                         _playerModel.ChangeMoney(adsOfferAddMoneyViewModel.MoneyAmountToAdd);
                         
-                        _audioPlayer.PlaySound(SoundIdKey.CashSound_2);
+                        PlayAdsOfferApplySound();
+                        break;
+                    case AdsOfferType.MoneyMultiplier:
+                        var adsOfferMoneyMultiplierViewModel = (AdsOfferMoneyMultiplierViewModel)adsOfferViewModel;
+                        var modifier = new PlayerMoneyEarnModifierModel(
+                            adsOfferMoneyMultiplierViewModel.Multiplier,
+                            adsOfferMoneyMultiplierViewModel.RewardTimeMin * Constants.SecondsInMinute);
+                        _playerModel.AddMoneyEarnModifier(modifier);
+
+                        PlayAdsOfferApplySound();
                         break;
                     default:
                         throw new NotSupportedException(
@@ -92,24 +101,44 @@ namespace Systems
             }
         }
 
+        private void PlayAdsOfferApplySound()
+        {
+            _audioPlayer.PlaySound(SoundIdKey.CashSound_2);
+        }
+
+        private void OnGameplaySecondPassed()
+        {
+            if (_secondsSinceLastOfferShown < int.MaxValue)
+            {
+                _secondsSinceLastOfferShown++;
+            }
+        }
+
         private void OnRealtimeSecondPassed()
         {
-            if (_adsOfferViewModelsHolder.CurrentAdsOfferViewModel != null)
+            ProcessCurrentOfferTimeLeft();
+        }
+
+        private void ProcessCurrentOfferTimeLeft()
+        {
+            if (_adsOfferViewModelsHolder.CurrentAdsOfferViewModel == null) return;
+            
+            var offer = _adsOfferViewModelsHolder.CurrentAdsOfferViewModel;
+            if (offer.OfferTimeLeft < 0)
             {
-                var offer = _adsOfferViewModelsHolder.CurrentAdsOfferViewModel;
-                if (offer.OfferTimeLeft < 0)
-                {
-                    _adsOfferViewModelsHolder.RemoveCurrentAdsOffer();
-                }
-                else
-                {
-                    offer.SetOfferTimeLeft(offer.OfferTimeLeft - 1);
-                }
+                RemoveCurrentOffer();
             }
             else
             {
-                _secondsSinceLastAdsShown++;
+                offer.SetOfferTimeLeft(offer.OfferTimeLeft - 1);
             }
+        }
+
+        private void RemoveCurrentOffer()
+        {
+            _adsOfferViewModelsHolder.RemoveCurrentAdsOffer();
+
+            _secondsSinceLastOfferShown = 0;
         }
 
         private void OnInsufficientFunds(int delta)
@@ -117,18 +146,39 @@ namespace Systems
             AddMoneyAdsOfferIfNeeded(delta > 5 ? delta : delta * 2);
         }
 
-        private void OnMoneyChanged(int _)
+        private void OnMoneyChanged(int deltaMoney)
         {
             if (_playerModel.MoneyAmount <= 0)
             {
                 AddMoneyAdsOfferIfNeeded();
             }
+            else if (deltaMoney > 0
+                     && _playerModelHolder.PlayerCharModel.NearCashDesk != null)
+            {
+                AddMoneyMultiplierAdsOfferIfNeeded();
+            }
+        }
+
+        private void AddMoneyMultiplierAdsOfferIfNeeded()
+        {
+            if (CanShowOffer == false) return;
+            
+            if (_secondsSinceLastOfferShown < ShowAdsOfferCooldownSeconds 
+                || _playerModel.MoneyEarnModifier != null) return;
+
+            var multiplier = _playerModel.Level < 4 ? 2 : Random.Range(2, 4);
+            var rewardTimeMin = Random.Range(1, Math.Min(_playerModel.Level + 1, 6));
+            var offerViewModel =
+                new AdsOfferMoneyMultiplierViewModel(ShowAdsOfferTimeSeconds, rewardTimeMin, multiplier);
+            _adsOfferViewModelsHolder.SetAdsOffer(offerViewModel);
+
+            _secondsSinceLastOfferShown = 0;
         }
 
         private void AddMoneyAdsOfferIfNeeded(int requestedAmount = -1)
         {
             if (CanShowOffer == false) return;
-
+            
             var moneyAmountToAdd = requestedAmount;
             if (moneyAmountToAdd <= 0)
             {

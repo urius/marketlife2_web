@@ -46,6 +46,10 @@ namespace View.UI.LeftPanel
                     mediator = MediateChild<UIAdsOfferAddMoneyMediator, AdsOfferAddMoneyViewModel>(TargetTransform,
                         (AdsOfferAddMoneyViewModel)viewModel);
                     break;
+                case AdsOfferType.MoneyMultiplier:
+                    mediator = MediateChild<UIAdsOfferMoneyMultiplierMediator, AdsOfferMoneyMultiplierViewModel>(TargetTransform,
+                        (AdsOfferMoneyMultiplierViewModel)viewModel);
+                    break;
                 default:
                     Debug.LogError($"{nameof(OnAdsOfferAdded)}: unknown ads offer type {viewModel.AdsOfferType}");
                     break;

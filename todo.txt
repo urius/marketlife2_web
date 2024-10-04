@@ -1,14 +1,15 @@
 Saves!
 Music
 In-game splash screen
-Connect language detection
-x2 Money ads offer
-
 More floors content
+Analytics
+Hire all staff ad offer
 
 + Money icon animation on money get
 + Start player position
 + Flying text on interior popup
++ Connect language detection
++ x2 Money ads offer
 
 --
 More walls content

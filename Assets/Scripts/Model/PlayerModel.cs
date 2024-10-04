@@ -14,6 +14,9 @@ namespace Model
         public event Action<TutorialStep> OpenTutorialStepRemoved;
         public event Action<WallType> WallBought;
         public event Action<FloorType> FloorBought;
+
+        public event Action<PlayerMoneyEarnModifierModel> MoneyEarnModifierAdded;
+        public event Action<PlayerMoneyEarnModifierModel> MoneyEarnModifierRemoved;
         
         public readonly ShopModel ShopModel;
         public readonly PlayerCharModel PlayerCharModel;
@@ -61,7 +64,8 @@ namespace Model
         public int Level { get; private set; }
         public int StaffWorkTimeSeconds { get; private set; }
         public int LevelIndex => Level - 1;
-
+        public PlayerMoneyEarnModifierModel MoneyEarnModifier { get; private set; }
+    
         public void AddBoughtWall(WallType newWallType)
         {
             if (_boughtWalls.Contains(newWallType)) return;
@@ -82,9 +86,11 @@ namespace Model
         
         public void ChangeMoney(int deltaMoney)
         {
-            MoneyAmount += deltaMoney;
+            var resultDeltaMoney = MoneyEarnModifier?.Apply(deltaMoney) ?? deltaMoney;
+
+            MoneyAmount += resultDeltaMoney;
             
-            MoneyChanged?.Invoke(deltaMoney);
+            MoneyChanged?.Invoke(resultDeltaMoney);
         }
 
         public bool TrySpendMoney(int amount)
@@ -166,6 +172,19 @@ namespace Model
             }
 
             return false;
+        }
+
+        public void AddMoneyEarnModifier(PlayerMoneyEarnModifierModel modifier)
+        {
+            MoneyEarnModifier = modifier;
+            MoneyEarnModifierAdded?.Invoke(modifier);
+        }
+
+        public void RemoveMoneyEarnModifier()
+        {
+            var modifier = MoneyEarnModifier;
+            MoneyEarnModifier = null;
+            MoneyEarnModifierRemoved?.Invoke(modifier);
         }
     }
 }

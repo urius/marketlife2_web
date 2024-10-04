@@ -33,5 +33,15 @@ namespace Utils
         {
             return value < 10 ? $"0{value}" : value.ToString();
         }
+
+        public static string ToTimeFormatMinSec(int seconds)
+        {
+            var minutes = seconds / 60;
+            var remainingSeconds = seconds % 60;
+            
+            var formattedTime = $"{minutes:D2}:{remainingSeconds:D2}";
+            
+             return formattedTime;
+        }
     }
 }

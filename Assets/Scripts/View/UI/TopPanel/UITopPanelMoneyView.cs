@@ -9,12 +9,14 @@ namespace View.UI.TopPanel
     {
         [SerializeField] private TMP_Text _text;
         [SerializeField] private RectTransform _moneyIconTransform;
+        [SerializeField] private UIMoneyEarnMultiplierModifierView _moneyEarnMultiplierModifierView;
         
         private Color _textDefaultColor;
         private Vector2 _defaultMoneyIconPosition;
         private CancellationTokenSource _moneyIconBounceTcs;
 
         public Color TextDefaultColor => _textDefaultColor;
+        public UIMoneyEarnMultiplierModifierView MoneyEarnMultiplierModifierView => _moneyEarnMultiplierModifierView;
 
         private void Awake()
         {

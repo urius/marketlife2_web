@@ -32,9 +32,10 @@ namespace View.UI.TopPanel
 
         protected override void MediateInternal()
         {
-            _moneyView = TargetTransform.GetComponent<UITopPanelMoneyView>();
-
             _playerModel = _playerModelHolder.PlayerModel;
+            
+            _moneyView = TargetTransform.GetComponent<UITopPanelMoneyView>();
+            MediateChild<UIMoneyEarnMultiplierViewMediator>(_moneyView.MoneyEarnMultiplierModifierView.transform);
 
             Subscribe();
 

@@ -49,6 +49,11 @@ namespace Holders
         
         public void SetAdsOffer(AdsOfferViewModelBase viewModel)
         {
+            if (CurrentAdsOfferViewModel != null)
+            {
+                RemoveCurrentAdsOffer();
+            }
+
             CurrentAdsOfferViewModel = viewModel;
             
             AdsOfferAdded?.Invoke(CurrentAdsOfferViewModel);

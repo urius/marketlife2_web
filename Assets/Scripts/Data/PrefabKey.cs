@@ -34,5 +34,6 @@ namespace Data
         UIInteriorPopupItem,
         ManCompass,
         UIAdsOfferMoney,
+        UIAdsOfferMoneyMultiplier,
     }
 }

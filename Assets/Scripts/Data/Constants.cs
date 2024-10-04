@@ -20,6 +20,7 @@ namespace Data
         public const int ExpandPointFreeCoord = 3;
         public const int HireByAdvertWorkTimeMultiplier = 5;
         public const int CellDistanceToSound = 10;
+        public const int SecondsInMinute = 60;
 
         public const string LocalizationKeyMarketLevelPrefix = "market_level_";
         public const string LocalizationBottomPanelDeliveryTitle = "bottom_panel_delivery_title";
@@ -55,6 +56,7 @@ namespace Data
         public const string LocalizationInteriorPopupWallsTabTitleKey = "interior_popup_wall_tab_title";
         public const string LocalizationInteriorPopupFloorsTabTitleKey = "interior_popup_floors_tab_title";
         public const string LocalizationKeyBought = "bought";
+        public const string LocalizationKeyMinutesShort = "minutes_short";
 
         private const string ColdPrefabsFolderPath = "Prefabs/Cold Prefabs";
         public static readonly string TutorialHowToMovePath = $"{ColdPrefabsFolderPath}/TutorialHowToMove";

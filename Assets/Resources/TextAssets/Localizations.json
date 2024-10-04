@@ -264,6 +264,11 @@
 			"key": "bought",
 			"en": "Bought!",
 			"ru": "Куплено!"
+		},
+		{
+			"key": "minutes_short",
+			"en": "min",
+			"ru": "мин"
 		}
 	]
 }
