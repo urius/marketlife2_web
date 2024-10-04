@@ -57,6 +57,7 @@ namespace Data
         public const string LocalizationInteriorPopupFloorsTabTitleKey = "interior_popup_floors_tab_title";
         public const string LocalizationKeyBought = "bought";
         public const string LocalizationKeyMinutesShort = "minutes_short";
+        public const string LocalizationKeyAdsOfferHireAllStaff = "ads_offer_hire_all_staff";
 
         private const string ColdPrefabsFolderPath = "Prefabs/Cold Prefabs";
         public static readonly string TutorialHowToMovePath = $"{ColdPrefabsFolderPath}/TutorialHowToMove";

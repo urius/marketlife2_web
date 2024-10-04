@@ -269,6 +269,11 @@
 			"key": "minutes_short",
 			"en": "min",
 			"ru": "мин"
+		},
+		{
+			"key": "ads_offer_hire_all_staff",
+			"en": "Hire all staff",
+			"ru": "Нанять всех работников"
 		}
 	]
 }

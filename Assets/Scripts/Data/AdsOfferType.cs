@@ -5,5 +5,6 @@ namespace Data
         Undefined,
         AddMoney,
         MoneyMultiplier,
+        HireAllStaff,
     }
 }

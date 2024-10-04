@@ -35,5 +35,6 @@ namespace Data
         ManCompass,
         UIAdsOfferMoney,
         UIAdsOfferMoneyMultiplier,
+        UIAdsOfferHireAllStaff,
     }
 }

@@ -16,7 +16,7 @@ namespace Systems
 {
     public class AdsOfferSystem : ISystem
     {
-        private const int ShowAdsOfferCooldownSeconds = 50;
+        private const int ShowAdsOfferCooldownSeconds = 25;
         private const int ShowAdsOfferTimeSeconds = 10;
         
         private readonly IPlayerModelHolder _playerModelHolder = Instance.Get<IPlayerModelHolder>();
@@ -27,7 +27,9 @@ namespace Systems
         private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
         
         private PlayerModel _playerModel;
-        private int _secondsSinceLastOfferShown = int.MaxValue;
+        private PlayerCharModel _playerCharModel;
+        private ShopModel _shopModel;
+        private int _secondsSinceLastOfferShown = ShowAdsOfferCooldownSeconds;
 
         private bool CanShowOffer => _adsOfferViewModelsHolder.CurrentAdsOfferViewModel == null
                                      && GamePushWrapper.CanShowRewardedAds();
@@ -35,6 +37,8 @@ namespace Systems
         public void Start()
         {
             _playerModel = _playerModelHolder.PlayerModel;
+            _shopModel = _playerModel.ShopModel;
+            _playerCharModel = _playerModelHolder.PlayerCharModel;
 
             Subscribe();
         }
@@ -48,20 +52,32 @@ namespace Systems
         {
             _playerModel.MoneyChanged += OnMoneyChanged;
             _playerModel.InsufficientFunds += OnInsufficientFunds;
+            _playerCharModel.NearShopObjectsUpdated += OnNearShopObjectsUpdated;
             _updatesProvider.RealtimeSecondPassed += OnRealtimeSecondPassed;
             _updatesProvider.GameplaySecondPassed += OnGameplaySecondPassed;
             
             _eventBus.Subscribe<AdsOfferClickedEvent>(OnAdsOfferClickedEvent);
+            _eventBus.Subscribe<StaffRemovedEvent>(OnStaffRemovedEvent);
         }
 
         private void Unsubscribe()
         {
             _playerModel.MoneyChanged -= OnMoneyChanged;
             _playerModel.InsufficientFunds -= OnInsufficientFunds;
+            _playerCharModel.NearShopObjectsUpdated -= OnNearShopObjectsUpdated;
             _updatesProvider.RealtimeSecondPassed -= OnRealtimeSecondPassed;
             _updatesProvider.GameplaySecondPassed -= OnGameplaySecondPassed;
             
-            _eventBus.Unsubscribe<AdsOfferClickedEvent>(OnAdsOfferClickedEvent);
+            _eventBus.Unsubscribe<AdsOfferClickedEvent>(OnAdsOfferClickedEvent);            
+            _eventBus.Subscribe<StaffRemovedEvent>(OnStaffRemovedEvent);
+        }
+
+        private void OnNearShopObjectsUpdated()
+        {
+            if (_playerCharModel.NearTruckPoint is { HasStaff: false })
+            {
+                AddHireAllStaffOfferIfNeeded();
+            }
         }
 
         private void OnAdsOfferClickedEvent(AdsOfferClickedEvent e)
@@ -94,9 +110,39 @@ namespace Systems
 
                         PlayAdsOfferApplySound();
                         break;
+                    case AdsOfferType.HireAllStaff:
+                        HireAllNotHiredStaff().Forget();
+                        
+                        PlayAdsOfferApplySound();
+                        break;
                     default:
                         throw new NotSupportedException(
                             $"{nameof(ShowAndProcessRewardedAds)} unsupported AdsOfferType {adsOfferViewModel.AdsOfferType}");
+                }
+            }
+        }
+
+        private async UniTaskVoid HireAllNotHiredStaff()
+        {
+            const int delayFrames = 20;
+            
+            foreach (var cashDeskModel in _shopModel.CashDesks)
+            {
+                if (cashDeskModel.HasCashMan == false)
+                {
+                    _eventBus.Dispatch(new RequestHireStaffEvent(cashDeskModel));
+                    
+                    await UniTask.DelayFrame(delayFrames);
+                }
+            }
+            
+            foreach (var truckPointModel in _shopModel.TruckPoints)
+            {
+                if (truckPointModel.HasStaff == false)
+                {
+                    _eventBus.Dispatch(new RequestHireStaffEvent(truckPointModel));
+                    
+                    await UniTask.DelayFrame(delayFrames);
                 }
             }
         }
@@ -153,10 +199,46 @@ namespace Systems
                 AddMoneyAdsOfferIfNeeded();
             }
             else if (deltaMoney > 0
-                     && _playerModelHolder.PlayerCharModel.NearCashDesk != null)
+                     && _playerCharModel.NearCashDesk != null)
             {
-                AddMoneyMultiplierAdsOfferIfNeeded();
+                var nearCashDesk = _playerCharModel.NearCashDesk;
+
+                if (nearCashDesk.HasCashMan)
+                {
+                    AddMoneyMultiplierAdsOfferIfNeeded();
+                }
+                else
+                {
+                    if (Random.value < 0.5f)
+                    {
+                        AddHireAllStaffOfferIfNeeded();
+                    }
+                    else
+                    {
+                        AddMoneyMultiplierAdsOfferIfNeeded();
+                    }
+                }
             }
+        }
+
+        private void OnStaffRemovedEvent(StaffRemovedEvent e)
+        {
+            AddHireAllStaffOfferIfNeeded();
+        }
+
+        private void AddMoneyAdsOfferIfNeeded(int requestedAmount = -1)
+        {
+            if (CanShowOffer == false) return;
+            
+            var moneyAmountToAdd = requestedAmount;
+            if (moneyAmountToAdd <= 0)
+            {
+                var levelTargetMoney = _commonGameSettings.GetLevelTargetMoney(_playerModel.LevelIndex + 1);
+                moneyAmountToAdd = (int)Math.Ceiling(levelTargetMoney * Random.Range(0.25f, 0.45f));
+            }
+
+            var offerViewModel = new AdsOfferAddMoneyViewModel(ShowAdsOfferTimeSeconds, moneyAmountToAdd);
+            _adsOfferViewModelsHolder.SetAdsOffer(offerViewModel);
         }
 
         private void AddMoneyMultiplierAdsOfferIfNeeded()
@@ -175,19 +257,32 @@ namespace Systems
             _secondsSinceLastOfferShown = 0;
         }
 
-        private void AddMoneyAdsOfferIfNeeded(int requestedAmount = -1)
+        private void AddHireAllStaffOfferIfNeeded()
         {
-            if (CanShowOffer == false) return;
-            
-            var moneyAmountToAdd = requestedAmount;
-            if (moneyAmountToAdd <= 0)
+            if (_playerModel.IsTutorialStepPassed(TutorialStep.UpgradeTruckPoint) == false
+                || CanShowOffer == false
+                || _secondsSinceLastOfferShown < ShowAdsOfferCooldownSeconds
+                || AllShopObjectsHaveStaff()) return;
+
+            var offerViewModel = new AdsOfferHireAllStaffViewModel(ShowAdsOfferTimeSeconds);
+            _adsOfferViewModelsHolder.SetAdsOffer(offerViewModel);
+
+            _secondsSinceLastOfferShown = 0;
+        }
+
+        private bool AllShopObjectsHaveStaff()
+        {
+            foreach (var truckPointModel in _shopModel.TruckPoints)
             {
-                var levelTargetMoney = _commonGameSettings.GetLevelTargetMoney(_playerModel.LevelIndex + 1);
-                moneyAmountToAdd = (int)Math.Ceiling(levelTargetMoney * Random.Range(0.25f, 0.45f));
+                if (truckPointModel.HasStaff == false) return false;
             }
 
-            var offerViewModel = new AdsOfferAddMoneyViewModel(ShowAdsOfferTimeSeconds, moneyAmountToAdd);
-            _adsOfferViewModelsHolder.SetAdsOffer(offerViewModel);
+            foreach (var cashDeskModel in _shopModel.CashDesks)
+            {
+                if (cashDeskModel.HasCashMan == false) return false;
+            }
+
+            return true;
         }
     }
 }

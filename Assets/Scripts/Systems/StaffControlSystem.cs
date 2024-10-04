@@ -69,6 +69,7 @@ namespace Systems
             _eventBus.Subscribe<TruckPointStaffStepFinishedEvent>(OnStaffStepFinishedEvent);
             _eventBus.Subscribe<StaffTakeBoxFromTruckAnimationFinishedEvent>(OnStaffTakeBoxFromTruckAnimationFinishedEvent);
             _eventBus.Subscribe<PutProductOnShelfHalfAnimationEvent>(OnPutProductOnShelfHalfAnimationEvent);
+            _eventBus.Subscribe<RequestHireStaffEvent>(OnRequestHireStaffEvent);
             
             _updatesProvider.GameplaySecondPassed += OnSecondPassed;
         }
@@ -79,6 +80,7 @@ namespace Systems
             _eventBus.Unsubscribe<TruckPointStaffStepFinishedEvent>(OnStaffStepFinishedEvent);
             _eventBus.Unsubscribe<StaffTakeBoxFromTruckAnimationFinishedEvent>(OnStaffTakeBoxFromTruckAnimationFinishedEvent);
             _eventBus.Unsubscribe<PutProductOnShelfHalfAnimationEvent>(OnPutProductOnShelfHalfAnimationEvent);
+            _eventBus.Unsubscribe<RequestHireStaffEvent>(OnRequestHireStaffEvent);
             
             _updatesProvider.GameplaySecondPassed -= OnSecondPassed;
         }
@@ -150,6 +152,8 @@ namespace Systems
                 {
                     truckPointModel.RemoveStaff();
                     ConsiderStaffRemoved(staffCharModel);
+                    
+                    _eventBus.Dispatch(new StaffRemovedEvent(truckPointModel));
                 }
             }
             else if (staffCharModel.WorkSecondsLeft > 1 || staffCharModel.HasProducts == false)
@@ -466,24 +470,44 @@ namespace Systems
             }
         }
 
+        private void OnRequestHireStaffEvent(RequestHireStaffEvent e)
+        {
+            var shopObjectModel = e.TargetShopObjectModel;
+            
+            switch (shopObjectModel.ShopObjectType)
+            {
+                case ShopObjectType.CashDesk:
+                    HireCashDeskStaff((CashDeskModel)shopObjectModel);
+                    break;
+                case ShopObjectType.TruckPoint:
+                    HireTruckPointStaff((TruckPointModel)shopObjectModel);
+                    break;
+            }
+        }
+
         private void HireOrProlongStaffTo(TruckPointModel truckPointModel, int workTimeMultiplier = 1)
         {
             PlayHireSound();
             
-            var workTime = _playerModel.StaffWorkTimeSeconds;
-
             if (truckPointModel.HasStaff)
             {
-                truckPointModel.StaffCharModel.ProlongWorkTime(workTime * workTimeMultiplier);
+                truckPointModel.StaffCharModel.ProlongWorkTime(_playerModel.StaffWorkTimeSeconds * workTimeMultiplier);
             }
             else
             {
-                var staffInitialPosition = truckPointModel.CellCoords + _staffInitialPointOffset;
-                
-                var staffModel = new TruckPointStaffCharModel(staffInitialPosition, workTime);
-                ConsiderNewStaff(staffModel, truckPointModel);
-                truckPointModel.AddStaff(staffModel);
+                HireTruckPointStaff(truckPointModel);
             }
+        }
+
+        private void HireTruckPointStaff(TruckPointModel truckPointModel)
+        {
+            if (truckPointModel.HasStaff) return;
+            
+            var staffInitialPosition = truckPointModel.CellCoords + _staffInitialPointOffset;
+
+            var staffModel = new TruckPointStaffCharModel(staffInitialPosition, _playerModel.StaffWorkTimeSeconds);
+            ConsiderNewStaff(staffModel, truckPointModel);
+            truckPointModel.AddStaff(staffModel);
         }
 
         private void HireOrProlongStaffTo(CashDeskModel cashDeskModel, int workTimeMultiplier = 1)
@@ -496,12 +520,19 @@ namespace Systems
             }
             else
             {
-                var staffModel = new CashDeskStaffModel(
-                    cashDeskModel.CellCoords + Constants.CashDeskStaffPositionOffset, 
-                    _playerModel.StaffWorkTimeSeconds);
-            
-                cashDeskModel.AddStaff(staffModel);
+                HireCashDeskStaff(cashDeskModel);
             }
+        }
+
+        private void HireCashDeskStaff(CashDeskModel cashDeskModel)
+        {
+            if (cashDeskModel.HasCashMan) return;
+            
+            var staffModel = new CashDeskStaffModel(
+                cashDeskModel.CellCoords + Constants.CashDeskStaffPositionOffset,
+                _playerModel.StaffWorkTimeSeconds);
+
+            cashDeskModel.AddStaff(staffModel);
         }
 
         private void PlayHireSound()
