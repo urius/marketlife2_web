@@ -17,5 +17,7 @@ namespace Data.Dto
         public FloorType[] UnlockedFloors;
 
         public TutorialStep[] TutorialSteps;
+        
+        public PlayerStatsDto Stats;
     }
 }

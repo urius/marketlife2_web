@@ -18,6 +18,7 @@ namespace Utils
             var playerCharData = ToPlayerCharModel(dataDto.PlayerCharData);
             var audioSettingsModel = ToAudioSettingsModel(dataDto.AudioSettings);
             var uiFLagsModel = ToUiFLagsModel(dataDto.UIFlags);
+            var statsModel = ToStatsModel(dataDto.Stats);
 
             var result = new PlayerModel(
                 shopModel,
@@ -29,9 +30,15 @@ namespace Utils
                 playerCharData,
                 dataDto.TutorialSteps,
                 audioSettingsModel,
-                uiFLagsModel);
+                uiFLagsModel,
+                statsModel);
 
             return result;
+        }
+
+        private static PlayerStatsModel ToStatsModel(PlayerStatsDto dto)
+        {
+            return new PlayerStatsModel(dto.TotalMoneyEarned);
         }
 
         private static PlayerUIFlagsModel ToUiFLagsModel(PlayerUIFlagsDto dto)

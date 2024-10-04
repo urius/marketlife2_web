@@ -30,11 +30,12 @@ namespace Model
 
         public readonly PlayerAudioSettingsModel AudioSettingsModel;
         public readonly PlayerUIFlagsModel UIFlagsModel;
+        public readonly PlayerStatsModel StatsModel;
 
         public PlayerModel(ShopModel shopModel, int moneyAmount, int level, 
             int staffWorkTimeSeconds, WallType[] unlockedWalls, FloorType[] unlockedFloors,
             PlayerCharModel playerCharModel, IEnumerable<TutorialStep> passedTutorialSteps,
-            PlayerAudioSettingsModel audioSettingsModel, PlayerUIFlagsModel uiFlagsModel)
+            PlayerAudioSettingsModel audioSettingsModel, PlayerUIFlagsModel uiFlagsModel, PlayerStatsModel statsModel)
         {
             ShopModel = shopModel;
             MoneyAmount = moneyAmount;
@@ -47,7 +48,8 @@ namespace Model
             PlayerCharModel = playerCharModel;
             AudioSettingsModel = audioSettingsModel;
             UIFlagsModel = uiFlagsModel;
-            
+            StatsModel = statsModel;
+
             if (passedTutorialSteps != null)
             {
                 foreach (var s in passedTutorialSteps)
@@ -89,6 +91,11 @@ namespace Model
             var resultDeltaMoney = MoneyEarnModifier?.Apply(deltaMoney) ?? deltaMoney;
 
             MoneyAmount += resultDeltaMoney;
+
+            if (resultDeltaMoney > 0)
+            {
+                StatsModel.AddTotalMoneyEarned(resultDeltaMoney);
+            }
             
             MoneyChanged?.Invoke(resultDeltaMoney);
         }
