@@ -6410,7 +6410,8 @@ MonoBehaviour:
   _gameObjectsCache: {fileID: 950237263}
   _audioManager: {fileID: 1168823303}
   _soundsHolder: {fileID: 11400000, guid: 21ce296507804465f9953306bd06fa87, type: 2}
-  _streamingAudioPlayer: {fileID: 1168823304}
+  _streamingAudioLoader: {fileID: 1168823304}
+  _assetBundlesLoader: {fileID: 11400000, guid: e3e858738a50549b4a8a669c5d404a73, type: 2}
 --- !u!114 &1168823302
 MonoBehaviour:
   m_ObjectHideFlags: 0

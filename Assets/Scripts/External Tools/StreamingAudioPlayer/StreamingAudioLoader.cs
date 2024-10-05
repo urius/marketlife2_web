@@ -10,7 +10,7 @@ namespace Tools.StreamingAudioPlayer
     {
         private AudioClip _currentStreamingAudioClip;
 
-        public UniTask<AudioClip> GetStreamingAudioClip(string streamURL, AudioType audioType = AudioType.UNKNOWN, ulong bytesBeforePlayback = 200000)
+        public UniTask<AudioClip> GetStreamingAudioClip(string streamURL, AudioType audioType, ulong bytesBeforePlayback)
         {
             var tcs = new UniTaskCompletionSource<AudioClip>();
             
@@ -79,6 +79,6 @@ namespace Tools.StreamingAudioPlayer
     public interface IStreamingAudioLoader
     {
         public UniTask<AudioClip> GetStreamingAudioClip(string streamURL, AudioType audioType = AudioType.UNKNOWN,
-            ulong bytesBeforePlayback = 10000);
+            ulong bytesBeforePlayback = 300000);
     }
 }

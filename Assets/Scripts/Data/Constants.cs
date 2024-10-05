@@ -21,6 +21,7 @@ namespace Data
         public const int HireByAdvertWorkTimeMultiplier = 5;
         public const int CellDistanceToSound = 10;
         public const int SecondsInMinute = 60;
+        public const string AssetBundleUpliftMusicName = "music_uplift";
 
         public const string LocalizationKeyMarketLevelPrefix = "market_level_";
         public const string LocalizationBottomPanelDeliveryTitle = "bottom_panel_delivery_title";
