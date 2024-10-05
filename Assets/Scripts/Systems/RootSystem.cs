@@ -14,6 +14,7 @@ namespace Systems
         public async void Start()
         {
             StartSystem<GamePauseSystem>();
+            StartSystem<MusicControlSystem>();
             
             await _playerModelHolder.PlayerModelSetTask;
 

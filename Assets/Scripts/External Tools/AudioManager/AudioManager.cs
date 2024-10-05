@@ -10,6 +10,7 @@ namespace Tools.AudioManager
         public static AudioManager Instance { get; private set; }
 
         private readonly Dictionary<int, AudioClip> _sounds = new();
+        private readonly LinkedList<string> _muteRequesters = new();
 
         private AudioSource _musicSource;
         private AudioSource _soundsSource;
@@ -19,6 +20,8 @@ namespace Tools.AudioManager
         {
             Instance = this;
         }
+
+        public bool IsMuteRequested => _muteRequesters.Count > 0;
 
         private void Awake()
         {
@@ -135,9 +138,18 @@ namespace Tools.AudioManager
             await FadeInAndPlayMusicAsync(stopToken, clip, fadeInDuration);
         }
 
-        private float GetMusicVolume()
+        public void MuteBy(string muteRequesterId)
         {
-            return _audioSettingsModel.IsAudioMuted || _audioSettingsModel.IsMusicMuted ? 0 : 0.5f;
+            if (_muteRequesters.Contains(muteRequesterId)) return;
+            
+            _muteRequesters.AddLast(muteRequesterId);
+            UpdateAudioSettings();
+        }
+
+        public void UnmuteBy(string unmuteRequesterId)
+        {
+            _muteRequesters.Remove(unmuteRequesterId);
+            UpdateAudioSettings();
         }
 
         private void OnAudioMutedStateChanged(bool isAudioMuted)
@@ -155,8 +167,22 @@ namespace Tools.AudioManager
             if (_audioSettingsModel != null)
             {
                 SetMusicVolume(GetMusicVolume());
-                SetSoundsVolume(_audioSettingsModel.IsAudioMuted ? 0 : 0.5f);
+                SetSoundsVolume(GetSoundsVolume());
             }
+        }
+
+        private float GetMusicVolume()
+        {
+            if (IsMuteRequested) return 0;
+            
+            return _audioSettingsModel.IsAudioMuted || _audioSettingsModel.IsMusicMuted ? 0 : 0.5f;
+        }
+
+        private float GetSoundsVolume()
+        {
+            if (IsMuteRequested) return 0;
+            
+            return _audioSettingsModel.IsAudioMuted ? 0 : 0.5f;
         }
 
         private void SubscribeOnSettingsModel(IAudioSettingsModel audioSettingsModel)

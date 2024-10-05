@@ -8,7 +8,9 @@ using Systems;
 using Tools;
 using Tools.AudioManager;
 using Tools.GameObjectsCache;
+using Tools.StreamingAudioPlayer;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Utils;
 using View.Camera;
 using View.Game;
@@ -33,6 +35,7 @@ public class InitScript : MonoBehaviour
     [SerializeField] private GameObjectsCache _gameObjectsCache;
     [SerializeField] private AudioManager _audioManager;
     [SerializeField] private SoundsHolderSo _soundsHolder;
+    [FormerlySerializedAs("_streamingAudioPlayer")] [SerializeField] private StreamingAudioLoader _streamingAudioLoader;
 
     private PlayerModelHolder _playerModelHolder;
     private GameRootMediator _gameRootMediator;
@@ -109,6 +112,7 @@ public class InitScript : MonoBehaviour
         SetupInstance.From(_commonGameSettings).As<ICommonGameSettings>();
         SetupInstance.From(_localizationsHolder).As<ILocalizationProvider>();
         SetupInstance.From(_audioManager).As<IAudioPlayer>();
+        SetupInstance.From(_streamingAudioLoader).As<IStreamingAudioLoader>();
         
         var commandExecutor = SetupNewInstance<CommandExecutor, ICommandExecutor>();
         var eventBus = SetupNewInstance<EventBus, IEventBus>();

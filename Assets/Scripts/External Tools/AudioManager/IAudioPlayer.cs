@@ -12,5 +12,8 @@ namespace Tools.AudioManager
 
         public UniTask FadeInAndPlayMusicAsync(CancellationToken stopToken, AudioClip clip, float duration = 0.5f);
         public UniTask FadeOutAndStopMusicAsync(CancellationToken stopToken, float duration = 0.5f);
+        
+        void MuteBy(string muteRequesterId);
+        void UnmuteBy(string unmuteRequesterId);
     }
 }

@@ -24,11 +24,11 @@ namespace Tools
 #if UNITY_EDITOR
             return true;
 #endif
-            Dispatch(new RequestGamePauseEvent(nameof(GamePushWrapper), true));
+            Dispatch(new RequestGamePauseEvent(nameof(GamePushWrapper), isPaused:true, needMute:true));
 
             var showAdsResult = await Instance.ShowRewardedAdsInternal();
             
-            Dispatch(new RequestGamePauseEvent(nameof(GamePushWrapper), false));
+            Dispatch(new RequestGamePauseEvent(nameof(GamePushWrapper),isPaused: false));
 
             return showAdsResult;
         }

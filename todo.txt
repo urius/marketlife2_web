@@ -1,7 +1,7 @@
 Saves!
-Music
 More floors content
 Analytics
+
 
 + Money icon animation on money get
 + Start player position
@@ -10,6 +10,8 @@ Analytics
 + x2 Money ads offer
 + Hire all staff ad offer
 + In-game splash screen
++ Mute sounds and music buttons
++ Music
 
 --
 More walls content
