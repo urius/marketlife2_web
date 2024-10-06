@@ -277,7 +277,8 @@ namespace View.UI.BottomPanel
             
             if (staffModel != null)
             {
-                PanelView.SetStaffWorkTimerText($"{staffModel.WorkSecondsLeft}{_secondsPostfix}");
+                var workTimeText= FormattingHelper.ToTimeFormatMinSec(staffModel.WorkSecondsLeft);
+                PanelView.SetStaffWorkTimerText(workTimeText);
                 
                 var clockColor = StaffCharHelper.GetClockColorByPercent(
                         (float)staffModel.WorkSecondsLeft /

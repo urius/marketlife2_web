@@ -6,6 +6,7 @@ using Infra.Instance;
 using Model;
 using Model.People;
 using Model.ShopObjects;
+using Utils;
 using View.Game.People;
 using View.Helpers;
 
@@ -22,7 +23,6 @@ namespace View.UI.BottomPanel
         private readonly ISharedViewsDataHolder _sharedViewsDataHolder = Instance.Get<ISharedViewsDataHolder>();
         
         private PlayerCharModel _playerCharModel;
-        private string _secondsPostfix;
         private CashDeskModel _targetCashDeskModel;
         private int _workSecondsLeftTemp;
         private PlayerModel _playerModel;
@@ -127,8 +127,6 @@ namespace View.UI.BottomPanel
                 && _playerModelHolder.PlayerModel.Level >= Constants.MinLevelForCashDeskUpgrades
                 && _playerFocusProvider.IsPlayerFocused)
             {
-                _secondsPostfix = _localizationProvider.GetLocale(Constants.LocalizationSecondsShortPostfix);
-
                 PanelView.SetStaffTitleText(
                     _localizationProvider.GetLocale(Constants.LocalizationBottomPanelCashDeskStaffTitle));
 
@@ -209,7 +207,8 @@ namespace View.UI.BottomPanel
 
             if (staffModel != null)
             {
-                PanelView.SetStaffWorkTimerText($"{staffModel.WorkSecondsLeft}{_secondsPostfix}");
+                var workTimeText = FormattingHelper.ToTimeFormatMinSec(staffModel.WorkSecondsLeft);
+                PanelView.SetStaffWorkTimerText(workTimeText);
 
                 var clockColor = StaffCharHelper.GetClockColorByPercent(
                     (float)_targetCashDeskModel.CashDeskStaffModel.WorkSecondsLeft /
