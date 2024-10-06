@@ -1,8 +1,10 @@
 using System.Threading;
 using System.Threading.Tasks;
+using Cysharp.Threading.Tasks;
 using Data;
 using Holders;
 using Infra.Instance;
+using Model;
 using Model.People;
 using Tools.AssetBundles;
 using Tools.AudioManager;
@@ -12,9 +14,8 @@ namespace Systems
 {
     public class MusicControlSystem : ISystem
     {
-        private const int AssetBundleUpliftMusicVersion = 1;
         private const float MusicFadeOutDuration = 2f;
-        private const float MusicFadeInDuration = 2f;
+        private const float MusicFadeInDuration = 1f;
 
         private readonly IPlayerModelHolder _playerModelHolder = Instance.Get<IPlayerModelHolder>();
         private readonly IAssetBundlesLoader _assetBundlesLoader = Instance.Get<IAssetBundlesLoader>();
@@ -23,6 +24,7 @@ namespace Systems
         private int _currentPlayingMusicIndex = -1;
         private CustomersModel _customersModel;
         private AudioClip[] _musicList;
+        private PlayerModel _playerModel;
 
         public async void Start()
         {
@@ -30,37 +32,69 @@ namespace Systems
 
             await _playerModelHolder.PlayerModelSetTask;
 
-            _customersModel = _playerModelHolder.PlayerModel.ShopModel.CustomersModel;
+            _playerModel = _playerModelHolder.PlayerModel;
+            _customersModel = _playerModel.ShopModel.CustomersModel;
 
-            Subscribe();
+            if (_playerModel.LevelIndex > 0)
+            {
+                PlayMusic();
+            }
+            else
+            {
+                Subscribe();
+            }
         }
 
         public void Stop()
         {
-            _customersModel.CustomerAdded -= OnCustomerAdded;
+            Unsubscribe();
         }
 
         private void Subscribe()
         {
-            _customersModel.CustomerAdded += OnCustomerAdded;
+            _playerModel.LevelChanged += OnLevelChanged;
+            //_customersModel.CustomerAdded += OnCustomerAdded;
         }
 
-        private void OnCustomerAdded(CustomerCharModel obj)
+        private void Unsubscribe()
+        {
+            _playerModel.LevelChanged -= OnLevelChanged;
+            //_customersModel.CustomerAdded -= OnCustomerAdded;
+        }
+
+        private void OnLevelChanged(int level)
+        {
+            _playerModel.LevelChanged -= OnLevelChanged;
+
+            UniTask.Delay(2000)
+                .ContinueWith(PlayMusic);
+        }
+
+        private void OnCustomerAdded(CustomerCharModel model)
         {
             _customersModel.CustomerAdded -= OnCustomerAdded;
 
-            _audioPlayer.FadeInAndPlayMusicAsync(CancellationToken.None, _musicList[0], MusicFadeInDuration);
+            UniTask.Delay(3000)
+                .ContinueWith(PlayMusic);
+        }
+
+        private UniTask PlayMusic()
+        {
+            return _audioPlayer.FadeInAndPlayMusicAsync(CancellationToken.None, _musicList[0], MusicFadeInDuration);
         }
 
         private async Task<AudioClip[]> LoadMusicBundle()
         {
+            const int assetBundleUpliftMusicVersion = 6;
+            
             var assetBundle =
-                await _assetBundlesLoader.LoadOrGetBundle(Constants.AssetBundleUpliftMusicName, AssetBundleUpliftMusicVersion);
+                await _assetBundlesLoader.LoadOrGetBundle(Constants.AssetBundleUpliftMusicName, assetBundleUpliftMusicVersion);
 
-            var upliftMusic = assetBundle.LoadAllAssets<AudioClip>();
+            var musicList = assetBundle.LoadAllAssets<AudioClip>();
 
-            Debug.Log("Music loaded: " + upliftMusic.Length + " name: " + upliftMusic[0].name);
-            return upliftMusic;
+            Debug.Log("Music loaded: " + musicList.Length + " name: " + musicList[0].name);
+            
+            return musicList;
         }
     }
 }

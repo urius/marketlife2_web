@@ -1,8 +1,10 @@
 using Cysharp.Threading.Tasks;
 using Events;
-using GamePush;
 using Infra.EventBus;
 using UnityEngine;
+#if !UNITY_STANDALONE_OSX
+using GamePush;
+#endif
 
 namespace Tools
 {
@@ -21,9 +23,6 @@ namespace Tools
         
         public static async UniTask<bool> ShowRewardedAds()
         {
-#if UNITY_EDITOR
-            return true;
-#endif
             Dispatch(new RequestGamePauseEvent(nameof(GamePushWrapper), isPaused:true, needMute:true));
 
             var showAdsResult = await Instance.ShowRewardedAdsInternal();
@@ -35,6 +34,7 @@ namespace Tools
 
         public static string GetLanguage()
         {
+#if !UNITY_STANDALONE_OSX
             var gpCurrentLanguage = GP_Language.Current();
 
             switch (gpCurrentLanguage)
@@ -57,6 +57,8 @@ namespace Tools
                 default:
                     return "en";
             }
+#endif
+            return "en";
         }
 
         private static void Dispatch(RequestGamePauseEvent e)
@@ -67,23 +69,28 @@ namespace Tools
 
         public static bool CanShowRewardedAds()
         {
-#if UNITY_EDITOR
-            return true;
-#endif
+#if !UNITY_STANDALONE_OSX && !UNITY_EDITOR
             return GP_Ads.IsRewardedAvailable();
+#endif
+            return true;
         }
 
-        private UniTask<bool> ShowRewardedAdsInternal()
+        private async UniTask<bool> ShowRewardedAdsInternal()
         {
+#if !UNITY_STANDALONE_OSX && !UNITY_EDITOR
             _rewardedAdsTcs = new UniTaskCompletionSource<bool>();
-            
             GP_Ads.ShowRewarded(onRewardedReward:RewardedAdsRewardedResultHandler, onRewardedClose:RewardedAdsClosedResultHandler);
 
             return _rewardedAdsTcs.Task;
+#endif
+            await UniTask.Delay(500, DelayType.UnscaledDeltaTime);
+            
+            return true;
         }
         
         private UniTask InitInternal()
         {
+#if !UNITY_STANDALONE_OSX
             if (GP_Init.isReady)
             {
                 _initTcs.TrySetResult();
@@ -97,12 +104,16 @@ namespace Tools
             }
 
             return _initTcs.Task;
+#endif
+            return UniTask.CompletedTask;
         }
 
         private void OnGpInitReady()
         {
+#if !UNITY_STANDALONE_OSX
             GP_Init.OnError -= OnGpInitError;
             GP_Init.OnReady -= OnGpInitReady;
+#endif
             
             _initTcs.TrySetResult();
         }

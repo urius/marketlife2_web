@@ -99,7 +99,7 @@ namespace Tools.AudioManager
             _musicSource.clip = clip;
             
             var musicFadeTsc = new UniTaskCompletionSource();
-            LeanTween.value(gameObject, f => _musicSource.volume = f, _musicSource.volume, GetMusicVolume(), fadeInDuration)
+            LeanTween.value(gameObject, f => _musicSource.volume = f, 0, GetMusicVolume(), fadeInDuration)
                 .setOnComplete(() =>
                 {
                     registration.Dispose();

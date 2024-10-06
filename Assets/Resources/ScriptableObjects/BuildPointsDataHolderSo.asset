@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _cashDesksData:
   - CellCoords: {x: 2, y: 2}
-    Cost: 5
+    Cost: 4
   - CellCoords: {x: 6, y: 2}
-    Cost: 10
+    Cost: 8
   _shelfsByRow:
   - YCellCoord: 4
     Shelfs:

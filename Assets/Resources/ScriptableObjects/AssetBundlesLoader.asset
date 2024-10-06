@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: AssetBundlesLoader
   m_EditorClassIdentifier: 
   _webGlUrl: https://s3.eponesh.com/games/files/17247
-  _osxUrl: https://s3.eponesh.com/games/files/17247
+  _osxUrl: /AssetBundles/OSX
   _androidUrl: 

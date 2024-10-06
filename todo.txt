@@ -1,7 +1,7 @@
 Saves!
 More floors content
 Analytics
-
+Mute buttons
 
 + Money icon animation on money get
 + Start player position

@@ -42,24 +42,33 @@ namespace Tools.AssetBundles
             }
 
             var fullUrl = $"{GetUrl()}/{bundleName}";
+
+            AssetBundle assetBundle = null;
             
-            using var webRequest = UnityWebRequestAssetBundle.GetAssetBundle(fullUrl, (uint)version, 0);
-            
-            var sendRequestOperation = webRequest.SendWebRequest();
-            if (progressCallback != null)
+            if (fullUrl.Contains("http"))
             {
-                while (!sendRequestOperation.isDone)
+                using var webRequest = UnityWebRequestAssetBundle.GetAssetBundle(fullUrl, (uint)version, 0);
+            
+                var sendRequestOperation = webRequest.SendWebRequest();
+                if (progressCallback != null)
                 {
-                    await UniTask.Delay(100, DelayType.UnscaledDeltaTime);
-                    progressCallback(sendRequestOperation.progress);
+                    while (!sendRequestOperation.isDone)
+                    {
+                        await UniTask.Delay(100, DelayType.UnscaledDeltaTime);
+                        progressCallback(sendRequestOperation.progress);
+                    }
                 }
+                var webRequestResult = await sendRequestOperation;
+                assetBundle = DownloadHandlerAssetBundle.GetContent(webRequestResult);
+
+                _bundlesByName[bundleName] = assetBundle;
+
+                Debug.Log($"Bundle {bundleName} was loaded ");
             }
-            var webRequestResult = await sendRequestOperation;
-            var assetBundle = DownloadHandlerAssetBundle.GetContent(webRequestResult);
-
-            _bundlesByName[bundleName] = assetBundle;
-
-            Debug.Log($"Bundle {bundleName} was loaded ");
+            else
+            {
+                assetBundle = AssetBundle.LoadFromFile(Application.dataPath + fullUrl);
+            }
 
             return assetBundle;
         }
