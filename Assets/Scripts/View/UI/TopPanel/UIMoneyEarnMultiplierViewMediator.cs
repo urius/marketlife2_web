@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using Holders;
 using Infra.Instance;
 using Model;
@@ -47,6 +48,8 @@ namespace View.UI.TopPanel
         {
             UpdateView();
             SubscribeOnUpdates();
+            
+            _view.AnimateIconJump().Forget();
         }
 
         private void OnMoneyEarnModifierRemoved(PlayerMoneyEarnModifierModel model)
