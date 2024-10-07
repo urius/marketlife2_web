@@ -7,5 +7,11 @@ namespace Data.Dto
     {
         public bool HaveNewWalls;
         public bool HaveNewFloors;
+
+        public PlayerUIFlagsDto(bool haveNewWalls, bool haveNewFloors)
+        {
+            HaveNewWalls = haveNewWalls;
+            HaveNewFloors = haveNewFloors;
+        }
     }
 }

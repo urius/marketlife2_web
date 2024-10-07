@@ -25,6 +25,8 @@ namespace View.Game.ShopObjects.TruckPoint
 
             OwnCells();
 
+            UpdateOpenedState(TargetModel.DeliverTimeSecondsRest);
+
             Subscribe();
         }
 
@@ -51,6 +53,11 @@ namespace View.Game.ShopObjects.TruckPoint
         }
 
         private void OnDeliverTimeAdvanced(int timeLeft)
+        {
+            UpdateOpenedState(timeLeft);
+        }
+
+        private void UpdateOpenedState(int timeLeft)
         {
             if (timeLeft <= Constants.TruckArrivingDuration)
             {

@@ -20,35 +20,19 @@ namespace Model.People
             remove => ProductsBox.ProductRemoved -= value;
         }
 
+        public readonly ProductBoxModel ProductsBox;
+
         public TruckPointStaffCharModel(
             Vector2Int cellCoords, 
             int workSecondsLeft, 
             IReadOnlyList<ProductType> products) 
             : base(cellCoords, workSecondsLeft)
         {
-
-            for (var i = 0; i < ProductsBox.ProductsInBox.Length; i++)
-            {
-                if (i < products.Count)
-                {
-                    ProductsBox.ProductsInBox[i] = products[i];
-                }
-            }
-        }
-
-        public TruckPointStaffCharModel(
-            Vector2Int cellCoords,
-            int workSecondsLeft)
-            : this(
-                cellCoords,
-                workSecondsLeft,
-                Array.Empty<ProductType>())
-        {
+            ProductsBox = new ProductBoxModel(products);
         }
 
         public IReadOnlyList<ProductType> ProductsInBox => ProductsBox.ProductsInBox;
         public bool HasProducts => ProductsBox.HasProducts();
-        public ProductBoxModel ProductsBox { get; } = new();
 
         public void FillBoxWithProduct(ProductType product)
         {

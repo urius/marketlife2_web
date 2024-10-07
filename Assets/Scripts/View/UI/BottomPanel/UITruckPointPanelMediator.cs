@@ -33,11 +33,13 @@ namespace View.UI.BottomPanel
         protected override void MediateInternal()
         {
             base.MediateInternal();
-
-            _sharedViewsDataHolder.RegisterTruckPointPanelTransformsProvider(PanelView);
             
             _playerModel = _playerModelHolder.PlayerModel;
             _playerCharModel = _playerModelHolder.PlayerCharModel;
+            
+            _sharedViewsDataHolder.RegisterTruckPointPanelTransformsProvider(PanelView);
+            
+            UpdatePanelViewState();
 
             Subscribe();
         }

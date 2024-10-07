@@ -13,24 +13,28 @@ MonoBehaviour:
   m_Name: DefaultPlayerDataHolderSo
   m_EditorClassIdentifier: 
   _defaultPlayerData:
+    ShopData:
+      Size: {x: 8, y: 8}
+      WallType: 1
+      FloorType: 1
+      CashDesks: []
+      Shelfs: []
+      TruckPoints: []
+      BuildPoints: []
+    Money: 20
+    Level: 1
+    StaffWorkTimeSeconds: 60
+    BoughtWalls: 
+    BoughtFloors: 
+    PlayerCharData:
+      CellPosition: {x: 4, y: 1}
+      ProductsInBox: 
+    PassedTutorialSteps: 
     AudioSettings:
       IsAudioMuted: 0
       IsMusicMuted: 0
     UIFlags:
       HaveNewWalls: 0
       HaveNewFloors: 0
-    Money: 20
-    Level: 1
-    StaffWorkTimeSeconds: 60
-    ShopData:
-      Size: {x: 8, y: 8}
-      WallType: 1
-      FloorType: 1
-      ShopObjects: []
-      BuildPoints: []
-      ExpandPoints: []
-    PlayerCharData:
-      CellPosition: {x: 4, y: 1}
-    UnlockedWalls: 
-    UnlockedFloors: 
-    TutorialSteps: 
+    Stats:
+      TotalMoneyEarned: 0

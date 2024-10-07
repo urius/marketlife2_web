@@ -12,13 +12,18 @@ namespace Model.ShopObjects
         public event Action<int> ProductRemoved;
         public event Action<int> UpgradeIndexChanged;
 
-        public ShelfModel(Vector2Int cellCoords, ShopObjectType shopObjectType, int slotsAmount)
+        public ShelfModel(
+            Vector2Int cellCoords, 
+            ShopObjectType shopObjectType, 
+            int slotsAmount,
+            int upgradeIndex = 0,
+            ProductType[] products = null)
             : base(cellCoords)
         {
             ShopObjectType = shopObjectType;
-            UpgradeIndex = 0;
+            UpgradeIndex = upgradeIndex;
 
-            ProductSlots = Enumerable.Repeat(ProductType.None, slotsAmount).ToArray();
+            ProductSlots = products ?? Enumerable.Repeat(ProductType.None, slotsAmount).ToArray();
         }
 
         public override ShopObjectType ShopObjectType { get; }

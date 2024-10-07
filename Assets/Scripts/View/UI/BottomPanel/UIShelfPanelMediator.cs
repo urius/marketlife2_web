@@ -28,6 +28,8 @@ namespace View.UI.BottomPanel
             _playerCharModel = _playerModelHolder.PlayerCharModel;
             
             PanelView.UpgradeButton.SetOrangeSkinData();
+            
+            UpdatePanelViewState();
 
             Subscribe();
         }

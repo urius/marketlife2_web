@@ -3,6 +3,7 @@ using Events;
 using Extensions;
 using Holders;
 using Infra.CommandExecutor;
+using Infra.EventBus;
 using Infra.Instance;
 using Tools.AudioManager;
 
@@ -14,6 +15,7 @@ namespace Commands
         private readonly IShelfUpgradeSettingsProvider _shelfUpgradeSettingsProvider = Instance.Get<IShelfUpgradeSettingsProvider>();
         private readonly IPlayerModelHolder _playerModelHolder = Instance.Get<IPlayerModelHolder>();
         private readonly IAudioPlayer _audioPlayer = Instance.Get<IAudioPlayer>();
+        private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
         
         public void Execute(UIShelfUpgradeClickedEvent e)
         {
@@ -31,6 +33,8 @@ namespace Commands
                     
                     shelfModel.SetSlotsAmount(shelfSettings.SlotsAmount);
                     shelfModel.IncrementUpgradeIndex();
+                    
+                    _eventBus.Dispatch(new ShelfUpgradedEvent(shelfModel));
                 }
             }
         }

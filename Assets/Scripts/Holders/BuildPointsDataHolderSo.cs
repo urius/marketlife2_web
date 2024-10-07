@@ -11,7 +11,7 @@ namespace Holders
     [CreateAssetMenu(fileName = "BuildPointsDataHolderSo", menuName = "ScriptableObjects/BuildPointsDataHolderSo")]
     public class BuildPointsDataHolderSo : ScriptableObject
     {
-        [LabeledArray(nameof(ShopObjectDto.CellCoords))]
+        [LabeledArray(nameof(CashDeskBuildPointRowData.CellCoords))]
         [SerializeField]
         private CashDeskBuildPointRowData[] _cashDesksData;
         

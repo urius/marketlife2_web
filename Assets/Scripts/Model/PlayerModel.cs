@@ -33,17 +33,17 @@ namespace Model
         public readonly PlayerStatsModel StatsModel;
 
         public PlayerModel(ShopModel shopModel, int moneyAmount, int level, 
-            int staffWorkTimeSeconds, WallType[] unlockedWalls, FloorType[] unlockedFloors,
-            PlayerCharModel playerCharModel, IEnumerable<TutorialStep> passedTutorialSteps,
+            int staffWorkTimeSeconds, WallType[] boughtWalls, FloorType[] boughtFloors,
+            PlayerCharModel playerCharModel, IEnumerable<int> passedTutorialSteps,
             PlayerAudioSettingsModel audioSettingsModel, PlayerUIFlagsModel uiFlagsModel, PlayerStatsModel statsModel)
         {
             ShopModel = shopModel;
             MoneyAmount = moneyAmount;
             Level = level <= 0 ? 1 : level;
             StaffWorkTimeSeconds = staffWorkTimeSeconds;
-            _boughtWalls = new List<WallType>(unlockedWalls);
+            _boughtWalls = new List<WallType>(boughtWalls);
             AddBoughtWall(shopModel.WallsType);
-            _boughtFloors = new List<FloorType>(unlockedFloors);
+            _boughtFloors = new List<FloorType>(boughtFloors);
             AddBoughtFloor(shopModel.FloorsType);
             PlayerCharModel = playerCharModel;
             AudioSettingsModel = audioSettingsModel;
@@ -54,7 +54,7 @@ namespace Model
             {
                 foreach (var s in passedTutorialSteps)
                 {
-                    PassedTutorialSteps.AddLast((int)s);
+                    PassedTutorialSteps.AddLast(s);
                 }
             }
         }

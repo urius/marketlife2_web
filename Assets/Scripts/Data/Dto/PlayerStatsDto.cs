@@ -6,5 +6,10 @@ namespace Data.Dto
     public struct PlayerStatsDto
     {
         public long TotalMoneyEarned;
+
+        public PlayerStatsDto(long totalMoneyEarned)
+        {
+            TotalMoneyEarned = totalMoneyEarned;
+        }
     }
 }

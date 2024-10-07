@@ -31,10 +31,12 @@ namespace View.UI.BottomPanel
         {
             base.MediateInternal();
             
-            _sharedViewsDataHolder.RegisterCashDeskPanelTransformsProvider(PanelView);
-            
             _playerModel = _playerModelHolder.PlayerModel;
             _playerCharModel = _playerModelHolder.PlayerCharModel;
+            
+            _sharedViewsDataHolder.RegisterCashDeskPanelTransformsProvider(PanelView);
+            
+            UpdatePanelViewState();
 
             Subscribe();
         }

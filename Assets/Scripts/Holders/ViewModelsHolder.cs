@@ -17,6 +17,8 @@ namespace Holders
 
         public AdsOfferViewModelBase CurrentAdsOfferViewModel { get; private set; }
 
+        public int OpenedPopupsCount => _popupsStack.Count;
+
         public void AddPopup(PopupViewModelBase popupViewModel)
         {
             _popupsStack.AddLast(popupViewModel);
@@ -78,6 +80,8 @@ namespace Holders
     {
         public event Action<PopupViewModelBase> PopupAdded;
         public event Action<PopupViewModelBase> PopupRemoved;
+        
+        public int OpenedPopupsCount { get; }
         
         public void AddPopup(PopupViewModelBase popupViewModel);
         public PopupViewModelBase FindPopupByKey(PopupKey popupKey);

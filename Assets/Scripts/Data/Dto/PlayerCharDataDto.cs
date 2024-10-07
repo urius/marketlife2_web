@@ -7,5 +7,12 @@ namespace Data.Dto
     public struct PlayerCharDataDto
     {
         public Vector2Int CellPosition;
+        public int[] ProductsInBox;
+
+        public PlayerCharDataDto(Vector2Int cellPosition, int[] productsInBox)
+        {
+            CellPosition = cellPosition;
+            ProductsInBox = productsInBox;
+        }
     }
 }

@@ -11,11 +11,31 @@ namespace Data.Dto
         public Vector2Int Size;
         public WallType WallType;
         public FloorType FloorType;
-        [LabeledArray(nameof(ShopObjectDto.ShopObjectType))]
-        public ShopObjectDto[] ShopObjects;
-        [LabeledArray(nameof(ShopObjectDto.ShopObjectType))]
+        [LabeledArray(nameof(CashDeskDto.CellCoords))]
+        public CashDeskDto[] CashDesks;
+        [LabeledArray(nameof(ShelfDto.CellCoords))]
+        public ShelfDto[] Shelfs;
+        [LabeledArray(nameof(TruckPointDto.CellCoords))]
+        public TruckPointDto[] TruckPoints;
+        [LabeledArray(nameof(BuildPointDto.ShopObjectType))]
         public BuildPointDto[] BuildPoints;
-        [LabeledArray(nameof(ExpandPointDto.CellCoords))]
-        public ExpandPointDto[] ExpandPoints;
+
+        public ShopDataDto(
+            Vector2Int size,
+            WallType wallType,
+            FloorType floorType,
+            CashDeskDto[] cashDesks,
+            ShelfDto[] shelfs,
+            TruckPointDto[] truckPoints,
+            BuildPointDto[] buildPoints)
+        {
+            Size = size;
+            WallType = wallType;
+            FloorType = floorType;
+            CashDesks = cashDesks;
+            Shelfs = shelfs;
+            TruckPoints = truckPoints;
+            BuildPoints = buildPoints;
+        }
     }
 }

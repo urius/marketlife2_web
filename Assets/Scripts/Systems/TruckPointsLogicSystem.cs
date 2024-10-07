@@ -91,6 +91,8 @@ namespace Systems
                     _audioPlayer.PlaySound(SoundIdKey.CashSound_2);
                     
                     truckPointModel.Upgrade();
+                    
+                    _eventBus.Dispatch(new TruckPointUpgradedEvent(truckPointModel));
                 }
             }
         }

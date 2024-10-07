@@ -1,8 +1,11 @@
 using Cysharp.Threading.Tasks;
+using Data;
 using Data.Dto;
 using Holders;
 using Infra.CommandExecutor;
 using Infra.Instance;
+using Tools;
+using UnityEngine;
 
 namespace Commands
 {
@@ -10,11 +13,20 @@ namespace Commands
     {
         public UniTask<PlayerDataDto> ExecuteAsync()
         {
-            //load data part
-            //if data == null
-            //then create new
+            PlayerDataDto result;
+            
+            var playerDataStr = GamePushWrapper.GetPlayerData(Constants.PlayerDataKey);
 
-            var result = Instance.Get<DefaultPlayerDataHolderSo>().DefaultPlayerData;
+            Debug.Log($"{nameof(GamePushWrapper.GetPlayerData)} result: \n {playerDataStr}");
+            
+            if (string.IsNullOrEmpty(playerDataStr))
+            {
+                result = Instance.Get<DefaultPlayerDataHolderSo>().DefaultPlayerData;
+            }
+            else
+            {
+                result = JsonUtility.FromJson<PlayerDataDto>(playerDataStr);
+            }
             
             return UniTask.FromResult(result);
         }

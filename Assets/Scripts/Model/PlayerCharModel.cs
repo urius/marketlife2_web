@@ -23,11 +23,12 @@ namespace Model
 
         public event Action NearShopObjectsUpdated;
 
-        public readonly ProductBoxModel ProductsBox = new();
+        public readonly ProductBoxModel ProductsBox;
         
-        public PlayerCharModel(Vector2Int cellPosition)
+        public PlayerCharModel(Vector2Int cellPosition, IReadOnlyList<ProductType> productsInBox)
         {
             CellPosition = cellPosition;
+            ProductsBox = new ProductBoxModel(productsInBox);
         }
 
         public Vector2Int CellPosition { get; private set; }

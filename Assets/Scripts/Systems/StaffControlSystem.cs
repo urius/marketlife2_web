@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Cysharp.Threading.Tasks;
@@ -485,43 +486,20 @@ namespace Systems
             }
         }
 
-        private void HireOrProlongStaffTo(TruckPointModel truckPointModel, int workTimeMultiplier = 1)
-        {
-            PlayHireSound();
-            
-            if (truckPointModel.HasStaff)
-            {
-                truckPointModel.StaffCharModel.ProlongWorkTime(_playerModel.StaffWorkTimeSeconds * workTimeMultiplier);
-            }
-            else
-            {
-                HireTruckPointStaff(truckPointModel);
-            }
-        }
-
         private void HireTruckPointStaff(TruckPointModel truckPointModel)
         {
             if (truckPointModel.HasStaff) return;
             
             var staffInitialPosition = truckPointModel.CellCoords + _staffInitialPointOffset;
 
-            var staffModel = new TruckPointStaffCharModel(staffInitialPosition, _playerModel.StaffWorkTimeSeconds);
+            var staffModel = new TruckPointStaffCharModel(
+                staffInitialPosition,
+                _playerModel.StaffWorkTimeSeconds,
+                Array.Empty<ProductType>());
             ConsiderNewStaff(staffModel, truckPointModel);
             truckPointModel.AddStaff(staffModel);
-        }
-
-        private void HireOrProlongStaffTo(CashDeskModel cashDeskModel, int workTimeMultiplier = 1)
-        {
-            PlayHireSound();
-
-            if (cashDeskModel.HasCashMan)
-            {
-                cashDeskModel.CashDeskStaffModel.ProlongWorkTime(_playerModel.StaffWorkTimeSeconds * workTimeMultiplier);
-            }
-            else
-            {
-                HireCashDeskStaff(cashDeskModel);
-            }
+            
+            _eventBus.Dispatch(new StaffHiredEvent(truckPointModel));
         }
 
         private void HireCashDeskStaff(CashDeskModel cashDeskModel)
@@ -533,6 +511,43 @@ namespace Systems
                 _playerModel.StaffWorkTimeSeconds);
 
             cashDeskModel.AddStaff(staffModel);
+            
+            _eventBus.Dispatch(new StaffHiredEvent(cashDeskModel));
+        }
+
+        private void HireOrProlongStaffTo(TruckPointModel truckPointModel, int workTimeMultiplier = 1)
+        {
+            PlayHireSound();
+            
+            if (truckPointModel.HasStaff)
+            {
+                ProlongStaffWorkTime(truckPointModel.StaffCharModel, workTimeMultiplier);
+            }
+            else
+            {
+                HireTruckPointStaff(truckPointModel);
+            }
+        }
+
+        private void ProlongStaffWorkTime(StaffCharModelBase staffCharModel, int workTimeMultiplier)
+        {
+            staffCharModel.ProlongWorkTime(_playerModel.StaffWorkTimeSeconds * workTimeMultiplier);
+            
+            _eventBus.Dispatch(new StaffWorkTimeProlongedEvent(staffCharModel));
+        }
+
+        private void HireOrProlongStaffTo(CashDeskModel cashDeskModel, int workTimeMultiplier = 1)
+        {
+            PlayHireSound();
+
+            if (cashDeskModel.HasCashMan)
+            {
+                ProlongStaffWorkTime(cashDeskModel.CashDeskStaffModel, workTimeMultiplier);
+            }
+            else
+            {
+                HireCashDeskStaff(cashDeskModel);
+            }
         }
 
         private void PlayHireSound()

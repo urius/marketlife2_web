@@ -27,6 +27,7 @@ namespace Systems
             StartSystem<StaffControlSystem>();
             StartSystem<TutorialSystem>();
             StartSystem<AdsOfferSystem>();
+            StartSystem<SaveDataSystem>();
         }
 
         public void Stop()

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Data;
 
@@ -9,8 +10,23 @@ namespace Model.People
         public event Action ProductsBoxAdded;
         public event Action<int> ProductRemoved;
         
-        public readonly ProductType[] ProductsInBox =
-            Enumerable.Repeat(ProductType.None, Constants.ProductsAmountInBox).ToArray();
+        public readonly ProductType[] ProductsInBox;
+
+        public ProductBoxModel(IReadOnlyList<ProductType> productsInBox)
+        {
+            ProductsInBox = Enumerable.Repeat(ProductType.None, Constants.ProductsAmountInBox).ToArray();
+            
+            if (productsInBox != null)
+            {
+                for (var i = 0; i < productsInBox.Count; i++)
+                {
+                    if (i < ProductsInBox.Length)
+                    {
+                        ProductsInBox[i] = productsInBox[i];
+                    }
+                }
+            }
+        }
         
         public void FillBoxWithProduct(ProductType product)
         {

@@ -1,7 +1,6 @@
-Saves!
 More floors content
 Analytics
-Mute buttons
+Mute buttons (or settings popup)
 
 + Money icon animation on money get
 + Start player position
@@ -12,6 +11,7 @@ Mute buttons
 + In-game splash screen
 + Mute sounds and music buttons
 + Music
++ Saves!
 
 --
 More walls content

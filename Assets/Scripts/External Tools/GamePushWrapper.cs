@@ -32,6 +32,47 @@ namespace Tools
             return showAdsResult;
         }
 
+        public static string GetPlayerData(string fieldName)
+        {
+#if !UNITY_STANDALONE_OSX
+            if (GP_Player.IsStub() == false)
+            {
+                return GP_Player.GetString(fieldName);
+            }
+#endif
+#if UNITY_EDITOR
+            return PlayerPrefs.GetString(fieldName);
+#endif
+            return null;
+        }
+        
+        public static void SavePlayerData(string fieldName, string value, bool needSync = true)
+        {
+#if !UNITY_STANDALONE_OSX
+            GP_Player.Set(fieldName, value);
+            
+            if (needSync)
+            {
+                SyncPlayerData();
+            }
+#endif
+#if UNITY_EDITOR
+            PlayerPrefs.SetString(fieldName, value);
+#endif
+        }
+        
+        public static void SavePlayerData(string fieldName, long value, bool needSync = true)
+        {
+            SavePlayerData(fieldName, value.ToString(), needSync);
+        }
+
+        public static void SyncPlayerData()
+        {
+#if !UNITY_STANDALONE_OSX
+            GP_Player.Sync();
+#endif
+        }
+
         public static string GetLanguage()
         {
 #if !UNITY_STANDALONE_OSX
@@ -81,7 +122,7 @@ namespace Tools
             _rewardedAdsTcs = new UniTaskCompletionSource<bool>();
             GP_Ads.ShowRewarded(onRewardedReward:RewardedAdsRewardedResultHandler, onRewardedClose:RewardedAdsClosedResultHandler);
 
-            return _rewardedAdsTcs.Task;
+            return await _rewardedAdsTcs.Task;
 #endif
             await UniTask.Delay(500, DelayType.UnscaledDeltaTime);
             

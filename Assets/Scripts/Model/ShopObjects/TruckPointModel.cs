@@ -19,11 +19,12 @@ namespace Model.ShopObjects
         public event Action Upgraded;
         public event Action<TruckPointStaffCharModel> StaffAdded;
         public event Action<TruckPointStaffCharModel> StaffRemoved;
+
+        public readonly ProductType[] CurrentProductBoxes;
         
         private readonly TruckPointSetting _setting;
         private readonly int[] _deliverTimesByUpgradeIndex;
-        private readonly ProductType[] _currentProductBoxes;
-        
+
         private int _upgradesCount;
         private int _productBoxesAmount;
 
@@ -40,8 +41,8 @@ namespace Model.ShopObjects
             UpdateProductBoxesAmount();
             _deliverTimesByUpgradeIndex = GetDeliverTimes(setting);
 
-            _currentProductBoxes = new ProductType[_setting.Products.Length];
-            Array.Copy(currentProductBoxes, _currentProductBoxes, currentProductBoxes.Length);
+            CurrentProductBoxes = new ProductType[_setting.Products.Length];
+            Array.Copy(currentProductBoxes, CurrentProductBoxes, currentProductBoxes.Length);
             
             DeliverTimeSecondsRest = deliverTimeSecondsRest;
             StaffCharModel = staffModel;
@@ -57,10 +58,10 @@ namespace Model.ShopObjects
 
         public void RemoveBox(int boxIndex)
         {
-            if (boxIndex < _currentProductBoxes.Length
-                && _currentProductBoxes[boxIndex] != ProductType.None)
+            if (boxIndex < CurrentProductBoxes.Length
+                && CurrentProductBoxes[boxIndex] != ProductType.None)
             {
-                _currentProductBoxes[boxIndex] = ProductType.None;
+                CurrentProductBoxes[boxIndex] = ProductType.None;
 
                 BoxRemoved?.Invoke(boxIndex);
             }
@@ -69,7 +70,7 @@ namespace Model.ShopObjects
         public void ResetProducts()
         {
             var amountToCopy = Math.Min(_setting.Products.Length, _productBoxesAmount);
-            Array.Copy(_setting.Products, _currentProductBoxes, amountToCopy);
+            Array.Copy(_setting.Products, CurrentProductBoxes, amountToCopy);
             
             ProductsReset?.Invoke();
         }
@@ -106,14 +107,14 @@ namespace Model.ShopObjects
 
         public ProductType GetProductTypeAtBoxIndex(int boxIndex)
         {
-            return boxIndex < _currentProductBoxes.Length ? _currentProductBoxes[boxIndex] : ProductType.None;
+            return boxIndex < CurrentProductBoxes.Length ? CurrentProductBoxes[boxIndex] : ProductType.None;
         }
 
         public int GetFirstNotEmptyProductBoxIndex()
         {
-            for (var i = 0; i < _currentProductBoxes.Length; i++)
+            for (var i = 0; i < CurrentProductBoxes.Length; i++)
             {
-                var currentProductBox = _currentProductBoxes[i];
+                var currentProductBox = CurrentProductBoxes[i];
 
                 if (currentProductBox != ProductType.None)
                 {
@@ -126,9 +127,9 @@ namespace Model.ShopObjects
 
         public int GetLastNotEmptyProductBoxIndex()
         {
-            for (var i = _currentProductBoxes.Length - 1; i >= 0; i--)
+            for (var i = CurrentProductBoxes.Length - 1; i >= 0; i--)
             {
-                var currentProductBox = _currentProductBoxes[i];
+                var currentProductBox = CurrentProductBoxes[i];
 
                 if (currentProductBox != ProductType.None)
                 {
@@ -226,7 +227,7 @@ namespace Model.ShopObjects
 
         private bool HasProductsInternal()
         {
-            foreach (var productBox in _currentProductBoxes)
+            foreach (var productBox in CurrentProductBoxes)
             {
                 if (productBox != ProductType.None)
                 {

@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using Data;
 using Events;
+using Holders;
 using Infra.EventBus;
 using Infra.Instance;
 using Tools.AudioManager;
@@ -11,8 +13,11 @@ namespace Systems
     {
         private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
         private readonly IAudioPlayer _audioPlayer = Instance.Get<IAudioPlayer>();
+        private readonly ISharedFlagsHolder _sharedFlagsHolder = Instance.Get<ISharedFlagsHolder>();
 
         private readonly LinkedList<PauseRequesterData> _pauseRequesters = new ();
+
+        private bool IsGamePaused => _pauseRequesters.Count > 0;
         
         public void Start()
         {
@@ -36,8 +41,12 @@ namespace Systems
                 RemoveRequester(e.RequesterId);
             }
 
+            var isPaused = IsGamePaused; 
+            _sharedFlagsHolder.Set(SharedFlagKey.IsGamePaused, isPaused);
+            
+            Time.timeScale = isPaused ? 0 : 1;
+            
             UpdateMuteState();
-            Time.timeScale = _pauseRequesters.Count > 0 ? 0 : 1;
         }
 
         private void RemoveRequester(string requesterId)

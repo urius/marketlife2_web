@@ -1,3 +1,4 @@
+using Data;
 using Data.Dto;
 using UnityEngine;
 
@@ -10,6 +11,12 @@ namespace Holders
 
         public PlayerDataDto DefaultPlayerData => _defaultPlayerData;
 
+        [ContextMenu("Reset data")]
+        public void Test()
+        {
+            PlayerPrefs.SetString(Constants.PlayerDataKey, null);
+        }
+        
         // [ContextMenu("test")]
         // public void Test()
         // {

@@ -30,7 +30,7 @@ namespace View.Game.People
 
         private ManView _playerCharView;
         private Vector2 _moveDirection;
-        private Vector2Int _cellCoords;
+        private Vector2Int _charCellCoords;
         private (Vector2Int direction, Vector3[] offsets)[] _detectorOffsets;
         private Vector3 _playerWorldPosition;
         private Vector2 _prevMoveDirection;
@@ -48,8 +48,9 @@ namespace View.Game.People
             FillDetectorOffsets();
             
             _playerCharView = TargetTransform.GetComponent<ManView>();
+            _charCellCoords = _playerCharModel.CellPosition;
             _playerWorldPosition = _playerCharView.transform.position =
-                _gridCalculator.GetCellCenterWorld(_playerCharModel.CellPosition);
+                _gridCalculator.GetCellCenterWorld(_charCellCoords);
 
             UpdateSorting();
             
@@ -182,19 +183,19 @@ namespace View.Game.People
             
             var newCellCoords = _gridCalculator.WorldToCell(_playerWorldPosition);
             
-            if (newCellCoords != _cellCoords)
+            if (newCellCoords != _charCellCoords)
             {
-                _cellCoords = newCellCoords;
+                _charCellCoords = newCellCoords;
                 
                 UpdateSorting();
                 
-                _eventBus.Dispatch(new RequestPlayerCellChangeEvent(_cellCoords));
+                _eventBus.Dispatch(new RequestPlayerCellChangeEvent(_charCellCoords));
             }
         }
 
         private void UpdateSorting()
         {
-            DynamicViewSortingLogic.UpdateSorting(_playerCharView, _ownedCellsDataHolder, _cellCoords);
+            DynamicViewSortingLogic.UpdateSorting(_playerCharView, _ownedCellsDataHolder, _charCellCoords);
         }
 
         private void ProcessMove()

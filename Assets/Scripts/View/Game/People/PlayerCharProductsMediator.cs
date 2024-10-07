@@ -37,6 +37,8 @@ namespace View.Game.People
         {
             _viewsDataHolder.RegisterPlayerCharPositionProvider(_playerCharView);
             _viewsDataHolder.RegisterCharProductsInBoxPositionsProvider(_playerCharModel.ProductsBox, _playerCharView);
+
+            UpdateProductBoxView();
             
             Subscribe();
         }

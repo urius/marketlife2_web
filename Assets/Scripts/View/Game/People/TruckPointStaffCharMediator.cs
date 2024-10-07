@@ -40,6 +40,8 @@ namespace View.Game.People
             SetClothes();
             UpdateClockIconColor();
             UpdateClockPosition();
+            UpdateProductBoxView();
+            ToIdleState();
             
             Subscribe();
             

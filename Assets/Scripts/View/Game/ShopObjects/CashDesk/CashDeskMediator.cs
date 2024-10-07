@@ -39,6 +39,8 @@ namespace View.Game.ShopObjects.CashDesk
             {
                 MediateNewStaff(TargetModel.CashDeskStaffModel);
             }
+            
+            ShowMoney(TargetModel.MoneyAmount);
 
             Subscribe();
         }

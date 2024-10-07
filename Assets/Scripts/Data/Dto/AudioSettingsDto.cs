@@ -7,5 +7,11 @@ namespace Data.Dto
     {
         public bool IsAudioMuted;
         public bool IsMusicMuted;
+
+        public AudioSettingsDto(bool isAudioMuted, bool isMusicMuted)
+        {
+            IsAudioMuted = isAudioMuted;
+            IsMusicMuted = isMusicMuted;
+        }
     }
 }
