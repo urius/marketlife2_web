@@ -5,23 +5,23 @@ namespace Model
 {
     public class PlayerAudioSettingsModel : IAudioSettingsModel
     {
-        public event Action<bool> AudioMutedStateChanged;
+        public event Action<bool> SoundsMutedStateChanged;
         public event Action<bool> MusicMutedStateChanged;
         
         public PlayerAudioSettingsModel(bool isAudioMuted, bool isMusicMuted)
         {
-            IsAudioMuted = isAudioMuted;
+            IsSoundsMuted = isAudioMuted;
             IsMusicMuted = isMusicMuted;
         }
             
-        public bool IsAudioMuted { get; private set; }
+        public bool IsSoundsMuted { get; private set; }
         public bool IsMusicMuted { get; private set; }
 
-        public void SetAudioMuted(bool isMuted)
+        public void SetSoundsMuted(bool isMuted)
         {
-            IsAudioMuted = isMuted;
+            IsSoundsMuted = isMuted;
             
-            AudioMutedStateChanged?.Invoke(IsAudioMuted);
+            SoundsMutedStateChanged?.Invoke(IsSoundsMuted);
         }
 
         public void SetMusicMuted(bool isMuted)

@@ -45,7 +45,15 @@ namespace Tools
 #endif
             return null;
         }
-        
+
+        public static string GetPlayerId()
+        {
+#if !UNITY_STANDALONE_OSX
+            return GP_Player.GetID().ToString();
+#endif
+            return "undefined_id";
+        }
+
         public static void SavePlayerData(string fieldName, string value, bool needSync = true)
         {
 #if !UNITY_STANDALONE_OSX
@@ -60,7 +68,7 @@ namespace Tools
             PlayerPrefs.SetString(fieldName, value);
 #endif
         }
-        
+
         public static void SavePlayerData(string fieldName, long value, bool needSync = true)
         {
             SavePlayerData(fieldName, value.ToString(), needSync);
@@ -70,6 +78,16 @@ namespace Tools
         {
 #if !UNITY_STANDALONE_OSX
             GP_Player.Sync();
+#endif
+        }
+
+        public static void ResetPlayer()
+        {
+#if !UNITY_STANDALONE_OSX
+            GP_Player.ResetPlayer();
+#endif
+#if UNITY_EDITOR
+            PlayerPrefs.DeleteAll();
 #endif
         }
 
@@ -128,7 +146,7 @@ namespace Tools
             
             return true;
         }
-        
+
         private UniTask InitInternal()
         {
 #if !UNITY_STANDALONE_OSX
@@ -168,7 +186,7 @@ namespace Tools
         {
             _rewardedAdsTcs.TrySetResult(true);
         }
-        
+
         private void RewardedAdsClosedResultHandler(bool success)
         {
             _rewardedAdsTcs.TrySetResult(success);

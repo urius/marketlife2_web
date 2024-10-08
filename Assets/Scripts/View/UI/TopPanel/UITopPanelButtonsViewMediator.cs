@@ -6,6 +6,7 @@ using Infra.EventBus;
 using Infra.Instance;
 using Model;
 using UnityEngine;
+using View.UI.SettingsCanvas;
 
 namespace View.UI.TopPanel
 {
@@ -23,6 +24,7 @@ namespace View.UI.TopPanel
         private PlayerModel _playerModel;
         private UITopPanelButtonView _interiorButton;
         private PlayerUIFlagsModel _uiFlagsModel;
+        private UISettingsCanvasView _settingsCanvasView;
 
         protected override void MediateInternal()
         {
@@ -31,6 +33,7 @@ namespace View.UI.TopPanel
             
             _buttonsView = TargetTransform.GetComponent<UITopPanelButtonsView>();
             _interiorButton = _buttonsView.InteriorButton;
+            _settingsCanvasView = _sharedViewsDataHolder.GetSettingsCanvasView();
             
             _sharedViewsDataHolder.RegisterTopPanelInteriorButtonTransform(_interiorButton.RectTransform);
 
@@ -62,6 +65,7 @@ namespace View.UI.TopPanel
             _playerModel.LevelChanged += OnLevelChanged;
             _uiFlagsModel.FloorsFlagChanged += OnFloorsFlagChanged;
             _uiFlagsModel.WallsFlagChanged += OnWallsFlagChanged;
+            _settingsCanvasView.SettingsButtonClicked += OnSettingsButtonClicked;
             
             _interiorButton.Clicked += OnInteriorButtonClicked;
         }
@@ -71,8 +75,14 @@ namespace View.UI.TopPanel
             _playerModel.LevelChanged -= OnLevelChanged;
             _uiFlagsModel.FloorsFlagChanged -= OnFloorsFlagChanged;
             _uiFlagsModel.WallsFlagChanged -= OnWallsFlagChanged;
+            _settingsCanvasView.SettingsButtonClicked -= OnSettingsButtonClicked;
 
             _interiorButton.Clicked -= OnInteriorButtonClicked;
+        }
+
+        private void OnSettingsButtonClicked()
+        {
+            _eventBus.Dispatch(new UISettingsButtonClickedEvent());
         }
 
         private void OnWallsFlagChanged(bool flagValue)

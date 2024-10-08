@@ -5,12 +5,12 @@ namespace Data.Dto
     [Serializable]
     public struct AudioSettingsDto
     {
-        public bool IsAudioMuted;
+        public bool IsSoundsMuted;
         public bool IsMusicMuted;
 
-        public AudioSettingsDto(bool isAudioMuted, bool isMusicMuted)
+        public AudioSettingsDto(bool isSoundsMuted, bool isMusicMuted)
         {
-            IsAudioMuted = isAudioMuted;
+            IsSoundsMuted = isSoundsMuted;
             IsMusicMuted = isMusicMuted;
         }
     }

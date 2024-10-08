@@ -7,6 +7,8 @@ namespace View.UI.Common
 {
     public class UITextButtonView : MonoBehaviour
     {
+        public event Action ButtonClicked;
+            
         [SerializeField] private Image _buttonImage;
         [SerializeField] private TMP_Text _text;
         [SerializeField] private Button _button;
@@ -14,11 +16,27 @@ namespace View.UI.Common
         [SerializeField] private SkinData _orangeSkinData;
         [SerializeField] private SkinData _crimsonSkinData;
         [SerializeField] private SkinData _greenSkinData;
+        [SerializeField] private SkinData _blueSkinData;
 
         public RectTransform RectTransform => transform as RectTransform;
         public Button Button => _button;
         public TMP_Text Text => _text;
-        
+
+        private void Awake()
+        {
+            _button.onClick.AddListener(OnButtonClick);
+        }
+
+        private void OnDestroy()
+        {
+            _button.onClick.RemoveAllListeners();
+        }
+
+        private void OnButtonClick()
+        {
+            ButtonClicked?.Invoke();
+        }
+
         public void SetOrangeSkinData()
         {
             ApplySkinData(_orangeSkinData);
@@ -33,10 +51,20 @@ namespace View.UI.Common
         {
             ApplySkinData(_greenSkinData);
         }
+        
+        public void SetBlueSkinData()
+        {
+            ApplySkinData(_blueSkinData);
+        }
 
         public void SetText(string text)
         {
             _text.text = text;
+        }
+
+        public void SetVisibility(bool isVisible)
+        {
+            gameObject.SetActive(isVisible);
         }
         
         private void ApplySkinData(SkinData skinData)

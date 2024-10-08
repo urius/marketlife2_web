@@ -6,6 +6,7 @@ using Infra.Instance;
 using Model.Popups;
 using UnityEngine;
 using View.UI.Popups.InteriorPopup;
+using View.UI.Popups.SettingsPopup;
 
 namespace View.UI.Popups
 {
@@ -68,6 +69,9 @@ namespace View.UI.Popups
             {
                 case PopupKey.InteriorPopup:
                     MediatePopupInternal<UIInteriorPopupMediator, InteriorPopupViewModel>(popupViewModel);
+                    break;
+                case PopupKey.SettingsPopup:
+                    MediatePopupInternal<UISettingsPopupController, SettingsPopupViewModel>(popupViewModel);
                     break;
                 default:
                     UpdateCanvasActivity();

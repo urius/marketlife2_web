@@ -175,21 +175,21 @@ namespace Tools.AudioManager
         {
             if (IsMuteRequested) return 0;
             
-            return _audioSettingsModel.IsAudioMuted || _audioSettingsModel.IsMusicMuted ? 0 : 0.5f;
+            return _audioSettingsModel.IsMusicMuted ? 0 : 0.5f;
         }
 
         private float GetSoundsVolume()
         {
             if (IsMuteRequested) return 0;
             
-            return _audioSettingsModel.IsAudioMuted ? 0 : 0.5f;
+            return _audioSettingsModel.IsSoundsMuted ? 0 : 0.5f;
         }
 
         private void SubscribeOnSettingsModel(IAudioSettingsModel audioSettingsModel)
         {
             if (audioSettingsModel == null) return;
 
-            audioSettingsModel.AudioMutedStateChanged += OnAudioMutedStateChanged;
+            audioSettingsModel.SoundsMutedStateChanged += OnAudioMutedStateChanged;
             audioSettingsModel.MusicMutedStateChanged += OnMusicMutedStateChanged;
         }
 
@@ -197,7 +197,7 @@ namespace Tools.AudioManager
         {
             if (audioSettingsModel == null) return;
 
-            audioSettingsModel.AudioMutedStateChanged -= OnAudioMutedStateChanged;
+            audioSettingsModel.SoundsMutedStateChanged -= OnAudioMutedStateChanged;
             audioSettingsModel.MusicMutedStateChanged -= OnMusicMutedStateChanged;
         }
     }

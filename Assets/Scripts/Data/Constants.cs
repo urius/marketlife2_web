@@ -61,6 +61,17 @@ namespace Data
         public const string LocalizationKeyBought = "bought";
         public const string LocalizationKeyMinutesShort = "minutes_short";
         public const string LocalizationKeyAdsOfferHireAllStaff = "ads_offer_hire_all_staff";
+        public const string LocalizationKeySettingsPopupTitle = "settings_popup_title";
+        public const string LocalizationKeySettingsPopupSounds = "settings_popup_sounds";
+        public const string LocalizationKeySettingsPopupMusic = "settings_popup_music";
+        public const string LocalizationKeySettingsPopupResetButton = "settings_popup_reset_button";
+        public const string LocalizationKeySettingsPopupId = "settings_popup_id";
+        public const string LocalizationKeyYesNoPopupDefaultTitle = "yes_no_popup_title_default";
+        public const string LocalizationKeyYesNoPopupResetDataMessage = "yes_no_popup_message_reset";
+        public const string LocalizationKeyYes = "yes";
+        public const string LocalizationKeyNo = "no";
+        public const string LocalizationKeySuccess = "success";
+        public const string LocalizationKeyResetDataSuccessMessage = "reset_data_success_message";
 
         private const string ColdPrefabsFolderPath = "Prefabs/Cold Prefabs";
         public static readonly string TutorialHowToMovePath = $"{ColdPrefabsFolderPath}/TutorialHowToMove";

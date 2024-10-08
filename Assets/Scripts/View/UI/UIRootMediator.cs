@@ -14,12 +14,14 @@ namespace View.UI
     public class UIRootMediator : MediatorBase
     {
         private readonly IPlayerModelHolder _playerModelHolder = Instance.Get<IPlayerModelHolder>();
+        private readonly ISharedViewsDataHolder _sharedViewsDataHolder = Instance.Get<ISharedViewsDataHolder>();
         
         private UIRootView _view;
 
         protected override async void MediateInternal()
         {
             _view = TargetTransform.GetComponent<UIRootView>();
+            _sharedViewsDataHolder.RegisterSettingsCanvasView(_view.UISettingsCanvasView);
             
             _view.UILoadingOverlayImage.gameObject.SetActive(true);
             
@@ -45,6 +47,7 @@ namespace View.UI
 
         protected override void UnmediateInternal()
         {
+            _sharedViewsDataHolder.UnregisterSettingsCanvasView();
         }
 
         private void AnimateLoadingOverlayFadeOut()

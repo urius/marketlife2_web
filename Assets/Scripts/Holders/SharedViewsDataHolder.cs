@@ -7,6 +7,7 @@ using View.Game.ShopObjects.CashDesk;
 using View.Game.ShopObjects.Shelf;
 using View.Game.ShopObjects.TruckPoint;
 using View.UI.BottomPanel;
+using View.UI.SettingsCanvas;
 
 namespace Holders
 {
@@ -22,6 +23,7 @@ namespace Holders
 
         private IPlayerCharPositionsProvider _playerCharPositionsProvider;
         private RectTransform _topPanelInteriorButtonTransform;
+        private UISettingsCanvasView _settingsCanvasView;
 
         public void RegisterTruckBoxPositionProvider(TruckPointModel model, ITruckBoxPositionsProvider provider)
         {
@@ -151,6 +153,21 @@ namespace Holders
         {
             _topPanelInteriorButtonTransform = null;
         }
+
+        public void RegisterSettingsCanvasView(UISettingsCanvasView settingsCanvasView)
+        {
+            _settingsCanvasView = settingsCanvasView;
+        }
+
+        public UISettingsCanvasView GetSettingsCanvasView()
+        {
+            return _settingsCanvasView;
+        }
+
+        public void UnregisterSettingsCanvasView()
+        {
+            _settingsCanvasView = null;
+        }
     }
 
     public interface ISharedViewsDataHolder
@@ -187,5 +204,10 @@ namespace Holders
         public void RegisterTopPanelInteriorButtonTransform(RectTransform transform);
         public RectTransform GetTopPanelInteriorButtonTransform();
         public void UnregisterTopPanelInteriorButtonTransform();
+        
+        
+        public void RegisterSettingsCanvasView(UISettingsCanvasView settingsCanvasView);
+        public UISettingsCanvasView GetSettingsCanvasView();
+        public void UnregisterSettingsCanvasView();
     }
 }

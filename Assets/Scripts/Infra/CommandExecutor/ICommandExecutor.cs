@@ -7,7 +7,6 @@ namespace Infra.CommandExecutor
         UniTask ExecuteAsync<T>() where T : IAsyncCommand, new();
         UniTask ExecuteAsync<T, TArg>(TArg arg) where T : IAsyncCommand<TArg>, new();
         UniTask<TReturn> ExecuteAsync<T, TReturn>() where T : IAsyncCommandWithResult<TReturn>, new();
-
         UniTask<TReturn> ExecuteAsync<T, TReturn, TArg>(TArg argument)
             where T : IAsyncCommandWithResult<TReturn, TArg>, new();
 

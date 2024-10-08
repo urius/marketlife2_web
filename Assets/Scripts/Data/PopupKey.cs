@@ -4,5 +4,6 @@ namespace Data
     {
         None = 0,
         InteriorPopup = 1,
+        SettingsPopup = 2,
     }
 }

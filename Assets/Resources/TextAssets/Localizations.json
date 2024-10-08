@@ -274,6 +274,61 @@
 			"key": "ads_offer_hire_all_staff",
 			"en": "Hire all staff",
 			"ru": "Нанять всех работников"
+		},
+		{
+			"key": "settings_popup_title",
+			"en": "Settings",
+			"ru": "Настройки"
+		},
+		{
+			"key": "settings_popup_sounds",
+			"en": "Sounds",
+			"ru": "Звуки"
+		},
+		{
+			"key": "settings_popup_music",
+			"en": "Music",
+			"ru": "Звуки"
+		},
+		{
+			"key": "settings_popup_reset_button",
+			"en": "Reset player data",
+			"ru": "Сбросить игровые данные"
+		},
+		{
+			"key": "settings_popup_id",
+			"en": "Id: ",
+			"ru": "Id: "
+		},
+		{
+			"key": "yes_no_popup_title_default",
+			"en": "Confirm",
+			"ru": "Подтверждение"
+		},
+		{
+			"key": "yes_no_popup_message_reset",
+			"en": "All saved data will be deleted. Continue?",
+			"ru": "Сохраненные данные будут удалены. Продолжить?"
+		},
+		{
+			"key": "yes",
+			"en": "Yes",
+			"ru": " Да"
+		},
+		{
+			"key": "no",
+			"en": "No",
+			"ru": "Нет"
+		},
+		{
+			"key": "success",
+			"en": "Success",
+			"ru": "Успех"
+		},
+		{
+			"key": "reset_data_success_message",
+			"en": "Player data deleted. Please relaunch the game",
+			"ru": "Данные удалены. Перезапустите игру"
 		}
 	]
 }

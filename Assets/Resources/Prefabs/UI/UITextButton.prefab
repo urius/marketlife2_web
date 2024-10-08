@@ -198,6 +198,9 @@ MonoBehaviour:
   _greenSkinData:
     SkinSprite: {fileID: 21300000, guid: f8f5885d0130345c68b3da615d2000f9, type: 3}
     TextColor: {r: 0, g: 0, b: 0, a: 1}
+  _blueSkinData:
+    SkinSprite: {fileID: 21300000, guid: 2bfefc618e5ab4f0d86efc808b4ee96c, type: 3}
+    TextColor: {r: 1, g: 1, b: 1, a: 1}
 --- !u!222 &2370918498022155999
 CanvasRenderer:
   m_ObjectHideFlags: 0

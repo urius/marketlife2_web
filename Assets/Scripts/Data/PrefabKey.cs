@@ -36,5 +36,7 @@ namespace Data
         UIAdsOfferMoney,
         UIAdsOfferMoneyMultiplier,
         UIAdsOfferHireAllStaff,
+        UISettingsPopup,
+        UIYesNoPopup,
     }
 }

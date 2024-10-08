@@ -5,6 +5,7 @@ using Infra.Instance;
 using Tools.GameObjectsCache;
 using UnityEngine;
 using UnityEngine.Assertions;
+using Utils;
 
 namespace View
 {
@@ -111,9 +112,7 @@ namespace View
         protected T InstantiatePrefab<T>(PrefabKey prefabKey, Transform transform)
             where T : MonoBehaviour
         {
-            var go = InstantiatePrefab(prefabKey, transform);
-            var result = go.GetComponent<T>();
-            return result;
+            return InstantiateHelper.InstantiatePrefab<T>(prefabKey, transform);
         }
 
         protected GameObject InstantiatePrefab(PrefabKey prefabKey)
@@ -123,12 +122,12 @@ namespace View
         
         protected GameObject InstantiatePrefab(PrefabKey prefabKey, Transform transform)
         {
-            return Instantiate(GetPrefabByKey(prefabKey), transform);
+            return InstantiateHelper.InstantiatePrefab(prefabKey, transform);
         }
 
         protected static GameObject Instantiate(GameObject prefab, Transform transform)
         {
-            return Object.Instantiate(prefab, transform);
+            return InstantiateHelper.Instantiate(prefab, transform);
         }
 
         protected T GetComponentInPrefab<T>(PrefabKey prefabKey)
@@ -141,12 +140,12 @@ namespace View
         
         protected void Destroy(MonoBehaviour monoBehaviour)
         {
-            Destroy(monoBehaviour.gameObject);
+            InstantiateHelper.Destroy(monoBehaviour);
         }
 
         protected void Destroy(GameObject gameObject)
         {
-            Object.Destroy(gameObject);
+            InstantiateHelper.Destroy(gameObject);
         }
 
         protected GameObject GetFromCache(PrefabKey prefabKey, Transform transform)
@@ -227,9 +226,7 @@ namespace View
 
         private GameObject GetPrefabByKey(PrefabKey prefabKey)
         {
-            _prefabsHolder ??= Instance.Get<PrefabsHolderSo>();
-
-            return _prefabsHolder.GetPrefabByKey(prefabKey);
+            return InstantiateHelper.GetPrefabByKey(prefabKey);
         }
     }
 }

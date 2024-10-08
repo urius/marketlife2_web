@@ -2,12 +2,12 @@ namespace Tools.AudioManager
 {
     public class AudioSettingsModel
     {
-        public bool IsAudioMuted { get; private set; }
+        public bool IsSoundsMuted { get; private set; }
         public bool IsMusicMuted { get; private set; }
 
-        public void SetAudioMuted(bool isMuted)
+        public void SetSoundsMuted(bool isMuted)
         {
-            IsAudioMuted = isMuted;
+            IsSoundsMuted = isMuted;
         }
         
         public void SetMusicMuted(bool isMuted)

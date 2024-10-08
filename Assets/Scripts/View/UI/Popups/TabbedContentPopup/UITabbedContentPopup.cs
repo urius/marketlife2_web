@@ -224,6 +224,11 @@ namespace View.UI.Popups.TabbedContentPopup
             _tabButtons[tabIndex].SetNewNotificationVisibility(isVisible);
         }
 
+        public void SetTitleText(string text)
+        {
+            _titleText.text = text;
+        }
+
         private void ProcessScrollForward()
         {
             ProcessItemsAction(TryShowHeadHiddenItem);
@@ -339,11 +344,6 @@ namespace View.UI.Popups.TabbedContentPopup
         private bool ShouldHideItemAtHead(ItemData itemData)
         {
             return -(itemData.EndCoord + _contentTransformPosition.y) < 0;
-        }
-
-        public void SetTitleText(string text)
-        {
-            _titleText.text = text;
         }
 
         private Vector2 SetItemPosition(IUITabbedContentPopupItem item, int itemIndex)

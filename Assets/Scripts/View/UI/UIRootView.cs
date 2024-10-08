@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using View.UI.BottomPanel;
 using View.UI.LeftPanel;
 using View.UI.Popups;
+using View.UI.SettingsCanvas;
 using View.UI.TopPanel;
 using View.UI.Tutorial;
 
@@ -20,6 +21,7 @@ namespace View.UI
         [SerializeField] private UITutorialRootCanvasView _tutorialRootCanvasView;
         [SerializeField] private UIPopupsCanvasRootView _popupsCanvasRootView;
         [SerializeField] private UILeftPanelView _uiLeftPanelView;
+        [SerializeField] private UISettingsCanvasView _settingsCanvasView;
         [SerializeField] private Image _uiLoadingOverlayImage;
 
         public Transform UIGameOverlayPanelTransform => _gamePanelTransform;
@@ -32,6 +34,7 @@ namespace View.UI
         public UITutorialRootCanvasView UITutorialRootCanvasView => _tutorialRootCanvasView;
         public UIPopupsCanvasRootView UIPopupsCanvasRootView => _popupsCanvasRootView;
         public UILeftPanelView UILeftPanelView => _uiLeftPanelView;
+        public UISettingsCanvasView UISettingsCanvasView => _settingsCanvasView;
         public Image UILoadingOverlayImage => _uiLoadingOverlayImage;
 
         public void RemoveLoadingOverlay()

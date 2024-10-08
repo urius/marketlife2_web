@@ -84,7 +84,7 @@ namespace Utils
 
         private static AudioSettingsDto ToAudioSettingsDto(PlayerAudioSettingsModel model)
         {
-            return new AudioSettingsDto(model.IsAudioMuted, model.IsMusicMuted);
+            return new AudioSettingsDto(model.IsSoundsMuted, model.IsMusicMuted);
         }
 
         private static PlayerCharDataDto ToPlayerCharDto(PlayerCharModel model)
@@ -169,7 +169,7 @@ namespace Utils
 
         private static PlayerAudioSettingsModel ToAudioSettingsModel(AudioSettingsDto dto)
         {
-            return new PlayerAudioSettingsModel(dto.IsAudioMuted, dto.IsMusicMuted);
+            return new PlayerAudioSettingsModel(dto.IsSoundsMuted, dto.IsMusicMuted);
         }
 
         private static PlayerCharModel ToPlayerCharModel(PlayerCharDataDto playerCharDataDto)

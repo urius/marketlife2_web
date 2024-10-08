@@ -145,6 +145,7 @@ public class InitScript : MonoBehaviour
         Map<UIInteriorPopupItemClickedEvent, ProcessInteriorPopupItemClickedCommand>();
         Map<UIRequestClosePopupEvent, ProcessClosePopupCommand>();
         Map<UIInteriorPopupTabShownEvent, ProcessInteriorPopupTabShownCommand>();
+        Map<UISettingsButtonClickedEvent, ProcessSettingsButtonClickedCommand>();
     }
 
     private void Map<TEvent, TCommand>()
