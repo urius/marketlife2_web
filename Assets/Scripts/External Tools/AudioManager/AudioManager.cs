@@ -175,7 +175,7 @@ namespace Tools.AudioManager
         {
             if (IsMuteRequested) return 0;
             
-            return _audioSettingsModel.IsMusicMuted ? 0 : 0.5f;
+            return _audioSettingsModel.IsMusicMuted ? 0 : 0.25f;
         }
 
         private float GetSoundsVolume()
