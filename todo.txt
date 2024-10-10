@@ -1,6 +1,4 @@
-More floors content
 Analytics
-Mute buttons (or settings popup)
 
 + Money icon animation on money get
 + Start player position
@@ -12,8 +10,10 @@ Mute buttons (or settings popup)
 + Mute sounds and music buttons
 + Music
 + Saves!
++ Settings popup
 
 --
+More floors content
 More walls content
 Smiles
 Player clothes window
