@@ -119,6 +119,7 @@ namespace Systems
             
             GamePushWrapper.SavePlayerData(Constants.PlayerDataKey, playerDataToSaveStr, needSync: false);
             GamePushWrapper.SavePlayerData(Constants.PlayerScoreKey, _statsModel.TotalMoneyEarned, needSync: false);
+            GamePushWrapper.SyncPlayerData();
 
             Debug.Log($"<color=#39FF00>{nameof(SaveDataSystem)} Save!</color>");
         }
