@@ -228,23 +228,23 @@ namespace View.UI.Popups.DressesPopup
 
             if (itemViewModel.IsBought)
             {
-                itemView.SetButtonText(_localizationProvider.GetLocale(Constants.LocalizationChooseMessageKey));
+                itemView.SetButtonText(itemViewModel.IsChosen
+                    ? _localizationProvider.GetLocale(Constants.LocalizationChosenMessageKey)
+                    : _localizationProvider.GetLocale(Constants.LocalizationChooseMessageKey));
             }
             else if (isUnlockedByLevel)
             {
-                var buyCost =  tabType switch
+                var buyCost = tabType switch
                 {
                     PlayerDressesPopupTabType.TopDresses => CostHelper.GetTopDressCostForLevel(itemLevel),
                     PlayerDressesPopupTabType.BottomDresses => CostHelper.GetBottomDressCostForLevel(itemLevel),
                     PlayerDressesPopupTabType.Hairs => CostHelper.GetHairCostForLevel(itemLevel),
                     PlayerDressesPopupTabType.Glasses => CostHelper.GetGlassesCostForLevel(itemLevel),
                     _ => 1
-                }
+                };
 
-                ;
-                itemView.SetButtonText(itemViewModel.IsBought
-                    ? _localizationProvider.GetLocale(Constants.LocalizationChosenMessageKey)
-                    : $"{FormattingHelper.ToMoneyWithIconText2Format(buyCost)}\n{_localizationProvider.GetLocale(Constants.LocalizationBuyMessageKey)}");
+                itemView.SetButtonText(
+                    $"{FormattingHelper.ToMoneyWithIconText2Format(buyCost)}\n{_localizationProvider.GetLocale(Constants.LocalizationBuyMessageKey)}");
             }
             else
             {

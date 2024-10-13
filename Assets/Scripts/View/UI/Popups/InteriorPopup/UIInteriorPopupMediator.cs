@@ -275,7 +275,9 @@ namespace View.UI.Popups.InteriorPopup
 
             if (itemViewModel.IsBought)
             {
-                itemView.SetButtonText(_localizationProvider.GetLocale(Constants.LocalizationChooseMessageKey));
+                itemView.SetButtonText(itemViewModel.IsChosen
+                    ? _localizationProvider.GetLocale(Constants.LocalizationChosenMessageKey)
+                    : _localizationProvider.GetLocale(Constants.LocalizationChooseMessageKey));
             }
             else if (isUnlockedByLevel)
             {
@@ -283,9 +285,8 @@ namespace View.UI.Popups.InteriorPopup
                     ? CostHelper.GetWallCostForLevel(itemLevel)
                     : CostHelper.GetFloorCostForLevel(itemLevel);
 
-                itemView.SetButtonText(itemViewModel.IsBought
-                    ? _localizationProvider.GetLocale(Constants.LocalizationChosenMessageKey)
-                    : $"{FormattingHelper.ToMoneyWithIconText2Format(buyCost)}\n{_localizationProvider.GetLocale(Constants.LocalizationBuyMessageKey)}");
+                itemView.SetButtonText(
+                    $"{FormattingHelper.ToMoneyWithIconText2Format(buyCost)}\n{_localizationProvider.GetLocale(Constants.LocalizationBuyMessageKey)}");
             }
             else
             {
