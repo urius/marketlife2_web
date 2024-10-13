@@ -29,9 +29,18 @@ MonoBehaviour:
     PlayerCharData:
       CellPosition: {x: 4, y: 1}
       ProductsInBox: 
+      DressesDto:
+        TopDressType: 0
+        BottomDressType: 0
+        HairType: 0
+        GlassesType: 0
+        BoughtTopDresses: 
+        BoughtBottomDresses: 
+        BoughtHairs: 
+        BoughtGlasses: 00000000
     PassedTutorialSteps: 
     AudioSettings:
-      IsAudioMuted: 0
+      IsSoundsMuted: 0
       IsMusicMuted: 0
     UIFlags:
       HaveNewWalls: 0

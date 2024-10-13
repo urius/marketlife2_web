@@ -189,19 +189,23 @@ namespace View.UI.Popups.DressesPopup
                 case PlayerDressesPopupTabType.TopDresses:
                     var sprite2 = _spritesHolder.GetManSpriteByKey(itemViewModel.SecondarySpriteType);
                     itemView.SetupTopDress(sprite, sprite2);
+                    itemView.SetNewNotificationVisibility(itemViewModel.IsNew && _uiFlagsModel.HaveNewTopDresses);
                     break;
                 case PlayerDressesPopupTabType.BottomDresses:
                     itemView.SetupBottomDress(sprite);
+                    itemView.SetNewNotificationVisibility(itemViewModel.IsNew && _uiFlagsModel.HaveNewBottomDresses);
                     break;
                 case PlayerDressesPopupTabType.Hairs:
                     itemView.SetupGlasses(null);
                     sprite = GetHairSprite(itemViewModel.PrimarySpriteType);
                     itemView.SetupHair(sprite);
+                    itemView.SetNewNotificationVisibility(itemViewModel.IsNew && _uiFlagsModel.HaveNewHairs);
                     break;
                 case PlayerDressesPopupTabType.Glasses:
                     itemView.SetupGlasses(sprite);
                     sprite = GetHairSprite(_dressesModel.HairType);
                     itemView.SetupHair(sprite);
+                    itemView.SetNewNotificationVisibility(itemViewModel.IsNew && _uiFlagsModel.HaveNewGlasses);
                     break;
             }
             
