@@ -200,7 +200,7 @@ namespace View.UI.TopPanel
 
         private void UpdateNextLevelMoney()
         {
-            _nextLevelMoneyAmount = _commonGameSettings.GetLevelTargetMoney(_playerModel.Level + 1);
+            _nextLevelMoneyAmount = _commonGameSettings.GetLevelTargetMoney(_playerModel.LevelIndex + 1);
         }
     }
 }
