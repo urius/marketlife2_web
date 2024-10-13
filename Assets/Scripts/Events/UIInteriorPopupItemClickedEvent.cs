@@ -4,9 +4,9 @@ namespace Events
 {
     public struct UIInteriorPopupItemClickedEvent
     {
-        public readonly InteriorPopupItemViewModelBase ItemViewModel;
+        public readonly PopupItemViewModelBase ItemViewModel;
 
-        public UIInteriorPopupItemClickedEvent(InteriorPopupItemViewModelBase itemViewModel)
+        public UIInteriorPopupItemClickedEvent(PopupItemViewModelBase itemViewModel)
         {
             ItemViewModel = itemViewModel;
         }

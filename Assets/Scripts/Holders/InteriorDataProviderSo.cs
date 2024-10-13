@@ -110,6 +110,5 @@ namespace Holders
 
         public InteriorDataFloorItem[] GetFloorItemsByLevel(int level);
         public InteriorDataFloorItem[] GetFloorItemsForNextLevel(int level);
-
     }
 }

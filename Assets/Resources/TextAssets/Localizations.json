@@ -231,6 +231,11 @@
 			"ru": "Здесь можно улучшить дизайн магазина"
 		},
 		{
+			"key": "tutorial_dresses_button_text",
+			"en": "Here you can upgrade player view",
+			"ru": "Здесь можно обновить образ"
+		},
+		{
 			"key": "choose",
 			"en": "Choose",
 			"ru": "Выбрать"
@@ -259,6 +264,31 @@
 			"key": "interior_popup_floors_tab_title",
 			"en": "Floors",
 			"ru": "Полы"
+		},
+		{
+			"key": "dresses_popup_title",
+			"en": "Dresses",
+			"ru": "Образ"
+		},
+		{
+			"key": "dresses_popup_top_dress_tab_title",
+			"en": "Top",
+			"ru": "Верх"
+		},
+		{
+			"key": "dresses_popup_bottom_dress_tab_title",
+			"en": "Top",
+			"ru": "Штаны"
+		},
+		{
+			"key": "dresses_popup_hair_tab_title",
+			"en": "Hair",
+			"ru": "Прическа"
+		},
+		{
+			"key": "dresses_popup_glasses_tab_title",
+			"en": "Glasses",
+			"ru": "Очки"
 		},
 		{
 			"key": "bought",

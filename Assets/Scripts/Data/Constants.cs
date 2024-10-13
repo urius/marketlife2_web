@@ -21,6 +21,7 @@ namespace Data
         public const int HireByAdvertWorkTimeMultiplier = 5;
         public const int CellDistanceToSound = 10;
         public const int SecondsInMinute = 60;
+        public const int ManUISpriteKeyOffset = 1000;
         public const string AssetBundleUpliftMusicName = "music_uplift";
         public const string PlayerDataKey = "data";
         public const string PlayerScoreKey = "score";
@@ -52,12 +53,18 @@ namespace Data
         public const string LocalizationTutorialHireCashDeskStaffMessageKey = "tutorial_hire_cash_desk_staff_text";
         public const string LocalizationTutorialUpgradeTruckPointMessageKey = "tutorial_upgrade_truck_point_text";
         public const string LocalizationTutorialInteriorButtonMessageKey = "tutorial_interior_button_text";
+        public const string LocalizationTutorialDressesButtonMessageKey = "tutorial_dresses_button_text";
         public const string LocalizationChooseMessageKey = "choose";
         public const string LocalizationChosenMessageKey = "choosen";
         public const string LocalizationBuyMessageKey = "buy";
         public const string LocalizationInteriorPopupTitleKey = "interior_popup_title";
         public const string LocalizationInteriorPopupWallsTabTitleKey = "interior_popup_wall_tab_title";
         public const string LocalizationInteriorPopupFloorsTabTitleKey = "interior_popup_floors_tab_title";
+        public const string LocalizationDressesPopupTitleKey = "dresses_popup_title";
+        public const string LocalizationDressesPopupTopDressTabTitleKey = "dresses_popup_top_dress_tab_title";
+        public const string LocalizationDressesPopupBottomDressTabTitleKey = "dresses_popup_bottom_dress_tab_title";
+        public const string LocalizationDressesPopupHairTabTitleKey = "dresses_popup_hair_tab_title";
+        public const string LocalizationDressesPopupGlassesTabTitleKey = "dresses_popup_glasses_tab_title";
         public const string LocalizationKeyBought = "bought";
         public const string LocalizationKeyMinutesShort = "minutes_short";
         public const string LocalizationKeyAdsOfferHireAllStaff = "ads_offer_hire_all_staff";

@@ -24,7 +24,7 @@ namespace View.UI.Popups.InteriorPopup
         private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
         private readonly IAudioPlayer _audioPlayer = Instance.Get<IAudioPlayer>();
 
-        private readonly Dictionary<UIInteriorPopupItemView, InteriorPopupItemViewModelBase> _viewModelByView = new();
+        private readonly Dictionary<UIInteriorPopupItemView, PopupItemViewModelBase> _viewModelByView = new();
         private readonly InteriorItemType[] _tabTypes = { InteriorItemType.Wall, InteriorItemType.Floor };
         
         private UITabbedContentPopup _popupView;
@@ -53,6 +53,20 @@ namespace View.UI.Popups.InteriorPopup
             ShowTab(0);
 
             Appear().Forget();
+        }
+
+        protected override void UnmediateInternal()
+        {
+            _eventBus.Dispatch(new RequestGamePauseEvent(nameof(UIInteriorPopupMediator), false));
+            
+            Unsubscribe();
+            
+            RemoveItemViews();
+            
+            Destroy(_popupView);
+            _popupView = null;
+            
+            ClearCache(PrefabKey.UIInteriorPopupItem);
         }
 
         private async UniTaskVoid Appear()
@@ -97,20 +111,6 @@ namespace View.UI.Popups.InteriorPopup
                 };
                 _popupView.AddTab(_localizationProvider.GetLocale(tabTitleKey));
             }
-        }
-
-        protected override void UnmediateInternal()
-        {
-            _eventBus.Dispatch(new RequestGamePauseEvent(nameof(UIInteriorPopupMediator), false));
-            
-            Unsubscribe();
-            
-            RemoveItemViews();
-            
-            Destroy(_popupView);
-            _popupView = null;
-            
-            ClearCache(PrefabKey.UIInteriorPopupItem);
         }
 
         private void Subscribe()
@@ -177,7 +177,7 @@ namespace View.UI.Popups.InteriorPopup
             ShowTab(index);
         }
 
-        private void OnItemBought(InteriorPopupItemViewModelBase itemViewModel)
+        private void OnItemBought(PopupItemViewModelBase itemViewModel)
         {
             UpdateItemViewStates();
 
@@ -192,7 +192,7 @@ namespace View.UI.Popups.InteriorPopup
             }
         }
 
-        private void OnItemChosen(InteriorPopupItemViewModelBase itemViewModel)
+        private void OnItemChosen(PopupItemViewModelBase itemViewModel)
         {
             UpdateItemViewStates();
         }
@@ -205,7 +205,7 @@ namespace View.UI.Popups.InteriorPopup
             }
         }
 
-        private void ShowContent(IReadOnlyList<InteriorPopupItemViewModelBase> viewModels,
+        private void ShowContent(IReadOnlyList<PopupItemViewModelBase> viewModels,
             InteriorItemType interiorItemType)
         {
             _currentShowingInteriorItemType = interiorItemType;
@@ -239,7 +239,7 @@ namespace View.UI.Popups.InteriorPopup
         }
 
         private void SetupItemView(
-            UIInteriorPopupItemView itemView, InteriorPopupItemViewModelBase itemViewModel, InteriorItemType interiorItemType)
+            UIInteriorPopupItemView itemView, PopupItemViewModelBase itemViewModel, InteriorItemType interiorItemType)
         {
             switch (interiorItemType)
             {
@@ -264,9 +264,10 @@ namespace View.UI.Popups.InteriorPopup
             UpdateItemViewState(itemView, itemViewModel, interiorItemType);
         }
 
-        private void UpdateItemViewState(UIInteriorPopupItemView itemView, InteriorPopupItemViewModelBase itemViewModel,
+        private void UpdateItemViewState(UIInteriorPopupItemView itemView, PopupItemViewModelBase itemViewModel,
             InteriorItemType interiorItemType)
         {
+            var itemLevel = itemViewModel.UnlockLevel;
             var isUnlockedByLevel = itemViewModel.UnlockLevel <= _playerModel.Level;
 
             itemView.SetLockVisibility(!isUnlockedByLevel);
@@ -279,8 +280,8 @@ namespace View.UI.Popups.InteriorPopup
             else if (isUnlockedByLevel)
             {
                 var buyCost = interiorItemType == InteriorItemType.Wall
-                    ? InteriorCostHelper.GetWallCostForLevel(_playerModel.Level)
-                    : InteriorCostHelper.GetFloorCostForLevel(_playerModel.Level);
+                    ? CostHelper.GetWallCostForLevel(itemLevel)
+                    : CostHelper.GetFloorCostForLevel(itemLevel);
 
                 itemView.SetButtonText(itemViewModel.IsBought
                     ? _localizationProvider.GetLocale(Constants.LocalizationChosenMessageKey)
@@ -289,7 +290,7 @@ namespace View.UI.Popups.InteriorPopup
             else
             {
                 itemView.SetButtonText(
-                    $"{Constants.TextIconStar} {_localizationProvider.GetLocale(Constants.LocalizationKeyLevel)} {itemViewModel.UnlockLevel}");
+                    $"{Constants.TextIconStar} {_localizationProvider.GetLocale(Constants.LocalizationKeyLevel)} {itemLevel}");
             }
         }
 

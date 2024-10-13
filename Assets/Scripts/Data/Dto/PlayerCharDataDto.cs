@@ -8,11 +8,16 @@ namespace Data.Dto
     {
         public Vector2Int CellPosition;
         public int[] ProductsInBox;
+        public PlayerDressesDto DressesDto;
 
-        public PlayerCharDataDto(Vector2Int cellPosition, int[] productsInBox)
+        public PlayerCharDataDto(
+            Vector2Int cellPosition,
+            int[] productsInBox,
+            PlayerDressesDto dressesDto)
         {
             CellPosition = cellPosition;
             ProductsInBox = productsInBox;
+            DressesDto = dressesDto;
         }
     }
 }

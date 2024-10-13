@@ -25,12 +25,12 @@ namespace Commands
             if (itemViewModel.IsBought == false 
                 && itemViewModel.UnlockLevel <= playerModel.Level)
             {
-                var level = playerModel.Level;
+                var itemLevel = itemViewModel.UnlockLevel;
                 
                 var cost = itemViewModel switch
                 {
-                    InteriorPopupWallItemViewModel => InteriorCostHelper.GetWallCostForLevel(level),
-                    InteriorPopupFloorItemViewModel => InteriorCostHelper.GetFloorCostForLevel(level),
+                    InteriorPopupWallItemViewModel => CostHelper.GetWallCostForLevel(itemLevel),
+                    InteriorPopupFloorItemViewModel => CostHelper.GetFloorCostForLevel(itemLevel),
                     _ => 999
                 };
 

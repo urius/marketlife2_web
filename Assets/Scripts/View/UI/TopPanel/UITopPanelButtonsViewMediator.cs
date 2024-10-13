@@ -14,6 +14,7 @@ namespace View.UI.TopPanel
     {
         private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
         private readonly IInteriorDataProvider _interiorDataProvider = Instance.Get<IInteriorDataProvider>();
+        private readonly IPlayerDressesDataProvider _dressesDataProvider = Instance.Get<IPlayerDressesDataProvider>();
         private readonly IPlayerModelHolder _playerModelHolder = Instance.Get<IPlayerModelHolder>();
         private readonly IPlayerFocusProvider _playerFocusProvider = Instance.Get<IPlayerFocusProvider>();
         private readonly IUpdatesProvider _updatesProvider = Instance.Get<IUpdatesProvider>();
@@ -23,6 +24,7 @@ namespace View.UI.TopPanel
         private UITopPanelButtonsView _buttonsView;
         private PlayerModel _playerModel;
         private UITopPanelButtonView _interiorButton;
+        private UITopPanelButtonView _dressesButton;
         private PlayerUIFlagsModel _uiFlagsModel;
         private UISettingsCanvasView _settingsCanvasView;
 
@@ -33,14 +35,21 @@ namespace View.UI.TopPanel
             
             _buttonsView = TargetTransform.GetComponent<UITopPanelButtonsView>();
             _interiorButton = _buttonsView.InteriorButton;
+            _dressesButton = _buttonsView.DressesButton;
             _settingsCanvasView = _sharedViewsDataHolder.GetSettingsCanvasView();
             
             _sharedViewsDataHolder.RegisterTopPanelInteriorButtonTransform(_interiorButton.RectTransform);
+            _sharedViewsDataHolder.RegisterTopPanelDressesButtonTransform(_dressesButton.RectTransform);
 
             var shouldShowInteriorButton = ShouldShowInteriorButton();
             UpdateInteriorButtonNewNotificationVisibility();
             _interiorButton.SetVisibility(shouldShowInteriorButton);
             SetInteriorButtonShownSharedFlag(shouldShowInteriorButton);
+            
+            var shouldShowDressesButton = ShouldShowDressesButton();
+            UpdateDressesButtonNewNotificationVisibility();
+            _dressesButton.SetVisibility(shouldShowDressesButton);
+            SetDressesButtonShownSharedFlag(shouldShowInteriorButton);
             
             Subscribe();
         }
@@ -50,10 +59,19 @@ namespace View.UI.TopPanel
             return _interiorDataProvider.GetWallItemsByLevel(_playerModel.Level).Length > 1
                    || _interiorDataProvider.GetFloorItemsByLevel(_playerModel.Level).Length > 1;
         }
+        
+        private bool ShouldShowDressesButton()
+        {
+            return _dressesDataProvider.GetTopBodyItemsByLevel(_playerModel.Level).Length > 1
+                   || _dressesDataProvider.GetBottomBodyItemsByLevel(_playerModel.Level).Length > 1
+                   || _dressesDataProvider.GetHairItemsByLevel(_playerModel.Level).Length > 1
+                   || _dressesDataProvider.GetGlassItemsByLevel(_playerModel.Level).Length > 1;
+        }
 
         protected override void UnmediateInternal()
         {
             _sharedViewsDataHolder.UnregisterTopPanelInteriorButtonTransform();
+            _sharedViewsDataHolder.UnregisterTopPanelDressesButtonTransform();
             
             Unsubscribe();
             
@@ -65,9 +83,11 @@ namespace View.UI.TopPanel
             _playerModel.LevelChanged += OnLevelChanged;
             _uiFlagsModel.FloorsFlagChanged += OnFloorsFlagChanged;
             _uiFlagsModel.WallsFlagChanged += OnWallsFlagChanged;
+            _uiFlagsModel.DressesFlagChanged += OnDressesFlagChanged;
             _settingsCanvasView.SettingsButtonClicked += OnSettingsButtonClicked;
             
             _interiorButton.Clicked += OnInteriorButtonClicked;
+            _dressesButton.Clicked += OnDressesButtonClicked;
         }
 
         private void Unsubscribe()
@@ -75,9 +95,11 @@ namespace View.UI.TopPanel
             _playerModel.LevelChanged -= OnLevelChanged;
             _uiFlagsModel.FloorsFlagChanged -= OnFloorsFlagChanged;
             _uiFlagsModel.WallsFlagChanged -= OnWallsFlagChanged;
+            _uiFlagsModel.DressesFlagChanged -= OnDressesFlagChanged;
             _settingsCanvasView.SettingsButtonClicked -= OnSettingsButtonClicked;
 
             _interiorButton.Clicked -= OnInteriorButtonClicked;
+            _dressesButton.Clicked -= OnDressesButtonClicked;
         }
 
         private void OnSettingsButtonClicked()
@@ -101,6 +123,21 @@ namespace View.UI.TopPanel
             _interiorButton.SetNewNotificationVisibility(isNewNotificationVisible);
         }
 
+        private void OnDressesFlagChanged()
+        {
+            UpdateDressesButtonNewNotificationVisibility();
+        }
+
+        private void UpdateDressesButtonNewNotificationVisibility()
+        {
+            var isNewNotificationVisible = _uiFlagsModel.HaveNewTopDresses ||
+                                           _uiFlagsModel.HaveNewBottomDresses ||
+                                           _uiFlagsModel.HaveNewHairs ||
+                                           _uiFlagsModel.HaveNewGlasses;
+            
+            _dressesButton.SetNewNotificationVisibility(isNewNotificationVisible);
+        }
+
         private void OnLevelChanged(int level)
         {
             if (_buttonsView.InteriorButton.IsVisible == false
@@ -108,6 +145,13 @@ namespace View.UI.TopPanel
             {
                 _updatesProvider.GameplayQuarterSecondPassed -= OnShowInteriorButtonQuarterSecondPassed;
                 _updatesProvider.GameplayQuarterSecondPassed += OnShowInteriorButtonQuarterSecondPassed;
+            }
+            
+            if (_buttonsView.DressesButton.IsVisible == false
+                && ShouldShowDressesButton())
+            {
+                _updatesProvider.GameplayQuarterSecondPassed -= OnShowDressesButtonQuarterSecondPassed;
+                _updatesProvider.GameplayQuarterSecondPassed += OnShowDressesButtonQuarterSecondPassed;
             }
         }
 
@@ -118,24 +162,36 @@ namespace View.UI.TopPanel
                 _updatesProvider.GameplayQuarterSecondPassed -= OnShowInteriorButtonQuarterSecondPassed;
 
                 _interiorButton.SetVisibility(isVisible: true);
-                
-                AnimateAppearing().Forget();
+
+                AnimateAppearing(_interiorButton.RectTransform)
+                    .ContinueWith(() => SetInteriorButtonShownSharedFlag(true));
+            }
+        }
+        
+        private void OnShowDressesButtonQuarterSecondPassed()
+        {
+            if (_playerFocusProvider.IsPlayerFocused)
+            {
+                _updatesProvider.GameplayQuarterSecondPassed -= OnShowDressesButtonQuarterSecondPassed;
+
+                _dressesButton.SetVisibility(isVisible: true);
+
+                AnimateAppearing(_dressesButton.RectTransform)
+                    .ContinueWith(() => SetDressesButtonShownSharedFlag(true));
             }
         }
 
-        private async UniTaskVoid AnimateAppearing()
+        private UniTask AnimateAppearing(RectTransform rectTransform)
         {
-            var currentPos = _interiorButton.RectTransform.anchoredPosition;
+            var currentPos = rectTransform.anchoredPosition;
             var targetY = currentPos.y;
 
-            _interiorButton.RectTransform.anchoredPosition = new Vector2(currentPos.x, targetY + 50);
-            var (moveTask, descr) = LeanTweenHelper.MoveYAsync(_interiorButton.RectTransform, targetY, 0.8f);
+            rectTransform.anchoredPosition = new Vector2(currentPos.x, targetY + 50);
+            var (moveTask, descr) = LeanTweenHelper.MoveYAsync(rectTransform, targetY, 0.8f);
             
             descr.setEaseOutBounce();
 
-            await moveTask;
-
-            SetInteriorButtonShownSharedFlag(true);
+            return moveTask;
         }
 
         private void SetInteriorButtonShownSharedFlag(bool value)
@@ -143,9 +199,19 @@ namespace View.UI.TopPanel
             _sharedFlagsHolder.Set(SharedFlagKey.UITopPanelInteriorButtonShown, value);
         }
 
+        private void SetDressesButtonShownSharedFlag(bool value)
+        {
+            _sharedFlagsHolder.Set(SharedFlagKey.UITopPanelDressesButtonShown, value);
+        }
+
         private void OnInteriorButtonClicked()
         {
             _eventBus.Dispatch(new UIInteriorButtonClickedEvent());
+        }
+
+        private void OnDressesButtonClicked()
+        {
+            _eventBus.Dispatch(new UIDressesButtonClickedEvent());
         }
     }
 }

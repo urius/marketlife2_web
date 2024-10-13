@@ -1,0 +1,99 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 221ab078fc654ff3ad80b49d62639c85, type: 3}
+  m_Name: PlayerDressesDataProviderSo
+  m_EditorClassIdentifier: 
+  _topBodyItems:
+  - Level: 1
+    PrimarySpriteKey: 3
+    SecondarySpriteKey: 203
+  - Level: 4
+    PrimarySpriteKey: 1
+    SecondarySpriteKey: 201
+  - Level: 5
+    PrimarySpriteKey: 2
+    SecondarySpriteKey: 202
+  - Level: 6
+    PrimarySpriteKey: 5
+    SecondarySpriteKey: 205
+  - Level: 7
+    PrimarySpriteKey: 4
+    SecondarySpriteKey: 204
+  - Level: 9
+    PrimarySpriteKey: 6
+    SecondarySpriteKey: 206
+  - Level: 10
+    PrimarySpriteKey: 7
+    SecondarySpriteKey: 207
+  _bottomBodyItems:
+  - Level: 1
+    PrimarySpriteKey: 103
+    SecondarySpriteKey: 0
+  - Level: 4
+    PrimarySpriteKey: 101
+    SecondarySpriteKey: 0
+  - Level: 5
+    PrimarySpriteKey: 102
+    SecondarySpriteKey: 0
+  - Level: 6
+    PrimarySpriteKey: 105
+    SecondarySpriteKey: 0
+  - Level: 7
+    PrimarySpriteKey: 104
+    SecondarySpriteKey: 0
+  - Level: 9
+    PrimarySpriteKey: 106
+    SecondarySpriteKey: 0
+  - Level: 10
+    PrimarySpriteKey: 207
+    SecondarySpriteKey: 0
+  _hairItems:
+  - Level: 1
+    PrimarySpriteKey: 402
+    SecondarySpriteKey: 0
+  - Level: 4
+    PrimarySpriteKey: 401
+    SecondarySpriteKey: 0
+  - Level: 5
+    PrimarySpriteKey: 403
+    SecondarySpriteKey: 0
+  - Level: 7
+    PrimarySpriteKey: 404
+    SecondarySpriteKey: 0
+  - Level: 9
+    PrimarySpriteKey: 405
+    SecondarySpriteKey: 0
+  - Level: 11
+    PrimarySpriteKey: 406
+    SecondarySpriteKey: 0
+  - Level: 13
+    PrimarySpriteKey: 407
+    SecondarySpriteKey: 0
+  - Level: 15
+    PrimarySpriteKey: 408
+    SecondarySpriteKey: 0
+  _glassItems:
+  - Level: 1
+    PrimarySpriteKey: 0
+    SecondarySpriteKey: 0
+  - Level: 4
+    PrimarySpriteKey: 301
+    SecondarySpriteKey: 0
+  - Level: 5
+    PrimarySpriteKey: 302
+    SecondarySpriteKey: 0
+  - Level: 6
+    PrimarySpriteKey: 303
+    SecondarySpriteKey: 0
+  - Level: 8
+    PrimarySpriteKey: 304
+    SecondarySpriteKey: 0

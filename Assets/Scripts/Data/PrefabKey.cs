@@ -1,6 +1,7 @@
 namespace Data
 {
-    public enum PrefabKey
+    public enum 
+        PrefabKey
     {
         Wall,
         UIInputMovingControl,
@@ -38,5 +39,6 @@ namespace Data
         UIAdsOfferHireAllStaff,
         UISettingsPopup,
         UIYesNoPopup,
+        UIDressesPopupItem,
     }
 }

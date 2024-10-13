@@ -37,5 +37,13 @@ namespace Data
         Hair7,
         Hair8,
         SantaHat = 501,
+        UIHair1 = Hair1 + Constants.ManUISpriteKeyOffset,
+        UIHair2,
+        UIHair3,
+        UIHair4,
+        UIHair5,
+        UIHair6,
+        UIHair7,
+        UIHair8,
     }
 }

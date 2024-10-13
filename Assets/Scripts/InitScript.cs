@@ -31,6 +31,7 @@ public class InitScript : MonoBehaviour
     [SerializeField] private BuildPointsDataHolderSo _buildPointsDataHolder;
     [SerializeField] private TruckPointsSettingsProviderSo _truckPointsSettingsProvider;
     [SerializeField] private InteriorDataProviderSo _interiorDataProviderSo;
+    [SerializeField] private PlayerDressesDataProviderSo _playerDressesDataProvider;
     [SerializeField] private UpdatesProvider _updatesProvider;
     [SerializeField] private GameObjectsCache _gameObjectsCache;
     [SerializeField] private AudioManager _audioManager;
@@ -109,6 +110,7 @@ public class InitScript : MonoBehaviour
         SetupInstance.From(_buildPointsDataHolder).AsSelf();
         SetupInstance.From(_truckPointsSettingsProvider).AsSelf();
         SetupInstance.From(_interiorDataProviderSo).As<IInteriorDataProvider>();
+        SetupInstance.From(_playerDressesDataProvider).As<IPlayerDressesDataProvider>();
         SetupInstance.From(_gameObjectsCache).As<IGameObjectsCache>();
         SetupInstance.From(_commonGameSettings).As<ICommonGameSettings>();
         SetupInstance.From(_localizationsHolder).As<ILocalizationProvider>();
@@ -141,10 +143,13 @@ public class InitScript : MonoBehaviour
     private void MapEventsToCommands()
     {
         Map<UIShelfUpgradeClickedEvent, UpgradeShelfCommand>();
+        Map<UIRequestClosePopupEvent, ProcessClosePopupCommand>();
         Map<UIInteriorButtonClickedEvent, ShowInteriorPopupCommand>();
         Map<UIInteriorPopupItemClickedEvent, ProcessInteriorPopupItemClickedCommand>();
-        Map<UIRequestClosePopupEvent, ProcessClosePopupCommand>();
         Map<UIInteriorPopupTabShownEvent, ProcessInteriorPopupTabShownCommand>();
+        Map<UIDressesButtonClickedEvent, ShowDressesPopupCommand>();
+        Map<UIDressesPopupItemClickedEvent, ProcessDressesPopupItemClickedCommand>();
+        Map<UIDressesPopupTabShownEvent, ProcessDressesPopupTabShownCommand>();
         Map<UISettingsButtonClickedEvent, ProcessSettingsButtonClickedCommand>();
     }
 

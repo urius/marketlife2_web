@@ -29,6 +29,7 @@ namespace Systems
         private PlayerStatsModel _statsModel;
         private int _secondsSinceLastSave;
         private PlayerAudioSettingsModel _audioSettingsModel;
+        private PlayerDressesModel _dressesModel;
 
         public void Start()
         {
@@ -36,6 +37,7 @@ namespace Systems
             _audioSettingsModel = _playerModelHolder.PlayerModel.AudioSettingsModel;
             _shopModel = _playerModelHolder.PlayerModel.ShopModel;
             _statsModel = _playerModel.StatsModel;
+            _dressesModel = _playerModel.PlayerCharModel.DressesModel;
 
             Subscribe();
         }
@@ -55,6 +57,14 @@ namespace Systems
             _playerModel.MoneyEarnModifierAdded += OnMoneyEarnModifierAdded;
             _audioSettingsModel.MusicMutedStateChanged += OnMusicMutedStateChanged;
             _audioSettingsModel.SoundsMutedStateChanged += OnSoundsMutedStateChanged;
+            _dressesModel.TopDressTypeChanged += OnDressModelUpdate;
+            _dressesModel.BottomDressTypeChanged += OnDressModelUpdate;
+            _dressesModel.HairTypeChanged += OnDressModelUpdate;
+            _dressesModel.GlassesTypeChanged += OnDressModelUpdate;
+            _dressesModel.TopDressBought += OnDressModelUpdate;
+            _dressesModel.BottomDressBought += OnDressModelUpdate;
+            _dressesModel.HairBought += OnDressModelUpdate;
+            _dressesModel.GlassesBought += OnDressModelUpdate;
             _updatesProvider.RealtimeSecondPassed += OnRealtimeSecondPassed;
 
             _eventBus.Subscribe<StaffHiredEvent>(OnStaffHiredEvent);
@@ -73,6 +83,14 @@ namespace Systems
             _playerModel.MoneyEarnModifierAdded -= OnMoneyEarnModifierAdded;
             _audioSettingsModel.MusicMutedStateChanged -= OnMusicMutedStateChanged;
             _audioSettingsModel.SoundsMutedStateChanged -= OnSoundsMutedStateChanged;
+            _dressesModel.TopDressTypeChanged -= OnDressModelUpdate;
+            _dressesModel.BottomDressTypeChanged -= OnDressModelUpdate;
+            _dressesModel.HairTypeChanged -= OnDressModelUpdate;
+            _dressesModel.GlassesTypeChanged -= OnDressModelUpdate;
+            _dressesModel.TopDressBought -= OnDressModelUpdate;
+            _dressesModel.BottomDressBought -= OnDressModelUpdate;
+            _dressesModel.HairBought -= OnDressModelUpdate;
+            _dressesModel.GlassesBought -= OnDressModelUpdate;
             _updatesProvider.RealtimeSecondPassed -= OnRealtimeSecondPassed;
             
             _eventBus.Unsubscribe<StaffHiredEvent>(OnStaffHiredEvent);
@@ -122,6 +140,11 @@ namespace Systems
             GamePushWrapper.SyncPlayerData();
 
             Debug.Log($"<color=#39FF00>{nameof(SaveDataSystem)} Save!</color>");
+        }
+
+        private void OnDressModelUpdate(ManSpriteType _)
+        {
+            ChargeNeedSaveFlag();
         }
 
         private void OnTruckPointUpgradedEvent(TruckPointUpgradedEvent e)

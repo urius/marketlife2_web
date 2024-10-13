@@ -4,6 +4,7 @@ namespace Data
     {
         Undefined,
         UITopPanelInteriorButtonShown,
+        UITopPanelDressesButtonShown,
         IsGamePaused,
     }
 }

@@ -7,8 +7,8 @@ namespace Model.Popups
 {
     public class InteriorPopupViewModel : PopupViewModelBase
     {
-        public event Action<InteriorPopupItemViewModelBase> ItemBought;
-        public event Action<InteriorPopupItemViewModelBase> ItemChosen;
+        public event Action<PopupItemViewModelBase> ItemBought;
+        public event Action<PopupItemViewModelBase> ItemChosen;
 
         public readonly IReadOnlyList<InteriorPopupFloorItemViewModel> FloorItemViewModels;
         public readonly IReadOnlyList<InteriorPopupWallItemViewModel> WallItemViewModels;
@@ -33,7 +33,7 @@ namespace Model.Popups
             Unsubscribe();
         }
 
-        private void SetWallIsChosen(InteriorPopupItemViewModelBase itemViewModel)
+        private void SetWallIsChosen(PopupItemViewModelBase itemViewModel)
         {
             foreach (var wallItemViewModel in WallItemViewModels)
             {
@@ -45,7 +45,7 @@ namespace Model.Popups
             ItemChosen?.Invoke(itemViewModel);
         }
 
-        private void SetFloorIsChosen(InteriorPopupItemViewModelBase itemViewModel)
+        private void SetFloorIsChosen(PopupItemViewModelBase itemViewModel)
         {
             foreach (var floorItemViewModel in FloorItemViewModels)
             {
@@ -57,7 +57,7 @@ namespace Model.Popups
             ItemChosen?.Invoke(itemViewModel);
         }
 
-        private void SetItemBought(InteriorPopupItemViewModelBase itemViewModel)
+        private void SetItemBought(PopupItemViewModelBase itemViewModel)
         {
             itemViewModel.IsBought = true;
 
@@ -105,7 +105,7 @@ namespace Model.Popups
         }
     }
 
-    public class InteriorPopupWallItemViewModel : InteriorPopupItemViewModelBase
+    public class InteriorPopupWallItemViewModel : PopupItemViewModelBase
     {
         public readonly WallType WallType;
         
@@ -117,7 +117,7 @@ namespace Model.Popups
         }
     }
 
-    public class InteriorPopupFloorItemViewModel : InteriorPopupItemViewModelBase
+    public class InteriorPopupFloorItemViewModel : PopupItemViewModelBase
     {
         public readonly FloorType FloorType;
         
@@ -126,23 +126,6 @@ namespace Model.Popups
             : base(unlockLevel, isBought, isChosen, isNew)
         {
             FloorType = floorType;
-        }
-    }
-    
-    public abstract class InteriorPopupItemViewModelBase
-    {
-        public readonly int UnlockLevel;
-        public readonly bool IsNew;
-
-        public bool IsBought;
-        public bool IsChosen;
-
-        protected InteriorPopupItemViewModelBase(int unlockLevel, bool isBought, bool isChosen, bool isNew)
-        {
-            UnlockLevel = unlockLevel;
-            IsBought = isBought;
-            IsChosen = isChosen;
-            IsNew = isNew;
         }
     }
 }

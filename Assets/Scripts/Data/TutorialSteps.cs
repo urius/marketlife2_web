@@ -21,6 +21,7 @@ namespace Data
             new TutorialStep[]
             {
                 TutorialStep.OpenInteriorPopup,
+                TutorialStep.OpenDressesPopup,
             },
             new TutorialStep[]
             {
@@ -44,5 +45,6 @@ namespace Data
         HireCashDeskStaff = 11,
         UpgradeTruckPoint = 12,
         OpenInteriorPopup = 13,
+        OpenDressesPopup = 14,
     }
 }

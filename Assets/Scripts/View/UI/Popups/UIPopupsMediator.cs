@@ -5,6 +5,7 @@ using Holders;
 using Infra.Instance;
 using Model.Popups;
 using UnityEngine;
+using View.UI.Popups.DressesPopup;
 using View.UI.Popups.InteriorPopup;
 using View.UI.Popups.SettingsPopup;
 
@@ -72,6 +73,9 @@ namespace View.UI.Popups
                     break;
                 case PopupKey.SettingsPopup:
                     MediatePopupInternal<UISettingsPopupController, SettingsPopupViewModel>(popupViewModel);
+                    break;
+                case PopupKey.PlayerDressesPopup:
+                    MediatePopupInternal<UIDressesPopupMediator, PlayerDressesPopupViewModel>(popupViewModel);
                     break;
                 default:
                     UpdateCanvasActivity();

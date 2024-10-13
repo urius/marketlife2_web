@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Data;
@@ -14,8 +15,8 @@ namespace Utils
 {
     public static class DataConverter
     {
-        private static readonly IShelfUpgradeSettingsProvider _shelfSettingsProvider = Instance.Get<IShelfUpgradeSettingsProvider>();
-        private static readonly TruckPointsSettingsProviderSo _truckPointsSettingsProvider = Instance.Get<TruckPointsSettingsProviderSo>();
+        private static readonly IShelfUpgradeSettingsProvider ShelfSettingsProvider = Instance.Get<IShelfUpgradeSettingsProvider>();
+        private static readonly TruckPointsSettingsProviderSo TruckPointsSettingsProvider = Instance.Get<TruckPointsSettingsProviderSo>();
         
         public static PlayerModel ToPlayerModel(this PlayerDataDto dataDto)
         {
@@ -89,7 +90,23 @@ namespace Utils
 
         private static PlayerCharDataDto ToPlayerCharDto(PlayerCharModel model)
         {
-            return new PlayerCharDataDto(model.CellPosition, ToProductsDto(model.ProductsInBox));
+            return new PlayerCharDataDto(
+                model.CellPosition,
+                ToProductsDto(model.ProductsInBox),
+                ToDressesDto(model.DressesModel));
+        }
+
+        private static PlayerDressesDto ToDressesDto(PlayerDressesModel dressesModel)
+        {
+            return new PlayerDressesDto(
+                dressesModel.TopDressType,
+                dressesModel.BottomDressType,
+                dressesModel.HairType,
+                dressesModel.GlassesType,
+                dressesModel.BoughtTopDresses.ToArray(),
+                dressesModel.BoughtBottomDresses.ToArray(),
+                dressesModel.BoughtHairs.ToArray(),
+                dressesModel.BoughtGlasses.ToArray());
         }
 
         private static ShopDataDto ToShopDataDto(ShopModel shopModel)
@@ -174,7 +191,28 @@ namespace Utils
 
         private static PlayerCharModel ToPlayerCharModel(PlayerCharDataDto playerCharDataDto)
         {
-            return new PlayerCharModel(playerCharDataDto.CellPosition, ToProductTypes(playerCharDataDto.ProductsInBox));
+            return new PlayerCharModel(
+                playerCharDataDto.CellPosition,
+                ToProductTypes(playerCharDataDto.ProductsInBox),
+                ToDressesModel(playerCharDataDto.DressesDto));
+        }
+
+        private static PlayerDressesModel ToDressesModel(PlayerDressesDto dressesDto)
+        {
+            var topDressType = dressesDto.TopDressType == default ? ManSpriteType.Clothes3 : dressesDto.TopDressType;
+            var bottomDressType = dressesDto.BottomDressType == default ? ManSpriteType.FootClothes3 : dressesDto.BottomDressType;
+            var hairType = dressesDto.HairType == default ? ManSpriteType.Hair2 : dressesDto.HairType;
+            var glassesType = dressesDto.GlassesType == default ? ManSpriteType.Glasses1 : dressesDto.GlassesType;
+
+            return new PlayerDressesModel(
+                topDressType,
+                bottomDressType,
+                hairType,
+                glassesType,
+                dressesDto.BoughtTopDresses ?? Array.Empty<ManSpriteType>(),
+                dressesDto.BoughtBottomDresses ?? Array.Empty<ManSpriteType>(),
+                dressesDto.BoughtHairs ?? Array.Empty<ManSpriteType>(),
+                dressesDto.BoughtGlasses ?? Array.Empty<ManSpriteType>());
         }
 
         private static ShopModel ToShopModel(ShopDataDto shopDataDto)
@@ -227,7 +265,7 @@ namespace Utils
 
         private static TruckPointModel ToTruckPointModel(TruckPointDto dto, int truckPointIndex)
         {
-            if (_truckPointsSettingsProvider.TryGetSettingByTruckPointIndex(truckPointIndex,
+            if (TruckPointsSettingsProvider.TryGetSettingByTruckPointIndex(truckPointIndex,
                     out var truckPointSetting))
             {
                 return new TruckPointModel(dto.CellCoords,
@@ -253,7 +291,7 @@ namespace Utils
 
         private static ShopObjectModelBase ToShelfModel(ShelfDto dto)
         {
-            if (_shelfSettingsProvider.TryGetShelfUpgradeSetting(dto.ShelfType, dto.UpgradeIndex,
+            if (ShelfSettingsProvider.TryGetShelfUpgradeSetting(dto.ShelfType, dto.UpgradeIndex,
                     out var shelfSettings))
             {
                 return new ShelfModel(

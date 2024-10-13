@@ -14,6 +14,7 @@ namespace Systems
         private readonly IPlayerModelHolder _playerModelHolder = Instance.Get<IPlayerModelHolder>();
         private readonly ICommonGameSettings _commonGameSettings = Instance.Get<ICommonGameSettings>();
         private readonly IInteriorDataProvider _interiorDataProvider = Instance.Get<IInteriorDataProvider>();
+        private readonly IPlayerDressesDataProvider _dressesDataProvider = Instance.Get<IPlayerDressesDataProvider>();
         private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
         
         private PlayerModel _playerModel;
@@ -71,9 +72,29 @@ namespace Systems
                 uiFlagsModel.SetNewFloorsFlag(true);
             }
 
-            if (_interiorDataProvider.GetWallItemsForNextLevel(level).Length > 0)
+            if (_interiorDataProvider.GetWallItemsByLevel(level).Length > 0)
             {
                 uiFlagsModel.SetNewWallsFlag(true);
+            }
+
+            if (_dressesDataProvider.GetTopBodyItemsByLevel(level).Length > 0)
+            {
+                uiFlagsModel.SetNewTopDressesFlag(true);
+            }
+
+            if (_dressesDataProvider.GetBottomBodyItemsByLevel(level).Length > 0)
+            {
+                uiFlagsModel.SetNewBottomDressesFlag(true);
+            }
+
+            if (_dressesDataProvider.GetHairItemsByLevel(level).Length > 0)
+            {
+                uiFlagsModel.SetNewHairsFlag(true);
+            }
+
+            if (_dressesDataProvider.GetGlassItemsByLevel(level).Length > 0)
+            {
+                uiFlagsModel.SetNewGlassesFlag(true);
             }
         }
 
