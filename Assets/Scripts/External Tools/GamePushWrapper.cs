@@ -15,12 +15,24 @@ namespace Tools
         private readonly UniTaskCompletionSource _initTcs = new UniTaskCompletionSource();
 
         private UniTaskCompletionSource<bool> _rewardedAdsTcs;
+        private UniTaskCompletionSource<bool> _preloaderAdsTcs;
         
         public static UniTask Init()
         {
             return Instance.InitInternal();
         }
-        
+
+        public static async UniTask<bool> ShowPreloaderAds()
+        {
+            Dispatch(new RequestGamePauseEvent(nameof(GamePushWrapper), isPaused: true, needMute: true));
+
+            var showPreloaderAdsResult = await Instance.ShowPreloaderAdsInternal();
+
+            Dispatch(new RequestGamePauseEvent(nameof(GamePushWrapper), isPaused: false));
+
+            return showPreloaderAdsResult;
+        }
+
         public static async UniTask<bool> ShowRewardedAds()
         {
             Dispatch(new RequestGamePauseEvent(nameof(GamePushWrapper), isPaused:true, needMute:true));
@@ -30,6 +42,13 @@ namespace Tools
             Dispatch(new RequestGamePauseEvent(nameof(GamePushWrapper),isPaused: false));
 
             return showAdsResult;
+        }
+
+        public static void ShowStickyBanner()
+        {
+#if !UNITY_STANDALONE_OSX
+            GP_Ads.ShowSticky();
+#endif
         }
 
         public static string GetPlayerData(string fieldName)
@@ -146,6 +165,19 @@ namespace Tools
             
             return true;
         }
+        
+        private async UniTask<bool> ShowPreloaderAdsInternal()
+        {
+#if !UNITY_STANDALONE_OSX && !UNITY_EDITOR
+            _preloaderAdsTcs = new UniTaskCompletionSource<bool>();
+            GP_Ads.ShowPreloader(onPreloaderClose: PreloaderAdsCloseHandler);
+
+            return await _preloaderAdsTcs.Task;
+#endif
+            await UniTask.Delay(500, DelayType.UnscaledDeltaTime);
+            
+            return true;
+        }
 
         private UniTask InitInternal()
         {
@@ -190,6 +222,11 @@ namespace Tools
         private void RewardedAdsClosedResultHandler(bool success)
         {
             _rewardedAdsTcs.TrySetResult(success);
+        }
+
+        private void PreloaderAdsCloseHandler(bool result)
+        {
+            _preloaderAdsTcs.TrySetResult(result);
         }
 
         private void Log(string message)

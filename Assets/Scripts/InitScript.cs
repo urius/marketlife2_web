@@ -67,7 +67,13 @@ public class InitScript : MonoBehaviour
         
         _localizationsHolder.SetLocaleLang(GamePushWrapper.GetLanguage());
         
-        await commandExecutor.ExecuteAsync<InitPlayerModelCommand, PlayerModelHolder>(_playerModelHolder);
+        var initPLayerModelTask = commandExecutor.ExecuteAsync<InitPlayerModelCommand, PlayerModelHolder>(_playerModelHolder);
+
+        await GamePushWrapper.ShowPreloaderAds();
+
+        await initPLayerModelTask;
+        
+        GamePushWrapper.ShowStickyBanner();
     }
 
     private void InitAudioManager()
