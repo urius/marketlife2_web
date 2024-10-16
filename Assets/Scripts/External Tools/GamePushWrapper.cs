@@ -24,11 +24,15 @@ namespace Tools
 
         public static async UniTask<bool> ShowPreloaderAds()
         {
+            Log($"{nameof(ShowPreloaderAds)} start");
+            
             Dispatch(new RequestGamePauseEvent(nameof(GamePushWrapper), isPaused: true, needMute: true));
 
             var showPreloaderAdsResult = await Instance.ShowPreloaderAdsInternal();
 
             Dispatch(new RequestGamePauseEvent(nameof(GamePushWrapper), isPaused: false));
+            
+            Log($"{nameof(ShowPreloaderAds)} finish with result {showPreloaderAdsResult}");
 
             return showPreloaderAdsResult;
         }
@@ -46,8 +50,17 @@ namespace Tools
 
         public static void ShowStickyBanner()
         {
+            Log($"{nameof(ShowStickyBanner)}");
+            
 #if !UNITY_STANDALONE_OSX
-            GP_Ads.ShowSticky();
+            if (GP_Ads.IsStickyAvailable())
+            {
+                GP_Ads.ShowSticky();
+            }
+            else
+            {
+                LogError($"{nameof(ShowStickyBanner)} sticky is not available");
+            }
 #endif
         }
 
@@ -104,6 +117,7 @@ namespace Tools
         {
 #if !UNITY_STANDALONE_OSX
             GP_Player.ResetPlayer();
+            SyncPlayerData();
 #endif
 #if UNITY_EDITOR
             PlayerPrefs.DeleteAll();
@@ -170,7 +184,16 @@ namespace Tools
         {
 #if !UNITY_STANDALONE_OSX && !UNITY_EDITOR
             _preloaderAdsTcs = new UniTaskCompletionSource<bool>();
-            GP_Ads.ShowPreloader(onPreloaderClose: PreloaderAdsCloseHandler);
+            if (GP_Ads.IsPreloaderAvailable())
+            {
+                GP_Ads.ShowPreloader(onPreloaderClose: PreloaderAdsCloseHandler);
+            }
+            else
+            {
+                _preloaderAdsTcs.TrySetResult(false);
+                
+                LogError($"{nameof(ShowPreloaderAdsInternal)} ads is not available");
+            }
 
             return await _preloaderAdsTcs.Task;
 #endif
@@ -229,12 +252,12 @@ namespace Tools
             _preloaderAdsTcs.TrySetResult(result);
         }
 
-        private void Log(string message)
+        private static void Log(string message)
         {
             Debug.Log(GetLogMessageFormat(message));
         }
 
-        private void LogError(string message)
+        private static void LogError(string message)
         {
             Debug.LogError(GetLogMessageFormat(message));
         }
