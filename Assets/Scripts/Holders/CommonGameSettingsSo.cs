@@ -1,5 +1,4 @@
 using Data.Internal;
-using Newtonsoft.Json;
 using UnityEngine;
 
 namespace Holders
@@ -13,7 +12,7 @@ namespace Holders
         
         private void OnEnable()
         {
-            _commonGameSettingsData = JsonConvert.DeserializeObject<CommonGameSettingsData>(_levelsDataJson.text);
+            _commonGameSettingsData = JsonUtility.FromJson<CommonGameSettingsData>(_levelsDataJson.text);
         }
 
         public int GetLevelIndexByMoneyAmount(int moneyAmount)
