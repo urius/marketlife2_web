@@ -49,7 +49,7 @@ namespace View.UI.TopPanel
             var shouldShowDressesButton = ShouldShowDressesButton();
             UpdateDressesButtonNewNotificationVisibility();
             _dressesButton.SetVisibility(shouldShowDressesButton);
-            SetDressesButtonShownSharedFlag(shouldShowInteriorButton);
+            SetDressesButtonShownSharedFlag(shouldShowDressesButton);
             
             Subscribe();
         }
