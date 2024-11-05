@@ -10,8 +10,10 @@ namespace Holders
     {
         [SerializeField] private TextAsset _localizationsJson;
 
-        private string _localeLang = "en";
+        private string _localeLang = null;
         private Dictionary<string, LocalizationItemData> _localizationByKey;
+
+        public bool IsLanguageSet => _localeLang != null;
 
         private void OnEnable()
         {
@@ -43,6 +45,8 @@ namespace Holders
 
     public interface ILocalizationProvider
     {
+        public bool IsLanguageSet { get; }
+        
         public string GetLocale(string key);
     }
 }

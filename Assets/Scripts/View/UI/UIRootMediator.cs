@@ -1,3 +1,4 @@
+using Cysharp.Threading.Tasks;
 using Data;
 using Holders;
 using Infra.Instance;
@@ -24,7 +25,7 @@ namespace View.UI
             _view = TargetTransform.GetComponent<UIRootView>();
             _sharedViewsDataHolder.RegisterSettingsCanvasView(_view.UISettingsCanvasView);
             
-            ShowLoadingOverlay();
+            ShowLoadingOverlay().Forget();
 
             MediateChild<UIGameOverlayPanelMediator>(_view.UIGameOverlayPanelTransform);
             
@@ -51,12 +52,19 @@ namespace View.UI
             _sharedViewsDataHolder.UnregisterSettingsCanvasView();
         }
 
-        private void ShowLoadingOverlay()
+        private async UniTaskVoid ShowLoadingOverlay()
         {
             _view.UILoadingOverlayView.SetActive(true);
+            _view.UILoadingOverlayView.SetMessageTextVisibility(false);
             
-            var waitText = _localizationProvider.GetLocale(Constants.LocalizationKeyWaitLoading);
-            _view.UILoadingOverlayView.SetMessageText(waitText);
+            await UniTask.WaitUntil(() => _localizationProvider.IsLanguageSet);
+
+            if (_view.UILoadingOverlayView != null)
+            {
+                var waitText = _localizationProvider.GetLocale(Constants.LocalizationKeyWaitLoading);
+                _view.UILoadingOverlayView.SetMessageText(waitText);
+                _view.UILoadingOverlayView.SetMessageTextVisibility(true);
+            }
         }
 
         private void AnimateLoadingOverlayFadeOut()
