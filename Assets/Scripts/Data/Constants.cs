@@ -26,6 +26,7 @@ namespace Data
         public const string PlayerDataKey = "data";
         public const string PlayerScoreKey = "score";
 
+        public const string LocalizationKeyWaitLoading = "wait_loading";
         public const string LocalizationKeyMarketLevelPrefix = "market_level_";
         public const string LocalizationBottomPanelDeliveryTitle = "bottom_panel_delivery_title";
         public const string LocalizationBottomPanelStaffTitle = "bottom_panel_staff_title";

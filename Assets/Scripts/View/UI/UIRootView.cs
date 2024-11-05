@@ -1,7 +1,7 @@
 using UnityEngine;
-using UnityEngine.UI;
 using View.UI.BottomPanel;
 using View.UI.LeftPanel;
+using View.UI.LoadingOverlay;
 using View.UI.Popups;
 using View.UI.SettingsCanvas;
 using View.UI.TopPanel;
@@ -22,7 +22,7 @@ namespace View.UI
         [SerializeField] private UIPopupsCanvasRootView _popupsCanvasRootView;
         [SerializeField] private UILeftPanelView _uiLeftPanelView;
         [SerializeField] private UISettingsCanvasView _settingsCanvasView;
-        [SerializeField] private Image _uiLoadingOverlayImage;
+        [SerializeField] private UILoadingOverlayView _uiLoadingOverlayView;
 
         public Transform UIGameOverlayPanelTransform => _gamePanelTransform;
         public UITopPanelMoneyView UITopPanelMoneyView => _moneyView;
@@ -35,11 +35,11 @@ namespace View.UI
         public UIPopupsCanvasRootView UIPopupsCanvasRootView => _popupsCanvasRootView;
         public UILeftPanelView UILeftPanelView => _uiLeftPanelView;
         public UISettingsCanvasView UISettingsCanvasView => _settingsCanvasView;
-        public Image UILoadingOverlayImage => _uiLoadingOverlayImage;
+        public UILoadingOverlayView UILoadingOverlayView => _uiLoadingOverlayView;
 
         public void RemoveLoadingOverlay()
         {
-            Destroy(_uiLoadingOverlayImage.gameObject);
+            Destroy(_uiLoadingOverlayView.gameObject);
         }
     }
 }

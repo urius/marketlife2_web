@@ -6,6 +6,11 @@
 			"ru": "Тестовый ключ"
 		},
 		{
+			"key": "wait_loading",
+			"en": "One moment...",
+			"ru": "Секундочку..."
+		},
+		{
 			"key": "market_level_1",
 			"en": "Market stall",
 			"ru": "Торговая палатка"

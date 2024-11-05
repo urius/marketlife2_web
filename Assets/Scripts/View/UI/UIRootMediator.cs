@@ -1,6 +1,6 @@
+using Data;
 using Holders;
 using Infra.Instance;
-using View.Extensions;
 using View.UI.BottomPanel;
 using View.UI.Common;
 using View.UI.GameOverlayPanel;
@@ -15,6 +15,7 @@ namespace View.UI
     {
         private readonly IPlayerModelHolder _playerModelHolder = Instance.Get<IPlayerModelHolder>();
         private readonly ISharedViewsDataHolder _sharedViewsDataHolder = Instance.Get<ISharedViewsDataHolder>();
+        private readonly ILocalizationProvider _localizationProvider = Instance.Get<ILocalizationProvider>();
         
         private UIRootView _view;
 
@@ -23,8 +24,8 @@ namespace View.UI
             _view = TargetTransform.GetComponent<UIRootView>();
             _sharedViewsDataHolder.RegisterSettingsCanvasView(_view.UISettingsCanvasView);
             
-            _view.UILoadingOverlayImage.gameObject.SetActive(true);
-            
+            ShowLoadingOverlay();
+
             MediateChild<UIGameOverlayPanelMediator>(_view.UIGameOverlayPanelTransform);
             
             await _playerModelHolder.PlayerModelSetTask;
@@ -50,12 +51,22 @@ namespace View.UI
             _sharedViewsDataHolder.UnregisterSettingsCanvasView();
         }
 
+        private void ShowLoadingOverlay()
+        {
+            _view.UILoadingOverlayView.SetActive(true);
+            
+            var waitText = _localizationProvider.GetLocale(Constants.LocalizationKeyWaitLoading);
+            _view.UILoadingOverlayView.SetMessageText(waitText);
+        }
+
         private void AnimateLoadingOverlayFadeOut()
         {
-            var image = _view.UILoadingOverlayImage;
+            var overlayView = _view.UILoadingOverlayView;
             
-            LeanTween.value(image.color.a, 0f, 0.5f)
-                .setOnUpdate(image.SetAlpha)
+            overlayView.SetMessageTextVisibility(isVisible: false);
+            
+            LeanTween.value(overlayView.Alpha, 0f, 0.5f)
+                .setOnUpdate(overlayView.SetAlpha)
                 .setOnComplete(_view.RemoveLoadingOverlay);
         }
     }
