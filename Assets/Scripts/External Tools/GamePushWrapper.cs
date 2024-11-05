@@ -59,7 +59,7 @@ namespace Tools
             }
             else
             {
-                LogError($"{nameof(ShowStickyBanner)} sticky is not available");
+                LogWarning($"{nameof(ShowStickyBanner)} sticky is not available");
             }
 #endif
         }
@@ -260,6 +260,11 @@ namespace Tools
         private static void LogError(string message)
         {
             Debug.LogError(GetLogMessageFormat(message));
+        }
+
+        private static void LogWarning(string message)
+        {
+            Debug.LogWarning(GetLogMessageFormat(message));
         }
 
         private static string GetLogMessageFormat(string message)
