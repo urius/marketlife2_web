@@ -364,6 +364,11 @@
 			"key": "reset_data_success_message",
 			"en": "Player data deleted. Please relaunch the game",
 			"ru": "Данные удалены. Перезапустите игру"
+		},
+		{
+			"key": "reset_data_reload_button",
+			"en": "Relaunch",
+			"ru": "Перезапустить"
 		}
 	]
 }

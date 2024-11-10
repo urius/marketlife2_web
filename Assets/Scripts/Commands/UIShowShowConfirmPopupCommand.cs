@@ -93,6 +93,8 @@ namespace Commands
             if (string.IsNullOrEmpty(arg.NoButtonText))
             {
                 popupView.NoButton.SetVisibility(false);
+
+                PuYesButtonOnCenter(popupView.YesButton);
             }
             else
             {
@@ -103,6 +105,17 @@ namespace Commands
 
             ApplyPreset(popupView.YesButton, arg.YesButtonPreset);
             ApplyPreset(popupView.NoButton, arg.NoButtonPreset);
+        }
+
+        private static void PuYesButtonOnCenter(UITextButtonView yesButton)
+        {
+            var yesButtonRectTransform = yesButton.RectTransform;
+            var pos = yesButtonRectTransform.anchoredPosition;
+            pos.x = 0;
+            yesButtonRectTransform.anchoredPosition = pos;
+            yesButtonRectTransform.pivot = new Vector2(0.5f, yesButtonRectTransform.pivot.y);
+            yesButtonRectTransform.anchorMax = new Vector2(0.5f, yesButtonRectTransform.anchorMax.y);
+            yesButtonRectTransform.anchorMin = new Vector2(0.5f, yesButtonRectTransform.anchorMin.y);
         }
 
         private static void ApplyPreset(UITextButtonView button, ButtonPresetType preset)

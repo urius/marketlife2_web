@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using Commands;
 using Cysharp.Threading.Tasks;
 using Data;
@@ -15,6 +16,9 @@ namespace View.UI.Popups.SettingsPopup
 {
     public class UISettingsPopupController : MediatorWithModelBase<SettingsPopupViewModel>
     {
+        [DllImport("__Internal")]
+        private static extern void ReloadPage();
+        
         private readonly ISharedViewsDataHolder _sharedViewsDataHolder = Instance.Get<ISharedViewsDataHolder>();
         private readonly IEventBus _eventBus = Instance.Get<IEventBus>();
         private readonly IAudioPlayer _audioPlayer = Instance.Get<IAudioPlayer>();
@@ -91,16 +95,22 @@ namespace View.UI.Popups.SettingsPopup
                 
                 title = _localizationProvider.GetLocale(Constants.LocalizationKeySuccess);
                 message = _localizationProvider.GetLocale(Constants.LocalizationKeyResetDataSuccessMessage);
+                yesButtonText = _localizationProvider.GetLocale(Constants.LocalizationKeyResetDataReloadButtonText);
+
+                var confirmRelaunch = await _commandExecutor
+                    .ExecuteAsync<UIShowShowConfirmPopupCommand, bool, ShowPromptCommandParams>(
+                        new ShowPromptCommandParams(
+                            _overridenTargetTransform,
+                            title,
+                            message,
+                            yesButtonText,
+                            noButtonText: null,
+                            hideCloseButton: true));
                 
-                _commandExecutor.ExecuteAsync<UIShowShowConfirmPopupCommand, bool, ShowPromptCommandParams>(
-                    new ShowPromptCommandParams(
-                        _overridenTargetTransform,
-                        title,
-                        message,
-                        yesButtonText: null,
-                        noButtonText: null,
-                        hideCloseButton: true))
-                    .Forget();
+                if (confirmRelaunch)
+                {
+                    ReloadPage();
+                }
             }
         }
 

@@ -80,6 +80,7 @@ namespace Data
         public const string LocalizationKeyNo = "no";
         public const string LocalizationKeySuccess = "success";
         public const string LocalizationKeyResetDataSuccessMessage = "reset_data_success_message";
+        public const string LocalizationKeyResetDataReloadButtonText = "reset_data_reload_button";
 
         private const string ColdPrefabsFolderPath = "Prefabs/Cold Prefabs";
         public static readonly string TutorialHowToMovePath = $"{ColdPrefabsFolderPath}/TutorialHowToMove";
