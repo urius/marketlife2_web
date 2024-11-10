@@ -92,7 +92,7 @@ namespace View.UI.Tutorial.Steps
                 {
                     _showsCounter++;
                 }
-                else if (_showsCounter > 1)
+                else if (_showsCounter > 5)
                 {
                     DispatchStepFinished();
                 }

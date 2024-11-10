@@ -16,16 +16,15 @@ namespace Data
                 TutorialStep.PutProductToShelf2,
                 TutorialStep.MoveToCashDesk,
                 TutorialStep.HireCashDeskStaff,
+            },
+            new TutorialStep[]
+            {
                 TutorialStep.UpgradeTruckPoint,
             },
             new TutorialStep[]
             {
                 TutorialStep.OpenInteriorPopup,
                 TutorialStep.OpenDressesPopup,
-            },
-            new TutorialStep[]
-            {
-                //TutorialStep.HireCashDeskStaff
             },
         };
     }
