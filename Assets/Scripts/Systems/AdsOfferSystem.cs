@@ -17,7 +17,7 @@ namespace Systems
     public class AdsOfferSystem : ISystem
     {
         private const int ShowAdsOfferCooldownSeconds = 25;
-        private const int ShowAdsOfferTimeSeconds = 10;
+        private const int ShowAdsOfferTimeSeconds = 20;
         
         private readonly IPlayerModelHolder _playerModelHolder = Instance.Get<IPlayerModelHolder>();
         private readonly IAdsOfferViewModelsHolder _adsOfferViewModelsHolder = Instance.Get<IAdsOfferViewModelsHolder>();
