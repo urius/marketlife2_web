@@ -5,6 +5,7 @@ namespace Data
         Undefined,
         UITopPanelInteriorButtonShown,
         UITopPanelDressesButtonShown,
+        UITopPanelLeaderboardButtonShown,
         IsGamePaused,
     }
 }

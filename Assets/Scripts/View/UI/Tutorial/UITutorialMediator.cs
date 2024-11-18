@@ -103,6 +103,9 @@ namespace View.UI.Tutorial
                 case TutorialStep.OpenDressesPopup:
                     MediateStepInternal<UITutorialStepDressesButtonMediator>(tutorialStep);
                     break;
+                case TutorialStep.OpenLeaderboardPopup:
+                    MediateStepInternal<UITutorialStepLeaderboardButtonMediator>(tutorialStep);
+                    break;
                 default:
                     Debug.LogError($"tutorial step {tutorialStep} not implemented");
                     break;

@@ -25,6 +25,7 @@ namespace Data
             {
                 TutorialStep.OpenInteriorPopup,
                 TutorialStep.OpenDressesPopup,
+                TutorialStep.OpenLeaderboardPopup,
             },
         };
     }
@@ -45,5 +46,6 @@ namespace Data
         UpgradeTruckPoint = 12,
         OpenInteriorPopup = 13,
         OpenDressesPopup = 14,
+        OpenLeaderboardPopup = 15,
     }
 }

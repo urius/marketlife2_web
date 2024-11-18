@@ -16,6 +16,7 @@ namespace Data
         public const int MinLevelForTruckPointUpgrades = 2;
         public const int MinLevelForShelfUpgrades = 1;
         public const int MinLevelForShopExpand = 2;
+        public const int MinLevelForLeaderboardButton = 5;
         public const int ExpandCellsAmount = 3;
         public const int ExpandPointFreeCoord = 3;
         public const int HireByAdvertWorkTimeMultiplier = 5;
@@ -55,6 +56,7 @@ namespace Data
         public const string LocalizationTutorialUpgradeTruckPointMessageKey = "tutorial_upgrade_truck_point_text";
         public const string LocalizationTutorialInteriorButtonMessageKey = "tutorial_interior_button_text";
         public const string LocalizationTutorialDressesButtonMessageKey = "tutorial_dresses_button_text";
+        public const string LocalizationTutorialLeaderboardButtonMessageKey = "tutorial_leaderboard_button_text";
         public const string LocalizationChooseMessageKey = "choose";
         public const string LocalizationChosenMessageKey = "choosen";
         public const string LocalizationBuyMessageKey = "buy";

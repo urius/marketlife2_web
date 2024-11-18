@@ -241,6 +241,11 @@
 			"ru": "Здесь можно обновить образ"
 		},
 		{
+			"key": "tutorial_leaderboard_button_text",
+			"en": "Leaderboard is now available!",
+			"ru": "Стала доступна таблица лидеров!"
+		},
+		{
 			"key": "choose",
 			"en": "Choose",
 			"ru": "Выбрать"

@@ -141,7 +141,10 @@ namespace Systems
             {
                 GamePushWrapper.SavePlayerData(Constants.PlayerScoreKey, _statsModel.TotalMoneyEarned, needSync: false);
                 _needSaveLeaderboardDataFlag = false;
+
+                Debug.Log($"Leaderboard score Saved!");
             }
+
             GamePushWrapper.SyncPlayerData();
 
             Debug.Log($"<color=#39FF00>{nameof(SaveDataSystem)} Save!</color>");

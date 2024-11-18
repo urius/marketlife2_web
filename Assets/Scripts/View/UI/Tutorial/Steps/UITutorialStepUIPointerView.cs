@@ -37,6 +37,15 @@ namespace View.UI.Tutorial.Steps
             SetArrowZAngle(10);
         }
 
+        public void ToTopRightSideState()
+        {
+            SetTextXPivot(0);
+            SetTextYPivot(1);
+
+            SetTextYPosAbsMultiplier(-1);
+            SetArrowZAngle(-10);
+        }
+
         private void SetTextYPosAbsMultiplier(int multiplier)
         {
             var textPos = ((RectTransform)_text.transform).anchoredPosition;

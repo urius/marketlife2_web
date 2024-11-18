@@ -155,6 +155,7 @@ public class InitScript : MonoBehaviour
         Map<UIInteriorPopupTabShownEvent, ProcessInteriorPopupTabShownCommand>();
         Map<UIDressesButtonClickedEvent, ShowDressesPopupCommand>();
         Map<UIDressesPopupItemClickedEvent, ProcessDressesPopupItemClickedCommand>();
+        Map<UILeaderboardButtonClickedEvent, ShowLeaderboardPopupCommand>();
         Map<UIDressesPopupTabShownEvent, ProcessDressesPopupTabShownCommand>();
         Map<UISettingsButtonClickedEvent, ProcessSettingsButtonClickedCommand>();
     }

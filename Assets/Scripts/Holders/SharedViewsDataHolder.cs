@@ -24,6 +24,7 @@ namespace Holders
         private IPlayerCharPositionsProvider _playerCharPositionsProvider;
         private RectTransform _topPanelInteriorButtonTransform;
         private RectTransform _topPanelDressesButtonTransform;
+        private RectTransform _topPanelLeaderboardButtonTransform;
         private UISettingsCanvasView _settingsCanvasView;
 
         public void RegisterTruckBoxPositionProvider(TruckPointModel model, ITruckBoxPositionsProvider provider)
@@ -170,6 +171,22 @@ namespace Holders
         {
             _topPanelDressesButtonTransform = null;
         }
+        
+
+        public void RegisterTopPanelLeaderboardButtonTransform(RectTransform transform)
+        {
+            _topPanelLeaderboardButtonTransform = transform;
+        }
+
+        public RectTransform GetTopPanelLeaderboardButtonTransform()
+        {
+            return _topPanelLeaderboardButtonTransform;
+        }
+
+        public void UnregisterTopPanelLeaderboardButtonTransform()
+        {
+            _topPanelLeaderboardButtonTransform = null;
+        }
 
         public void RegisterSettingsCanvasView(UISettingsCanvasView settingsCanvasView)
         {
@@ -225,6 +242,10 @@ namespace Holders
         public void RegisterTopPanelDressesButtonTransform(RectTransform transform);
         public RectTransform GetTopPanelDressesButtonTransform();
         public void UnregisterTopPanelDressesButtonTransform();
+
+        public void RegisterTopPanelLeaderboardButtonTransform(RectTransform transform);
+        public RectTransform GetTopPanelLeaderboardButtonTransform();
+        public void UnregisterTopPanelLeaderboardButtonTransform();
         
         
         public void RegisterSettingsCanvasView(UISettingsCanvasView settingsCanvasView);

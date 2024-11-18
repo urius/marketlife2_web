@@ -27,6 +27,7 @@ namespace View.UI.TopPanel
         private UITopPanelButtonView _dressesButton;
         private PlayerUIFlagsModel _uiFlagsModel;
         private UISettingsCanvasView _settingsCanvasView;
+        private UITopPanelButtonView _leaderboardButton;
 
         protected override void MediateInternal()
         {
@@ -36,10 +37,12 @@ namespace View.UI.TopPanel
             _buttonsView = TargetTransform.GetComponent<UITopPanelButtonsView>();
             _interiorButton = _buttonsView.InteriorButton;
             _dressesButton = _buttonsView.DressesButton;
+            _leaderboardButton = _buttonsView.LeaderboardButton;
             _settingsCanvasView = _sharedViewsDataHolder.GetSettingsCanvasView();
             
             _sharedViewsDataHolder.RegisterTopPanelInteriorButtonTransform(_interiorButton.RectTransform);
             _sharedViewsDataHolder.RegisterTopPanelDressesButtonTransform(_dressesButton.RectTransform);
+            _sharedViewsDataHolder.RegisterTopPanelLeaderboardButtonTransform(_leaderboardButton.RectTransform);
 
             var shouldShowInteriorButton = ShouldShowInteriorButton();
             UpdateInteriorButtonNewNotificationVisibility();
@@ -50,6 +53,10 @@ namespace View.UI.TopPanel
             UpdateDressesButtonNewNotificationVisibility();
             _dressesButton.SetVisibility(shouldShowDressesButton);
             SetDressesButtonShownSharedFlag(shouldShowDressesButton);
+            
+            var shouldShowLeaderboardButton = ShouldShowLeaderboardButton();
+            _leaderboardButton.SetVisibility(shouldShowLeaderboardButton);
+            SetLeaderboardButtonShownSharedFlag(shouldShowLeaderboardButton);
             
             Subscribe();
         }
@@ -66,6 +73,12 @@ namespace View.UI.TopPanel
                    || _dressesDataProvider.GetBottomBodyItemsByLevel(_playerModel.Level).Length > 1
                    || _dressesDataProvider.GetHairItemsByLevel(_playerModel.Level).Length > 1
                    || _dressesDataProvider.GetGlassItemsByLevel(_playerModel.Level).Length > 1;
+        }
+        
+        private bool ShouldShowLeaderboardButton()
+        {
+            return ShouldShowInteriorButton() && ShouldShowDressesButton()
+                                              && _playerModel.Level >= Constants.MinLevelForLeaderboardButton;
         }
 
         protected override void UnmediateInternal()
@@ -88,6 +101,7 @@ namespace View.UI.TopPanel
             
             _interiorButton.Clicked += OnInteriorButtonClicked;
             _dressesButton.Clicked += OnDressesButtonClicked;
+            _leaderboardButton.Clicked += OnLeaderboardButtonClicked;
         }
 
         private void Unsubscribe()
@@ -100,6 +114,7 @@ namespace View.UI.TopPanel
 
             _interiorButton.Clicked -= OnInteriorButtonClicked;
             _dressesButton.Clicked -= OnDressesButtonClicked;
+            _leaderboardButton.Clicked -= OnLeaderboardButtonClicked;
         }
 
         private void OnSettingsButtonClicked()
@@ -153,6 +168,13 @@ namespace View.UI.TopPanel
                 _updatesProvider.GameplayQuarterSecondPassed -= OnShowDressesButtonQuarterSecondPassed;
                 _updatesProvider.GameplayQuarterSecondPassed += OnShowDressesButtonQuarterSecondPassed;
             }
+            
+            if (_buttonsView.LeaderboardButton.IsVisible == false
+                && ShouldShowLeaderboardButton())
+            {
+                _updatesProvider.GameplayQuarterSecondPassed -= OnShowLeaderboardButtonQuarterSecondPassed;
+                _updatesProvider.GameplayQuarterSecondPassed += OnShowLeaderboardButtonQuarterSecondPassed;
+            }
         }
 
         private void OnShowInteriorButtonQuarterSecondPassed()
@@ -180,6 +202,19 @@ namespace View.UI.TopPanel
                     .ContinueWith(() => SetDressesButtonShownSharedFlag(true));
             }
         }
+        
+        private void OnShowLeaderboardButtonQuarterSecondPassed()
+        {
+            if (_playerFocusProvider.IsPlayerFocused)
+            {
+                _updatesProvider.GameplayQuarterSecondPassed -= OnShowLeaderboardButtonQuarterSecondPassed;
+
+                _leaderboardButton.SetVisibility(isVisible: true);
+
+                AnimateAppearing(_leaderboardButton.RectTransform)
+                    .ContinueWith(() => SetLeaderboardButtonShownSharedFlag(true));
+            }
+        }
 
         private UniTask AnimateAppearing(RectTransform rectTransform)
         {
@@ -204,6 +239,11 @@ namespace View.UI.TopPanel
             _sharedFlagsHolder.Set(SharedFlagKey.UITopPanelDressesButtonShown, value);
         }
 
+        private void SetLeaderboardButtonShownSharedFlag(bool value)
+        {
+            _sharedFlagsHolder.Set(SharedFlagKey.UITopPanelLeaderboardButtonShown, value);
+        }
+
         private void OnInteriorButtonClicked()
         {
             _eventBus.Dispatch(new UIInteriorButtonClickedEvent());
@@ -212,6 +252,11 @@ namespace View.UI.TopPanel
         private void OnDressesButtonClicked()
         {
             _eventBus.Dispatch(new UIDressesButtonClickedEvent());
+        }
+
+        private void OnLeaderboardButtonClicked()
+        {
+            _eventBus.Dispatch(new UILeaderboardButtonClickedEvent());
         }
     }
 }
