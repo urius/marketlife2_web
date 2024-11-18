@@ -24,6 +24,7 @@ namespace Systems
         
         private ShopModel _shopModel;
         private bool _needSaveFlag = false;
+        private bool _needSaveLeaderboardDataFlag = true;
         private int _saveCooldownSeconds = 0;
         private PlayerModel _playerModel;
         private PlayerStatsModel _statsModel;
@@ -136,7 +137,11 @@ namespace Systems
             var playerDataToSaveStr = JsonUtility.ToJson(playerDataDToSave);
             
             GamePushWrapper.SavePlayerData(Constants.PlayerDataKey, playerDataToSaveStr, needSync: false);
-            GamePushWrapper.SavePlayerData(Constants.PlayerScoreKey, _statsModel.TotalMoneyEarned, needSync: false);
+            if (_needSaveLeaderboardDataFlag)
+            {
+                GamePushWrapper.SavePlayerData(Constants.PlayerScoreKey, _statsModel.TotalMoneyEarned, needSync: false);
+                _needSaveLeaderboardDataFlag = false;
+            }
             GamePushWrapper.SyncPlayerData();
 
             Debug.Log($"<color=#39FF00>{nameof(SaveDataSystem)} Save!</color>");
@@ -160,6 +165,7 @@ namespace Systems
         private void OnLevelChanged(int _)
         {
             ChargeNeedSaveFlag();
+            ChargeNeedSaveLeaderboardDataFlag();
         }
 
         private void OnFloorsTypeUpdated(FloorType _)
@@ -212,6 +218,12 @@ namespace Systems
         private void ChargeNeedSaveFlag()
         {
             _needSaveFlag = true;
+        }
+
+        private void ChargeNeedSaveLeaderboardDataFlag()
+        {
+            ChargeNeedSaveFlag();
+            _needSaveLeaderboardDataFlag = true;
         }
     }
 }
